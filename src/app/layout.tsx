@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Mi Zhou | Portfolio Replica",
+  title: "Avail Arch | Designs",
   description: "Architecture and Design Portfolio",
 };
 
