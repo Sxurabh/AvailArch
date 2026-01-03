@@ -1,5 +1,5 @@
 "use client";
-import { Project } from "../lib/data";
+import { Project } from "@/lib/data";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
