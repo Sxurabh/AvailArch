@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { projects } from "../lib/data";
+import { projects } from "@/lib/data";
 import ProjectCard from "./ProjectCard";
 import { AnimatePresence } from "framer-motion";
-import { cn } from "../lib/utils";
+import { cn } from "@/lib/utils";
 
 export default function ProjectGrid() {
   const [filter, setFilter] = useState("All");

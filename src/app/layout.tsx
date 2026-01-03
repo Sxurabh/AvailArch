@@ -3,11 +3,12 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Providers from "./components/Providers"; // Import the provider
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Avail Arch | Designs",
+  title: "Avail Arch | Portfolio",
   description: "Architecture and Design Portfolio",
 };
 
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans min-h-screen flex flex-col`}>
-        <Header />
-        <main className="flex-grow pt-32 px-6 md:px-12 max-w-7xl mx-auto w-full">
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="flex-grow pt-32 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
