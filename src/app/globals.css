@@ -1,21 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
-  --foreground-rgb: 0, 0, 0;
+  --foreground-rgb: 17, 17, 17;
   --background-rgb: 255, 255, 255;
+  --font-inter: 'Inter', sans-serif;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
+  font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-osx-font-smoothing: grayscale; /* Makes text look thinner/cleaner */
 }
 
-/* Hide scrollbar for clean aesthetic */
+/* Hide scrollbar for that "app-like" feel */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
+}
+
+::selection {
+  background: #000;
+  color: #fff;
 }

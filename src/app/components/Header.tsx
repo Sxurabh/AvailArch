@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "../lib/utils"; 
+import { cn } from "../lib/utils";
 
 export default function Header() {
   const pathname = usePathname();
@@ -13,20 +13,27 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-sm dark:bg-black/90 transition-colors duration-300">
-      <div className="flex justify-between items-center px-6 py-6 md:px-12 max-w-7xl mx-auto">
-        <Link href="/" className="text-lg font-bold tracking-widest uppercase hover:opacity-70 transition-opacity">
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm transition-all duration-500">
+      <div className="flex justify-between items-center px-6 py-8 md:px-12 max-w-[1600px] mx-auto">
+        {/* Logo */}
+        <Link 
+          href="/" 
+          className="text-sm font-bold tracking-[0.25em] uppercase hover:opacity-50 transition-opacity"
+        >
           Mi Zhou
         </Link>
 
-        <nav className="hidden md:flex gap-8">
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex gap-12">
           {navItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
               className={cn(
-                "text-sm font-medium tracking-wide transition-colors hover:text-black dark:hover:text-white",
-                pathname === item.path ? "text-black dark:text-white" : "text-gray-500 dark:text-gray-400"
+                "text-[10px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase",
+                pathname === item.path 
+                  ? "text-black" 
+                  : "text-gray-400 hover:text-black"
               )}
             >
               {item.name}
@@ -34,8 +41,10 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Mobile Menu Icon Placeholder */}
-        <button className="md:hidden text-sm uppercase">Menu</button>
+        {/* Mobile Nav Button */}
+        <button className="md:hidden text-[10px] font-semibold tracking-[0.2em] uppercase">
+          Menu
+        </button>
       </div>
     </header>
   );

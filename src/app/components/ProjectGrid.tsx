@@ -3,11 +3,12 @@ import { useState } from "react";
 import { projects } from "../lib/data";
 import ProjectCard from "./ProjectCard";
 import { AnimatePresence } from "framer-motion";
+import { cn } from "../lib/utils";
 
 export default function ProjectGrid() {
   const [filter, setFilter] = useState("All");
   
-  // Extract unique years for the filter menu
+  // Get unique years
   const years = ["All", ...Array.from(new Set(projects.map((p) => p.year))).sort().reverse()];
 
   const filteredProjects =
@@ -17,25 +18,28 @@ export default function ProjectGrid() {
 
   return (
     <div className="w-full">
-      {/* Filter Bar */}
-      <div className="flex gap-6 mb-12 text-sm">
-        {years.map((year) => (
-          <button
-            key={year}
-            onClick={() => setFilter(year)}
-            className={`transition-colors ${
-              filter === year
-                ? "text-black font-medium underline underline-offset-4"
-                : "text-muted hover:text-black"
-            }`}
-          >
-            {year}
-          </button>
-        ))}
+      {/* Sticky Filter Header */}
+      <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-md py-6 mb-8 md:mb-16 -mx-6 px-6 md:mx-0 md:px-0">
+        <div className="flex flex-wrap gap-x-8 gap-y-3 text-[10px] tracking-[0.2em] uppercase font-semibold">
+          {years.map((year) => (
+            <button
+              key={year}
+              onClick={() => setFilter(year)}
+              className={cn(
+                "transition-all duration-300 ease-out",
+                filter === year
+                  ? "text-black"
+                  : "text-neutral-300 hover:text-black"
+              )}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+      {/* Project Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-16 pb-24">
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
