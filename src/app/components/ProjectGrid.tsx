@@ -19,7 +19,7 @@ export default function ProjectGrid() {
   return (
     <div className="w-full">
       {/* Sticky Filter Header */}
-      <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-md py-6 mb-8 md:mb-16 -mx-6 px-6 md:mx-0 md:px-0">
+      <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-md py-6 mb-8 md:mb-16 -mx-6 px-6 md:mx-0 md:px-0 transition-all">
         <div className="flex flex-wrap gap-x-8 gap-y-3 text-[10px] tracking-[0.2em] uppercase font-semibold">
           {years.map((year) => (
             <button

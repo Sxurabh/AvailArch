@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // 🟢 CRITICAL: This ensures Tailwind finds files inside 'src'
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -12,14 +11,13 @@ const config: Config = {
       },
       colors: {
         background: "#ffffff",
-        foreground: "#111111",
-        // A specific warm grey used in architectural portfolios
-        muted: "#9CA3AF", 
-        border: "#E5E5E5",
+        foreground: "#111111", // Stark black for text
+        muted: "#9CA3AF",      // Architectural cool-grey
+        border: "#E5E5E5",     // Very light borders
       },
       letterSpacing: {
-        // "Architectural" spacing
-        widest: '.2em', 
+        widest: '.2em',       // The signature "spaced out" look
+        tighter: '-.02em',
       },
       fontSize: {
         // "Micro" text sizes for labels

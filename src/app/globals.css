@@ -10,16 +10,18 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
   font-family: var(--font-inter);
+  /* Crucial for the thin/clean aesthetic */
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; /* Makes text look thinner/cleaner */
+  -moz-osx-font-smoothing: grayscale; 
 }
 
-/* Hide scrollbar for that "app-like" feel */
+/* Hide default scrollbar */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
 }
 
+/* High-contrast selection */
 ::selection {
   background: #000;
   color: #fff;

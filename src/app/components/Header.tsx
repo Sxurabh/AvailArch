@@ -20,7 +20,7 @@ export default function Header() {
           href="/" 
           className="text-sm font-bold tracking-[0.25em] uppercase hover:opacity-50 transition-opacity"
         >
-          Mi Zhou
+          Avail Arch
         </Link>
 
         {/* Desktop Nav */}
