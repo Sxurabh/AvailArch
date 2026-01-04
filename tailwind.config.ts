@@ -11,16 +11,17 @@ const config: Config = {
       },
       colors: {
         background: "#ffffff",
-        foreground: "#111111", // Stark black for text
-        muted: "#9CA3AF",      // Architectural cool-grey
-        border: "#E5E5E5",     // Very light borders
+        foreground: "#111111", 
+        muted: "#9CA3AF",      
+        border: "#E5E5E5",     
+        // 👇 MAKE SURE THIS IS HERE AND RESTART SERVER
+        brand: "#bfff00",      
       },
       letterSpacing: {
-        widest: '.2em',       // The signature "spaced out" look
+        widest: '.2em',       
         tighter: '-.02em',
       },
       fontSize: {
-        // "Micro" text sizes for labels
         xxs: ['0.65rem', { lineHeight: '1rem' }],
       },
       animation: {
