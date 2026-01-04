@@ -20,6 +20,7 @@ export default function AdminDashboard() {
     onUnauthenticated() { redirect("/"); },
   });
 
+  // --- Request Management State ---
   const [requests, setRequests] = useState<any[]>([]);
   const [activeView, setActiveView] = useState("requests");
   const [loading, setLoading] = useState(true);
@@ -28,9 +29,20 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Project Form State
-  const [projectData, setProjectData] = useState({ title: "", year: "2024", category: "", image: "" });
+  // --- Project Form State (Updated with new fields) ---
+  const [projectData, setProjectData] = useState({ 
+    title: "", 
+    year: "2024", 
+    category: "", 
+    image: "", 
+    description: "", 
+    client: "", 
+    location: "", 
+    beforeImage: "", 
+    afterImage: ""
+  });
 
+  // Fetch Requests
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,6 +59,7 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
+  // Update Request Status
   const updateStatus = async (id: string, newStatus: string) => {
     setRequests(requests.map(r => r.id === id ? { ...r, status: newStatus } : r));
     await fetch("/api/requests", {
@@ -55,16 +68,21 @@ export default function AdminDashboard() {
     });
   };
 
+  // Add Project Handler
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectData.title || !projectData.image) {
-      alert("Please fill in all required fields.");
+      alert("Title and Main Image are required.");
       return;
     }
     
     await fetch("/api/projects", { method: "POST", body: JSON.stringify(projectData) });
     alert("Project Added Successfully");
-    setProjectData({ title: "", year: "2024", category: "", image: "" });
+    // Reset Form
+    setProjectData({ 
+      title: "", year: "2024", category: "", image: "",
+      description: "", client: "", location: "", beforeImage: "", afterImage: ""
+    });
   };
 
   if (session?.user && (session.user as any).role !== "admin") return null;
@@ -138,6 +156,8 @@ export default function AdminDashboard() {
 
         {/* Content Panel */}
         <div className="lg:col-span-9">
+          
+          {/* VIEW: MANAGE REQUESTS (RESTORED) */}
           {activeView === "requests" ? (
             <div className="bg-white border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
@@ -208,7 +228,7 @@ export default function AdminDashboard() {
                 </table>
               </div>
 
-              {/* Pagination */}
+              {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/30">
                   <button 
@@ -245,57 +265,77 @@ export default function AdminDashboard() {
               )}
             </div>
           ) : (
-            <div className="bg-white border border-gray-200 p-8 max-w-2xl">
+            
+            // VIEW: ADD PROJECT (UPDATED FORM)
+            <div className="bg-white border border-gray-200 p-8 max-w-4xl">
               <div className="mb-8 border-b border-gray-100 pb-4">
                 <h2 className="text-lg font-light uppercase tracking-widest mb-2">New Portfolio Entry</h2>
-                <p className="text-xs text-gray-400">Add a completed project to the public showcase.</p>
+                <p className="text-xs text-gray-400">Add a complete project case study.</p>
               </div>
               
               <form onSubmit={handleAddProject} className="space-y-8">
-                <div className="space-y-4">
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Project Title *</label>
-                    <input 
-                      required
-                      placeholder="E.g. The Eos Studio"
-                      className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all placeholder:text-gray-300"
-                      onChange={e => setProjectData({...projectData, title: e.target.value})}
-                      value={projectData.title}
-                    />
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Project Title *</label>
+                    <input required placeholder="E.g. The Eos Studio" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, title: e.target.value})} value={projectData.title} />
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="group">
-                      <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Year</label>
-                      <input 
-                        placeholder="2025"
-                        className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all placeholder:text-gray-300"
-                        onChange={e => setProjectData({...projectData, year: e.target.value})}
-                        value={projectData.year}
-                      />
-                    </div>
-                    <div className="group">
-                      <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Category</label>
-                      <input 
-                        placeholder="Interior / Landscape"
-                        className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all placeholder:text-gray-300"
-                        onChange={e => setProjectData({...projectData, category: e.target.value})}
-                        value={projectData.category}
-                      />
-                    </div>
+                  <div className="group">
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Year</label>
+                    <input placeholder="2025" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, year: e.target.value})} value={projectData.year} />
                   </div>
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Image Source URL *</label>
-                    <input 
-                      required // <--- VALIDATION ADDED
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all placeholder:text-gray-300"
-                      onChange={e => setProjectData({...projectData, image: e.target.value})}
-                      value={projectData.image}
-                    />
-                    <p className="text-[9px] text-gray-400 mt-2 uppercase tracking-wide">Use a direct URL from Unsplash or your hosting provider.</p>
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Client</label>
+                    <input placeholder="Private / Public" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, client: e.target.value})} value={projectData.client} />
                   </div>
+                  <div className="group">
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Location</label>
+                    <input placeholder="New York, USA" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, location: e.target.value})} value={projectData.location} />
+                  </div>
+                </div>
+                
+                <div className="group">
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Category</label>
+                    <input placeholder="Interior / Landscape" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, category: e.target.value})} value={projectData.category} />
+                </div>
+
+                {/* Description */}
+                <div className="group">
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Description</label>
+                    <textarea placeholder="Full project details..." rows={5} className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, description: e.target.value})} value={projectData.description} />
+                </div>
+
+                {/* Main Image */}
+                <div className="group">
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Main Image URL *</label>
+                    <input required placeholder="https://..." className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                      onChange={e => setProjectData({...projectData, image: e.target.value})} value={projectData.image} />
+                </div>
+
+                {/* Before / After Slider Images */}
+                <div className="p-6 bg-gray-50 border border-dashed border-gray-300">
+                    <h3 className="text-xs font-bold uppercase tracking-widest mb-4">Before & After Slider (Optional)</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="group">
+                            <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Before Image URL</label>
+                            <input placeholder="https://..." className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                            onChange={e => setProjectData({...projectData, beforeImage: e.target.value})} value={projectData.beforeImage} />
+                        </div>
+                        <div className="group">
+                            <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">After Image URL</label>
+                            <input placeholder="https://..." className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
+                            onChange={e => setProjectData({...projectData, afterImage: e.target.value})} value={projectData.afterImage} />
+                        </div>
+                    </div>
                 </div>
 
                 <div className="pt-4 border-t border-gray-100 flex justify-end">
