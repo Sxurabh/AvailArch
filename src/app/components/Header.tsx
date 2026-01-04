@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 export default function Header() {
@@ -11,6 +11,19 @@ export default function Header() {
   const router = useRouter();
   const { data: session, update } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null); // 🟢 Ref for the dropdown container
+
+  // 🟢 CLOSE DROPDOWN ON CLICK OUTSIDE
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Listen for the popup's success message
   useEffect(() => {
@@ -18,10 +31,10 @@ export default function Header() {
       if (event.origin !== window.location.origin) return;
 
       if (event.data === "auth-success") {
-        await update(); // Refresh session data
+        await update(); 
         setIsDropdownOpen(false);
-        router.push("/"); // 🟢 STRICTLY REDIRECT TO HOME PAGE
-        router.refresh(); // Ensure the UI updates
+        router.push("/");
+        router.refresh();
       }
     };
 
@@ -30,7 +43,6 @@ export default function Header() {
   }, [update, router]);
 
   const handleSignIn = async () => {
-    // 1. Open popup
     const width = 500;
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
@@ -42,7 +54,6 @@ export default function Header() {
       `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
     );
 
-    // 2. Show loading text in popup immediately
     if (popup) {
       popup.document.body.innerHTML = `
         <style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:#fff;color:#000;text-transform:uppercase;letter-spacing:0.2em;font-size:12px;font-weight:bold;}</style>
@@ -112,10 +123,10 @@ export default function Header() {
           </nav>
 
           {session?.user ? (
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:border-gray-400 transition-colors"
+                className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:border-black transition-colors"
               >
                 {session.user.image ? (
                   <Image 
@@ -132,16 +143,16 @@ export default function Header() {
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-4 w-48 bg-white border border-gray-100 shadow-xl py-2 animate-fade-in-up">
-                  <div className="px-4 py-2 border-b border-gray-50 mb-2">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Signed in as</p>
-                    <p className="text-xs font-medium truncate">{session.user.email}</p>
+                <div className="absolute right-0 mt-4 w-56 bg-white border border-gray-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.1)] py-2 animate-fade-in-up z-50">
+                  <div className="px-4 py-3 border-b border-gray-50 mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Signed in as</p>
+                    <p className="text-xs font-medium truncate text-black">{session.user.email}</p>
                   </div>
                   
                   <Link 
                     href={dashboardLink}
                     onClick={() => setIsDropdownOpen(false)}
-                    className="block px-4 py-2 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
+                    className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
                   >
                     {dashboardLabel}
                   </Link>
@@ -151,7 +162,7 @@ export default function Header() {
                       setIsDropdownOpen(false);
                       signOut({ callbackUrl: "/" });
                     }}
-                    className="w-full text-left block px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-red-400 hover:bg-gray-50 transition-colors"
+                    className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 hover:bg-gray-50 transition-colors"
                   >
                     Sign Out
                   </button>
