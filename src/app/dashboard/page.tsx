@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-// --- Icons (Inline SVGs for performance) ---
+// --- Icons ---
 const Icons = {
   Grid: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>,
   List: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>,
@@ -57,6 +57,11 @@ export default function AdminDashboard() {
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!projectData.title || !projectData.image) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+    
     await fetch("/api/projects", { method: "POST", body: JSON.stringify(projectData) });
     alert("Project Added Successfully");
     setProjectData({ title: "", year: "2024", category: "", image: "" });
@@ -81,7 +86,7 @@ export default function AdminDashboard() {
   return (
     <div className="max-w-[1600px] mx-auto pt-12 pb-24 animate-fade-in-up px-6 md:px-0">
       
-      {/* 1. Header & Stats Section */}
+      {/* Header */}
       <div className="mb-12">
         <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-6">
           <div>
@@ -102,10 +107,10 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* 2. Main Content Area */}
+      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        {/* Sidebar Tabs */}
+        {/* Sidebar */}
         <div className="lg:col-span-3 flex flex-col gap-2">
           <button 
             onClick={() => setActiveView("requests")}
@@ -135,13 +140,11 @@ export default function AdminDashboard() {
         <div className="lg:col-span-9">
           {activeView === "requests" ? (
             <div className="bg-white border border-gray-200">
-              {/* Table Header */}
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
                 <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">Incoming Requests</h3>
                 <span className="text-[10px] text-gray-400 uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead className="bg-white">
@@ -205,7 +208,7 @@ export default function AdminDashboard() {
                 </table>
               </div>
 
-              {/* Pagination Controls */}
+              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/30">
                   <button 
@@ -251,7 +254,7 @@ export default function AdminDashboard() {
               <form onSubmit={handleAddProject} className="space-y-8">
                 <div className="space-y-4">
                   <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Project Title</label>
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Project Title *</label>
                     <input 
                       required
                       placeholder="E.g. The Eos Studio"
@@ -283,8 +286,9 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Image Source</label>
+                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2 group-focus-within:text-black transition-colors">Image Source URL *</label>
                     <input 
+                      required // <--- VALIDATION ADDED
                       placeholder="https://images.unsplash.com/..."
                       className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all placeholder:text-gray-300"
                       onChange={e => setProjectData({...projectData, image: e.target.value})}
