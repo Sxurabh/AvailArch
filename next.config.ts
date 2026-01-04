@@ -1,3 +1,4 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -9,15 +10,20 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "unsplash.com", // 🟢 FIX: Stops the crash for root domain links
+        hostname: "unsplash.com",
       },
       {
         protocol: "https",
-        hostname: "plus.unsplash.com", // Covers new Unsplash Plus URLs
+        hostname: "plus.unsplash.com",
+      },
+      // 🟢 ALLOW GOOGLE DRIVE & CONTENT DOMAINS
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
       },
       {
         protocol: "https",
-        hostname: "*.googleusercontent.com", 
+        hostname: "*.googleusercontent.com",
       },
     ],
   },

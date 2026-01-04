@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BeforeAfterSlider from "@/app/components/BeforeAfterSlider";
+import { getDriveImage } from "@/lib/driveUtils"; // Import Utility
 
 // Force dynamic rendering to fetch fresh data
 export const dynamic = "force-dynamic";
@@ -19,43 +20,28 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     return notFound();
   }
 
-  // 🛡️ HELPER: Strict URL Validation (Prevents crashes)
-  const isValidUrl = (urlStr: string | undefined) => {
-    if (!urlStr || typeof urlStr !== 'string') return false;
-    const trimmed = urlStr.trim();
-    if (trimmed.length === 0) return false;
-    
-    // Allow local paths (e.g., /images/test.jpg)
-    if (trimmed.startsWith("/")) return true;
+  // 🟢 PROCESS IMAGES
+  const mainImage = getDriveImage(project.image);
+  const beforeImg = getDriveImage(project.beforeImage);
+  const afterImg = getDriveImage(project.afterImage);
 
-    // Check strict absolute URL validity
-    try {
-      new URL(trimmed);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const hasMainImage = isValidUrl(project.image);
-  const hasSlider = isValidUrl(project.beforeImage) && isValidUrl(project.afterImage);
+  const hasMainImage = Boolean(mainImage);
+  const hasSlider = Boolean(beforeImg && afterImg);
 
   return (
     <div className="min-h-screen bg-white pb-24">
       {/* 1. HERO SECTION */}
       <div className="relative w-full h-[60vh] md:h-[80vh] bg-gray-100">
          
-         {/* Render Image ONLY if valid */}
          {hasMainImage ? (
            <Image 
-             src={project.image.trim()} 
+             src={mainImage!} 
              alt={project.title} 
              fill 
              className="object-cover"
              priority
            />
          ) : (
-           // Fallback if image is missing/broken
            <div className="w-full h-full flex items-center justify-center bg-neutral-800">
               <span className="text-white/30 text-sm uppercase tracking-widest font-mono">
                 Image Not Available
@@ -65,7 +51,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
          <div className="absolute inset-0 bg-black/20" />
          
-         {/* Title Overlay */}
          <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 bg-gradient-to-t from-black/80 to-transparent">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-white text-4xl md:text-6xl font-light uppercase tracking-widest mb-2">
@@ -81,14 +66,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16">
-        {/* Back Link */}
         <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-colors mb-12">
             ← Back to Projects
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
             
-            {/* 2. MAIN DESCRIPTION */}
             <div className="lg:col-span-8">
                 <h2 className="text-xl font-light uppercase tracking-widest mb-8 border-b border-black/10 pb-4">Project Overview</h2>
                 <div className="prose prose-neutral max-w-none text-gray-600 font-light leading-relaxed whitespace-pre-line">
@@ -96,7 +79,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 </div>
             </div>
 
-            {/* 3. METADATA SIDEBAR */}
             <div className="lg:col-span-4 space-y-8">
                 <div className="bg-gray-50 p-8 border border-gray-100">
                     <h3 className="text-xs font-bold uppercase tracking-widest mb-6 text-black">Details</h3>
@@ -128,8 +110,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <div className="mt-24">
                 <h2 className="text-xl font-light uppercase tracking-widest mb-8 border-b border-black/10 pb-4 text-center">Transformation</h2>
                 <BeforeAfterSlider 
-                    beforeImage={project.beforeImage!.trim()} 
-                    afterImage={project.afterImage!.trim()} 
+                    beforeImage={beforeImg!} 
+                    afterImage={afterImg!} 
                 />
             </div>
         )}

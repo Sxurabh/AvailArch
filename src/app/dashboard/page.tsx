@@ -1,14 +1,15 @@
+// src/app/dashboard/page.tsx
 "use client";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
+import ProjectManager from "@/app/components/admin/ProjectManager"; // 🟢 IMPORT
 
 // --- Icons ---
 const Icons = {
   Grid: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>,
   List: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>,
-  Plus: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
   ChevronLeft: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>,
   ChevronRight: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
   Refresh: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
@@ -22,25 +23,12 @@ export default function AdminDashboard() {
 
   // --- Request Management State ---
   const [requests, setRequests] = useState<any[]>([]);
-  const [activeView, setActiveView] = useState("requests");
+  const [activeView, setActiveView] = useState<"requests" | "projects">("requests"); // 🟢 Updated type
   const [loading, setLoading] = useState(true);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
-  // --- Project Form State (Updated with new fields) ---
-  const [projectData, setProjectData] = useState({ 
-    title: "", 
-    year: "2024", 
-    category: "", 
-    image: "", 
-    description: "", 
-    client: "", 
-    location: "", 
-    beforeImage: "", 
-    afterImage: ""
-  });
 
   // Fetch Requests
   useEffect(() => {
@@ -65,23 +53,6 @@ export default function AdminDashboard() {
     await fetch("/api/requests", {
       method: "PATCH",
       body: JSON.stringify({ id, status: newStatus }),
-    });
-  };
-
-  // Add Project Handler
-  const handleAddProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!projectData.title || !projectData.image) {
-      alert("Title and Main Image are required.");
-      return;
-    }
-    
-    await fetch("/api/projects", { method: "POST", body: JSON.stringify(projectData) });
-    alert("Project Added Successfully");
-    // Reset Form
-    setProjectData({ 
-      title: "", year: "2024", category: "", image: "",
-      description: "", client: "", location: "", beforeImage: "", afterImage: ""
     });
   };
 
@@ -141,24 +112,26 @@ export default function AdminDashboard() {
           >
             <Icons.List /> Manage Requests
           </button>
+          
+          {/* 🟢 SWITCH TO PROJECTS VIEW */}
           <button 
-            onClick={() => setActiveView("add-project")}
+            onClick={() => setActiveView("projects")}
             className={cn(
               "flex items-center gap-3 px-4 py-3 text-[11px] uppercase tracking-[0.15em] transition-all border-l-2",
-              activeView === "add-project" 
+              activeView === "projects" 
                 ? "border-black text-black bg-gray-50 font-semibold" 
                 : "border-transparent text-gray-400 hover:text-black hover:bg-gray-50/50"
             )}
           >
-            <Icons.Grid /> Add Portfolio Item
+            <Icons.Grid /> Manage Projects
           </button>
         </div>
 
         {/* Content Panel */}
         <div className="lg:col-span-9">
           
-          {/* VIEW: MANAGE REQUESTS (RESTORED) */}
-          {activeView === "requests" ? (
+          {/* VIEW: MANAGE REQUESTS (Preserved) */}
+          {activeView === "requests" && (
             <div className="bg-white border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
                 <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">Incoming Requests</h3>
@@ -264,88 +237,15 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-          ) : (
-            
-            // VIEW: ADD PROJECT (UPDATED FORM)
-            <div className="bg-white border border-gray-200 p-8 max-w-4xl">
-              <div className="mb-8 border-b border-gray-100 pb-4">
-                <h2 className="text-lg font-light uppercase tracking-widest mb-2">New Portfolio Entry</h2>
-                <p className="text-xs text-gray-400">Add a complete project case study.</p>
-              </div>
-              
-              <form onSubmit={handleAddProject} className="space-y-8">
-                {/* Basic Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Project Title *</label>
-                    <input required placeholder="E.g. The Eos Studio" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, title: e.target.value})} value={projectData.title} />
-                  </div>
-                  <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Year</label>
-                    <input placeholder="2025" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, year: e.target.value})} value={projectData.year} />
-                  </div>
-                </div>
+          )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Client</label>
-                    <input placeholder="Private / Public" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, client: e.target.value})} value={projectData.client} />
-                  </div>
-                  <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Location</label>
-                    <input placeholder="New York, USA" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, location: e.target.value})} value={projectData.location} />
-                  </div>
-                </div>
-                
-                <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Category</label>
-                    <input placeholder="Interior / Landscape" className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, category: e.target.value})} value={projectData.category} />
-                </div>
-
-                {/* Description */}
-                <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Description</label>
-                    <textarea placeholder="Full project details..." rows={5} className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, description: e.target.value})} value={projectData.description} />
-                </div>
-
-                {/* Main Image */}
-                <div className="group">
-                    <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Main Image URL *</label>
-                    <input required placeholder="https://..." className="w-full bg-gray-50 border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                      onChange={e => setProjectData({...projectData, image: e.target.value})} value={projectData.image} />
-                </div>
-
-                {/* Before / After Slider Images */}
-                <div className="p-6 bg-gray-50 border border-dashed border-gray-300">
-                    <h3 className="text-xs font-bold uppercase tracking-widest mb-4">Before & After Slider (Optional)</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="group">
-                            <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Before Image URL</label>
-                            <input placeholder="https://..." className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                            onChange={e => setProjectData({...projectData, beforeImage: e.target.value})} value={projectData.beforeImage} />
-                        </div>
-                        <div className="group">
-                            <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">After Image URL</label>
-                            <input placeholder="https://..." className="w-full bg-white border border-gray-200 p-3 text-sm focus:outline-none focus:border-black"
-                            onChange={e => setProjectData({...projectData, afterImage: e.target.value})} value={projectData.afterImage} />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-100 flex justify-end">
-                  <button className="bg-black text-white px-8 py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all flex items-center gap-3">
-                    <Icons.Plus /> Publish Project
-                  </button>
-                </div>
-              </form>
+          {/* 🟢 VIEW: PROJECT MANAGER (Replaces old Add Project form) */}
+          {activeView === "projects" && (
+            <div className="bg-white border border-gray-200">
+                <ProjectManager />
             </div>
           )}
+
         </div>
       </div>
     </div>

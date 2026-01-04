@@ -1,9 +1,11 @@
+// src/app/components/ProjectCard.tsx
 "use client";
 import { Project } from "@/lib/data";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link"; // Import Link
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getDriveImage } from "@/lib/driveUtils"; // Import the new utility
 
 interface ProjectCardProps {
   project: Project;
@@ -12,20 +14,9 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, className }: ProjectCardProps) {
   
-  const isValidUrl = (urlStr: string | undefined) => {
-    if (!urlStr || typeof urlStr !== 'string') return false;
-    const trimmed = urlStr.trim();
-    if (trimmed.length === 0) return false;
-    if (trimmed.startsWith("/")) return true;
-    try {
-      new URL(trimmed);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const hasImage = isValidUrl(project.image);
+  // 🛡️ SAFE PARSING: Converts Drive links or validates URLs
+  const imageUrl = getDriveImage(project.image);
+  const hasImage = Boolean(imageUrl);
 
   return (
     <motion.div
@@ -40,7 +31,6 @@ export default function ProjectCard({ project, className }: ProjectCardProps) {
         className
       )}
     >
-      {/* WRAP CONTENT IN LINK to Project Page */}
       <Link href={`/projects/${project.id}`} className="block w-full h-full">
         
         {/* Image Container */}
@@ -48,11 +38,15 @@ export default function ProjectCard({ project, className }: ProjectCardProps) {
           
           {hasImage ? (
             <Image
-              src={project.image.trim()}
+              src={imageUrl!} // Safe because we checked Boolean(imageUrl)
               alt={project.title || "Project Image"}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 z-0"
+              // 🛡️ onError handler prevents crashes if the image link expires
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'; // Hide broken image
+              }}
             />
           ) : (
             <div className="absolute inset-0 bg-neutral-200 z-0 flex items-center justify-center">
@@ -62,8 +56,8 @@ export default function ProjectCard({ project, className }: ProjectCardProps) {
             </div>
           )}
           
-          {/* Overlay */}
-          <div className="absolute inset-0 z-10 bg-[#F59E0B] opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center text-center p-4">
+          {/* Overlay Content */}
+          <div className="absolute inset-0 z-10 bg-[#bfff00] opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center text-center p-4">
             <div className="relative z-20 flex flex-col items-center">
               <h3 className="text-black text-xl font-bold uppercase tracking-[0.2em] translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                 {project.title}
