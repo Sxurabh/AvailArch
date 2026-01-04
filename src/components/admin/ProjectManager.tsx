@@ -6,6 +6,13 @@ import ProjectForm from "./ProjectForm";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+// Visual consistency with Dashboard icons
+const Icons = {
+  Plus: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
+  Edit: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>,
+  Trash: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
+};
+
 export default function ProjectManager() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [view, setView] = useState<"list" | "create" | "edit">("list");
@@ -102,16 +109,16 @@ export default function ProjectManager() {
   return (
     <div className="bg-white border border-gray-200">
       {/* Header Section */}
-      <div className="px-6 py-6 border-b border-gray-100 flex justify-between items-end bg-gray-50/30">
+      <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
         <div>
-            <h3 className="text-[11px] uppercase tracking-[0.2em] font-bold text-black mb-1">Portfolio Management</h3>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest">Manage your showcased work</p>
+            <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">Portfolio Management</h3>
+            {/* Optional sub-label if you want to match dashboard exactly */}
         </div>
         <button 
             onClick={() => setView("create")}
-            className="px-5 py-2 bg-black text-white text-[10px] uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-black text-white text-[10px] uppercase tracking-widest hover:bg-neutral-800 transition-colors"
         >
-            + Add Project
+            <Icons.Plus /> Add Project
         </button>
       </div>
 
@@ -143,19 +150,23 @@ export default function ProjectManager() {
                   <td className="py-4 px-6 text-[11px] text-gray-500 font-mono">
                     {p.year}
                   </td>
-                  <td className="py-4 px-6 text-right space-x-4">
-                    <button 
-                      onClick={() => startEdit(p)}
-                      className="text-[10px] uppercase tracking-widest font-semibold text-black hover:text-gray-500 transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(p.id)}
-                      className="text-[10px] uppercase tracking-widest font-semibold text-red-500 hover:text-red-700 transition-colors"
-                    >
-                      Delete
-                    </button>
+                  <td className="py-4 px-6 text-right">
+                    <div className="flex justify-end gap-3">
+                        <button 
+                        onClick={() => startEdit(p)}
+                        className="text-gray-400 hover:text-blue-600 transition-colors"
+                        title="Edit"
+                        >
+                        <Icons.Edit />
+                        </button>
+                        <button 
+                        onClick={() => handleDelete(p.id)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                        title="Delete"
+                        >
+                        <Icons.Trash />
+                        </button>
+                    </div>
                   </td>
                 </tr>
               ))}

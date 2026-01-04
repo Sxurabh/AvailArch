@@ -52,8 +52,8 @@ export default function ProjectForm({ initialData, onSubmit, onCancel, isSaving 
 
   return (
     <div className="bg-white border border-gray-200">
-        <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/30">
-            <h3 className="text-[11px] uppercase tracking-[0.2em] font-bold text-black">
+        <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/30 flex justify-between items-center">
+            <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">
                 {initialData ? `Editing: ${initialData.title}` : "New Project Entry"}
             </h3>
         </div>
@@ -62,7 +62,7 @@ export default function ProjectForm({ initialData, onSubmit, onCancel, isSaving 
             
             {/* Section: Basic Info */}
             <div className="space-y-4">
-                <h4 className="text-[10px] uppercase tracking-widest text-black border-l-2 border-brand pl-3 mb-4">
+                <h4 className="text-[10px] uppercase tracking-widest text-black border-l-2 border-brand pl-3 mb-4 font-bold">
                     Basic Information
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
