@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.googleusercontent.com",
       },
+      // 🟢 ALLOW INTERIOR DESIGN DOMAIN
+      {
+        protocol: "https",
+        hostname: "interiordesign.net",
+      },
     ],
   },
 };

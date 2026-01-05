@@ -1,182 +1,175 @@
-// src/app/components/admin/ProjectManager.tsx
+// src/components/admin/ProjectManager.tsx
 "use client";
+
 import { useState, useEffect } from "react";
-import { Project } from "@/lib/data";
 import ProjectForm from "./ProjectForm";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-// Visual consistency with Dashboard icons
-const Icons = {
-  Plus: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>,
-  Edit: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>,
-  Trash: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-};
-
 export default function ProjectManager() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [view, setView] = useState<"list" | "create" | "edit">("list");
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("index"); // 'index' | 'create'
+  const [editingProject, setEditingProject] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // We don't strictly need isSaving here for the list view, but keeping state consistent
-  const [isSaving, setIsSaving] = useState(false);
-  
-  const router = useRouter();
 
-  // Fetch projects on load
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [activeTab]);
 
-  const fetchProjects = async () => {
-    setIsLoading(true);
+  async function fetchProjects() {
     try {
-      const res = await fetch("/api/projects", { cache: "no-store" });
+      const res = await fetch("/api/projects");
       const data = await res.json();
-      setProjects(data);
+      setProjects(data.reverse()); // Newest first
     } catch (error) {
-      console.error("Failed to load projects", error);
+      console.error("Failed to fetch projects", error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // HANDLERS
-  const handleCreate = async (data: Partial<Project>) => {
-    setIsSaving(true);
-    try {
-      await fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      await fetchProjects();
-      setView("list");
-      router.refresh();
-    } catch (e) {
-      alert("Error creating project");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleUpdate = async (data: Partial<Project>) => {
-    if (!editingProject) return;
-    setIsSaving(true);
-    try {
-      await fetch(`/api/projects/${editingProject.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      await fetchProjects();
-      setView("list");
-      setEditingProject(null);
-      router.refresh();
-    } catch (e) {
-      alert("Error updating project");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
-    try {
-      await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      setProjects(projects.filter(p => p.id !== id));
-      router.refresh();
-    } catch (e) {
-      alert("Error deleting project");
-    }
-  };
-
-  // RENDER HELPERS
-  const startEdit = (p: Project) => {
-    setEditingProject(p);
-    setView("edit");
-  };
-
-  if (view === "create") {
-    return <ProjectForm isSaving={isSaving} onSubmit={handleCreate} onCancel={() => setView("list")} />;
   }
 
-  if (view === "edit" && editingProject) {
-    return <ProjectForm isSaving={isSaving} initialData={editingProject} onSubmit={handleUpdate} onCancel={() => { setView("list"); setEditingProject(null); }} />;
+  async function handleDelete(id: string) {
+    if (!confirm("Irreversible action. Delete this project?")) return;
+    try {
+      await fetch(`/api/projects?id=${id}`, { method: "DELETE" });
+      setProjects(projects.filter((p) => p._id !== id));
+    } catch (error) {
+      console.error("Failed to delete", error);
+    }
   }
+
+  const handleEdit = (project: any) => {
+    setEditingProject(project);
+    setActiveTab("create");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSuccess = () => {
+    setEditingProject(null);
+    setActiveTab("index");
+    fetchProjects();
+  };
 
   return (
-    <div className="bg-white border border-gray-200">
-      {/* Header Section */}
-      <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
-        <div>
-            <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">Portfolio Management</h3>
-            {/* Optional sub-label if you want to match dashboard exactly */}
-        </div>
-        <button 
-            onClick={() => setView("create")}
-            className="flex items-center gap-2 px-4 py-2 bg-black text-white text-[10px] uppercase tracking-widest hover:bg-neutral-800 transition-colors"
+    <div className="max-w-4xl mx-auto pt-12 min-h-[60vh] animate-in fade-in slide-in-from-bottom-4">
+      <h1 className="text-2xl font-light uppercase tracking-widest mb-2">
+        Portfolio Manager
+      </h1>
+      <p className="text-xs text-gray-400 mb-12 uppercase tracking-wider">
+        Admin Console
+      </p>
+
+      {/* Tabs - Identical to Track Request */}
+      <div className="flex gap-8 border-b border-gray-100 mb-12">
+        <button
+          onClick={() => {
+            setActiveTab("index");
+            setEditingProject(null);
+          }}
+          className={cn(
+            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
+            activeTab === "index"
+              ? "border-b border-black text-black"
+              : "text-gray-400 hover:text-black"
+          )}
         >
-            <Icons.Plus /> Add Project
+          Project Index
+        </button>
+        <button
+          onClick={() => setActiveTab("create")}
+          className={cn(
+            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
+            activeTab === "create"
+              ? "border-b border-black text-black"
+              : "text-gray-400 hover:text-black"
+          )}
+        >
+          {editingProject ? "Edit Entry" : "Create New"}
         </button>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-12 text-[10px] uppercase tracking-widest text-gray-400">Loading projects...</div>
+      {/* Content Area */}
+      {activeTab === "create" ? (
+        <ProjectForm
+          existingProject={editingProject}
+          onSuccess={handleSuccess}
+          onCancel={() => {
+            setEditingProject(null);
+            setActiveTab("index");
+          }}
+        />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-white">
-              <tr className="border-b border-gray-100">
-                <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-400 font-medium w-1/3">Title</th>
-                <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-400 font-medium">Category</th>
-                <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-400 font-medium">Year</th>
-                <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-gray-400 font-medium text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {projects.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors group">
-                  <td className="py-4 px-6">
-                    <span className="block text-[11px] font-semibold text-black tracking-wide">{p.title}</span>
-                    {p.client && <span className="text-[9px] text-gray-400 tracking-wider uppercase">{p.client}</span>}
-                  </td>
-                  <td className="py-4 px-6">
-                    <span className="text-[10px] uppercase tracking-widest text-gray-600 border border-gray-100 px-2 py-1 rounded-sm bg-white">
-                        {p.category}
+        <div className="space-y-4">
+          {isLoading ? (
+            <div className="text-[10px] uppercase tracking-widest text-gray-400 animate-pulse">
+              Syncing Data...
+            </div>
+          ) : projects.length === 0 ? (
+            <p className="text-xs text-gray-400 italic">No projects found.</p>
+          ) : (
+            <div className="grid gap-4">
+              {/* Header Row */}
+              <div className="hidden md:grid grid-cols-12 gap-4 pb-2 border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-400">
+                <div className="col-span-1">Thumb</div>
+                <div className="col-span-5">Project Details</div>
+                <div className="col-span-3">Category</div>
+                <div className="col-span-3 text-right">Actions</div>
+              </div>
+
+              {/* Rows */}
+              {projects.map((project) => (
+                <div
+                  key={project._id}
+                  className="group bg-white border border-transparent hover:border-gray-100 p-4 md:p-0 md:py-4 md:border-b md:border-gray-50 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all"
+                >
+                  {/* Thumb */}
+                  <div className="hidden md:block col-span-1 relative h-10 w-10 bg-gray-100 overflow-hidden">
+                    {project.imageUrl && (
+                      <Image
+                        src={project.imageUrl}
+                        alt="thumb"
+                        fill
+                        className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                      />
+                    )}
+                  </div>
+
+                  {/* Details */}
+                  <div className="col-span-5">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-black">
+                      {project.title}
+                    </h3>
+                    <p className="text-[10px] text-gray-400 mt-1 line-clamp-1 font-mono">
+                      {project.description}
+                    </p>
+                  </div>
+
+                  {/* Category */}
+                  <div className="col-span-3 flex items-center">
+                    <span className="text-[9px] uppercase tracking-widest border border-gray-100 px-2 py-1 text-gray-500">
+                      {project.category}
                     </span>
-                  </td>
-                  <td className="py-4 px-6 text-[11px] text-gray-500 font-mono">
-                    {p.year}
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="flex justify-end gap-3">
-                        <button 
-                        onClick={() => startEdit(p)}
-                        className="text-gray-400 hover:text-blue-600 transition-colors"
-                        title="Edit"
-                        >
-                        <Icons.Edit />
-                        </button>
-                        <button 
-                        onClick={() => handleDelete(p.id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors"
-                        title="Delete"
-                        >
-                        <Icons.Trash />
-                        </button>
-                    </div>
-                  </td>
-                </tr>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-3 flex justify-end gap-6 md:gap-4 pr-2">
+                    <button
+                      onClick={() => handleEdit(project)}
+                      className="text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project._id)}
+                      className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               ))}
-              {projects.length === 0 && (
-                <tr>
-                    <td colSpan={4} className="py-12 text-center text-[10px] uppercase tracking-widest text-gray-400">No projects found. Start by adding one.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
       )}
     </div>

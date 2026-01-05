@@ -1,137 +1,283 @@
-// src/app/components/admin/ProjectForm.tsx
+// src/components/admin/ProjectForm.tsx
 "use client";
-import { useState } from "react";
-import { Project } from "@/lib/data";
 
-interface ProjectFormProps {
-  initialData?: Partial<Project>;
-  onSubmit: (data: Partial<Project>) => Promise<void>;
-  onCancel: () => void;
-  isSaving: boolean;
+import { useState, useEffect } from "react";
+
+// Structure for a single comparison slide
+interface ComparisonSlide {
+  before: string;
+  after: string;
 }
 
-export default function ProjectForm({ initialData, onSubmit, onCancel, isSaving }: ProjectFormProps) {
-  const [formData, setFormData] = useState<Partial<Project>>({
+interface ProjectFormProps {
+  existingProject?: any;
+  onSuccess?: () => void;
+  onCancel: () => void;
+}
+
+export default function ProjectForm({
+  existingProject,
+  onSuccess,
+  onCancel,
+}: ProjectFormProps) {
+  const [loading, setLoading] = useState(false);
+
+  // Core Data
+  const [formData, setFormData] = useState({
     title: "",
-    category: "",
-    year: new Date().getFullYear().toString(),
-    image: "",
     description: "",
-    client: "",
-    location: "",
-    beforeImage: "",
-    afterImage: "",
-    ...initialData,
+    category: "Interior Design",
+    year: new Date().getFullYear().toString(),
+    // We will still keep a 'main' image for thumbnails
+    imageUrl: "", 
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // Dynamic Array for Slides
+  const [slides, setSlides] = useState<ComparisonSlide[]>([
+    { before: "", after: "" },
+  ]);
+
+  useEffect(() => {
+    if (existingProject) {
+      setFormData({
+        title: existingProject.title || "",
+        description: existingProject.description || "",
+        category: existingProject.category || "Interior Design",
+        year: existingProject.year || new Date().getFullYear().toString(),
+        imageUrl: existingProject.imageUrl || "",
+      });
+
+      // Parse existing slides if available, otherwise fallback
+      if (existingProject.comparisons) {
+        try {
+          const parsed = JSON.parse(existingProject.comparisons);
+          setSlides(parsed);
+        } catch (e) {
+          setSlides([{ before: "", after: "" }]);
+        }
+      } else if (existingProject.imageUrl && existingProject.beforeImageUrl) {
+        // Migration support for the previous single-image version
+        setSlides([
+          {
+            before: existingProject.beforeImageUrl,
+            after: existingProject.imageUrl,
+          },
+        ]);
+      }
+    }
+  }, [existingProject]);
+
+  const addSlide = () => {
+    setSlides([...slides, { before: "", after: "" }]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const removeSlide = (index: number) => {
+    const newSlides = [...slides];
+    newSlides.splice(index, 1);
+    setSlides(newSlides);
+  };
+
+  const updateSlide = (index: number, field: "before" | "after", val: string) => {
+    const newSlides = [...slides];
+    newSlides[index][field] = val;
+    setSlides(newSlides);
+    
+    // Auto-set the main thumbnail to the first 'after' image if empty
+    if (index === 0 && field === 'after' && !formData.imageUrl) {
+        setFormData(prev => ({ ...prev, imageUrl: val }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    setLoading(true);
+
+    // Prepare payload
+    const payload = {
+      ...formData,
+      // Serialize slides to store in Google Sheets
+      comparisons: JSON.stringify(slides), 
+    };
+
+    try {
+      const method = existingProject ? "PUT" : "POST";
+      const url = existingProject
+        ? `/api/projects/${existingProject._id}`
+        : "/api/projects";
+
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Reusable Input Component to keep JSX clean
-  const InputGroup = ({ label, name, value, placeholder, required = false, type = "text" }: any) => (
-    <div className="space-y-1">
-      <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">{label}</label>
-      <input 
-        name={name} 
-        required={required} 
-        type={type}
-        value={value || ""} 
-        onChange={handleChange} 
-        placeholder={placeholder}
-        className="w-full px-3 py-2.5 text-xs bg-white border border-gray-200 focus:border-black focus:outline-none transition-colors rounded-sm text-black placeholder:text-gray-300" 
-      />
-    </div>
-  );
+  // Minimal Input Styles
+  const labelStyle = "block text-[10px] uppercase tracking-widest text-gray-400 mb-2";
+  const inputStyle = "w-full border-b border-gray-200 py-2 text-sm bg-transparent focus:outline-none focus:border-black rounded-none placeholder:text-gray-300 transition-colors";
 
   return (
-    <div className="bg-white border border-gray-200">
-        <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/30 flex justify-between items-center">
-            <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">
-                {initialData ? `Editing: ${initialData.title}` : "New Project Entry"}
-            </h3>
+    <form onSubmit={handleSubmit} className="max-w-4xl animate-fade-in-up">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+        {/* Left Col: Details */}
+        <div className="space-y-8">
+          <h3 className="text-xs font-bold uppercase tracking-widest border-b border-gray-100 pb-2 mb-6 text-black">
+            01. Project Data
+          </h3>
+
+          <div>
+            <label className={labelStyle}>Project Title</label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              placeholder="e.g. RESIDENCE 9"
+              className={inputStyle}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <label className={labelStyle}>Type</label>
+              <select
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+                className={inputStyle}
+              >
+                <option>Interior Design</option>
+                <option>Architecture</option>
+                <option>Commercial</option>
+                <option>Renovation</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelStyle}>Year</label>
+              <input
+                type="text"
+                value={formData.year}
+                onChange={(e) =>
+                  setFormData({ ...formData, year: e.target.value })
+                }
+                className={inputStyle}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelStyle}>Main Thumbnail URL</label>
+            <input
+              type="url"
+              value={formData.imageUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, imageUrl: e.target.value })
+              }
+              placeholder="https://..."
+              className={inputStyle}
+              required
+            />
+          </div>
+
+          <div>
+            <label className={labelStyle}>Brief</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              rows={4}
+              className="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-black transition-colors resize-none mt-2"
+              placeholder="Project description..."
+            />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
-            
-            {/* Section: Basic Info */}
-            <div className="space-y-4">
-                <h4 className="text-[10px] uppercase tracking-widest text-black border-l-2 border-brand pl-3 mb-4 font-bold">
-                    Basic Information
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputGroup label="Project Title" name="title" value={formData.title} required />
-                    <InputGroup label="Category" name="category" value={formData.category} placeholder="e.g. Residential" required />
-                    <InputGroup label="Year" name="year" value={formData.year} required />
-                    <InputGroup label="Client Name" name="client" value={formData.client} />
-                    <InputGroup label="Location" name="location" value={formData.location} />
-                </div>
-            </div>
+        {/* Right Col: Gallery Manager */}
+        <div className="space-y-8">
+          <div className="flex justify-between items-end border-b border-gray-100 pb-2 mb-6">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-black">
+              02. Comparison Gallery
+            </h3>
+            <button
+              type="button"
+              onClick={addSlide}
+              className="text-[9px] uppercase tracking-widest font-bold text-black hover:opacity-50"
+            >
+              + Add Pair
+            </button>
+          </div>
 
-            {/* Section: Details */}
-            <div className="space-y-4">
-                <div className="space-y-1">
-                    <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Project Description</label>
-                    <textarea 
-                        name="description" 
-                        rows={5} 
-                        value={formData.description || ""} 
-                        onChange={handleChange} 
-                        className="w-full p-3 text-xs bg-white border border-gray-200 focus:border-black focus:outline-none transition-colors rounded-sm text-black resize-y"
-                    />
-                </div>
-            </div>
-
-            {/* Section: Media */}
-            <div className="bg-gray-50 p-6 rounded-sm border border-gray-100 space-y-4">
-                <div className="flex justify-between items-center mb-2">
-                    <h4 className="text-[10px] uppercase tracking-widest text-black font-bold">Media Assets</h4>
-                    <span className="text-[9px] text-gray-400 uppercase tracking-widest">Google Drive Links Supported</span>
+          <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
+            {slides.map((slide, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-50/50 p-4 border border-gray-100 group hover:border-gray-200 transition-colors"
+              >
+                <div className="flex justify-between mb-3">
+                  <span className="text-[9px] uppercase tracking-widest text-gray-400">
+                    Slide {idx + 1}
+                  </span>
+                  {slides.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeSlide(idx)}
+                      className="text-[9px] uppercase text-red-400 hover:text-red-600"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
                 
-                <div className="space-y-4">
-                     <div className="space-y-1">
-                        <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Main Cover Image URL</label>
-                        <input name="image" required value={formData.image} onChange={handleChange} className="w-full p-2 border border-gray-200 text-[10px] font-mono focus:border-black focus:outline-none" />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                         <div className="space-y-1">
-                            <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Before Image (Slider)</label>
-                            <input name="beforeImage" value={formData.beforeImage || ""} onChange={handleChange} className="w-full p-2 border border-gray-200 text-[10px] font-mono focus:border-black focus:outline-none" />
-                        </div>
-                         <div className="space-y-1">
-                            <label className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">After Image (Slider)</label>
-                            <input name="afterImage" value={formData.afterImage || ""} onChange={handleChange} className="w-full p-2 border border-gray-200 text-[10px] font-mono focus:border-black focus:outline-none" />
-                        </div>
-                    </div>
+                <div className="space-y-3">
+                    <input
+                        type="url"
+                        placeholder="Before Image URL"
+                        value={slide.before}
+                        onChange={(e) => updateSlide(idx, 'before', e.target.value)}
+                        className="w-full bg-white border-b border-gray-200 px-2 py-1.5 text-xs focus:outline-none focus:border-black placeholder:text-gray-300"
+                    />
+                     <input
+                        type="url"
+                        placeholder="After Image URL (Required)"
+                        value={slide.after}
+                        onChange={(e) => updateSlide(idx, 'after', e.target.value)}
+                        className="w-full bg-white border-b border-gray-200 px-2 py-1.5 text-xs focus:outline-none focus:border-black placeholder:text-gray-300"
+                    />
                 </div>
-            </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-            {/* Actions */}
-            <div className="flex justify-end gap-4 pt-4 border-t border-gray-100">
-                <button 
-                    type="button" 
-                    onClick={onCancel} 
-                    className="px-6 py-3 text-[10px] uppercase tracking-[0.2em] text-gray-500 hover:text-black transition-colors"
-                >
-                    Cancel
-                </button>
-                <button 
-                    type="submit" 
-                    disabled={isSaving}
-                    className="px-8 py-3 bg-black text-white text-[10px] uppercase tracking-[0.2em] hover:bg-neutral-800 disabled:opacity-50 transition-colors"
-                >
-                    {isSaving ? "Saving..." : "Save Project"}
-                </button>
-            </div>
-        </form>
-    </div>
+      {/* Action Bar */}
+      <div className="pt-6 border-t border-gray-100 flex justify-end gap-6">
+        <button
+            type="button"
+            onClick={onCancel}
+            className="text-[10px] uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-colors"
+        >
+            Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-black text-white px-10 py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors disabled:opacity-50"
+        >
+          {loading ? "Saving..." : existingProject ? "Update Project" : "Publish Project"}
+        </button>
+      </div>
+    </form>
   );
 }
