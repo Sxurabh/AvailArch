@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 // Add your admin emails here
-const ADMIN_EMAILS = ["saurabhkirve@gmail.com", "sanchanvalse@gmail.com"];
+const ADMIN_EMAILS = ["saurabhkirve@gmail.com", "sanchanvalse@gmail.com","onkarcvalse@gmail.com"];
 
 export const authOptions: NextAuthOptions = {
   providers: [
