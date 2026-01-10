@@ -11,25 +11,21 @@ export default function Header() {
   const router = useRouter();
   const { data: session, update } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); // 🟢 Ref for the dropdown container
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 🟢 CLOSE DROPDOWN ON CLICK OUTSIDE
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Listen for the popup's success message
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
-
       if (event.data === "auth-success") {
         await update(); 
         setIsDropdownOpen(false);
@@ -37,7 +33,6 @@ export default function Header() {
         router.refresh();
       }
     };
-
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, [update, router]);
@@ -47,55 +42,44 @@ export default function Header() {
     const height = 600;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
-
-    const popup = window.open(
-      "", 
-      "google-auth-popup", 
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
-    );
-
-    if (popup) {
-      popup.document.body.innerHTML = `
-        <style>body{font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:#fff;color:#000;text-transform:uppercase;letter-spacing:0.2em;font-size:12px;font-weight:bold;}</style>
-        <p>Contacting Google...</p>
-      `;
-    }
+    const popup = window.open("", "google-auth-popup", `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`);
+    
+    if (popup) popup.document.body.innerHTML = "<p>Contacting Google...</p>";
 
     try {
-      const res = await signIn("google", { 
-        redirect: false, 
-        callbackUrl: "/auth-success" 
-      });
-
-      if (popup && res?.url) {
-        popup.location.href = res.url;
-        popup.focus();
-      } else {
-        popup?.close();
-      }
+      const res = await signIn("google", { redirect: false, callbackUrl: "/auth-success" });
+      if (popup && res?.url) popup.location.href = res.url;
+      else popup?.close();
     } catch (error) {
       popup?.close();
       console.error("Sign in failed", error);
     }
   };
 
+  // 🟢 Role Logic
+  const userRole = (session?.user as any)?.role;
+  const isAdmin = userRole === "admin";
+  const isClient = session?.user && !isAdmin;
+
+  // Base Items
   const navItems = [
     { name: "PROJECTS", path: "/" },
     { name: "ABOUT ME", path: "/about" },
-    { name: "CONTACT US", path: "https://forms.gle/7rzapbrJet4Gakfx5" },
   ];
 
-  const userRole = (session?.user as any)?.role;
-  const dashboardLink = userRole === "admin" ? "/dashboard" : "/track-request";
-  const dashboardLabel = userRole === "admin" ? "ADMIN DASHBOARD" : "TRACK REQUEST";
+  // Role Specific Items
+  if (isAdmin) {
+    navItems.push({ name: "DASHBOARD", path: "/dashboard" });
+  } else if (isClient) {
+    navItems.push({ name: "TRACK REQUEST", path: "/track-request" });
+  } else {
+    navItems.push({ name: "CONTACT US", path: "https://forms.gle/7rzapbrJet4Gakfx5" });
+  }
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm transition-all duration-500 border-b border-transparent hover:border-gray-100">
       <div className="flex justify-between items-center px-6 py-6 md:px-12 max-w-[1600px] mx-auto">
-        <Link 
-          href="/" 
-          className="text-sm font-bold tracking-[0.25em] uppercase hover:opacity-50 transition-opacity"
-        >
+        <Link href="/" className="text-sm font-bold tracking-[0.25em] uppercase hover:opacity-50 transition-opacity">
           Avail Arch
         </Link>
 
@@ -111,9 +95,7 @@ export default function Header() {
                   rel={isExternal ? "noopener noreferrer" : undefined}
                   className={cn(
                     "text-[10px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase",
-                    pathname === item.path 
-                      ? "text-black" 
-                      : "text-gray-400 hover:text-black"
+                    pathname === item.path ? "text-black" : "text-gray-400 hover:text-black"
                   )}
                 >
                   {item.name}
@@ -124,21 +106,11 @@ export default function Header() {
 
           {session?.user ? (
             <div className="relative" ref={dropdownRef}>
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:border-black transition-colors"
-              >
+              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:border-black transition-colors">
                 {session.user.image ? (
-                  <Image 
-                    src={session.user.image} 
-                    alt="User" 
-                    fill 
-                    className="object-cover"
-                  />
+                  <Image src={session.user.image} alt="User" fill className="object-cover" />
                 ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-[10px]">
-                    {session.user.name?.charAt(0)}
-                  </div>
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-[10px]">{session.user.name?.charAt(0)}</div>
                 )}
               </button>
 
@@ -149,31 +121,26 @@ export default function Header() {
                     <p className="text-xs font-medium truncate text-black">{session.user.email}</p>
                   </div>
                   
-                  <Link 
-                    href={dashboardLink}
-                    onClick={() => setIsDropdownOpen(false)}
-                    className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
-                  >
-                    {dashboardLabel}
-                  </Link>
+                  {/* Only show 'Track Request' or 'Dashboard' here if NOT Admin, 
+                      since Admin has Dashboard in the main navbar now. */}
+                  {!isAdmin && (
+                     <Link 
+                       href="/track-request"
+                       onClick={() => setIsDropdownOpen(false)}
+                       className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
+                     >
+                       Track Request
+                     </Link>
+                  )}
                   
-                  <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      signOut({ callbackUrl: "/" });
-                    }}
-                    className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 hover:bg-gray-50 transition-colors"
-                  >
+                  <button onClick={() => { setIsDropdownOpen(false); signOut({ callbackUrl: "/" }); }} className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 hover:bg-gray-50 transition-colors">
                     Sign Out
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <button
-              onClick={handleSignIn}
-              className="text-[10px] font-semibold tracking-[0.2em] uppercase bg-black text-white px-5 py-2 hover:bg-gray-800 transition-colors"
-            >
+            <button onClick={handleSignIn} className="text-[10px] font-semibold tracking-[0.2em] uppercase bg-black text-white px-5 py-2 hover:bg-gray-800 transition-colors">
               Sign In
             </button>
           )}

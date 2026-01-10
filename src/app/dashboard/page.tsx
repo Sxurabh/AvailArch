@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ProjectManager from "@/components/admin/ProjectManager";
+import ResponseManager from "@/app/components/admin/ResponseManager"; // Importing the new component
+
 // --- Icons ---
 const Icons = {
   Grid: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>,
@@ -12,6 +14,7 @@ const Icons = {
   ChevronLeft: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>,
   ChevronRight: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
   Refresh: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
+  Inbox: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>,
 };
 
 export default function AdminDashboard() {
@@ -22,7 +25,8 @@ export default function AdminDashboard() {
 
   // --- Request Management State ---
   const [requests, setRequests] = useState<any[]>([]);
-  const [activeView, setActiveView] = useState<"requests" | "projects">("requests"); // 🟢 Updated type
+  // 🟢 Updated activeView type to include "responses"
+  const [activeView, setActiveView] = useState<"requests" | "projects" | "responses">("requests"); 
   const [loading, setLoading] = useState(true);
   
   // Pagination State
@@ -112,7 +116,6 @@ export default function AdminDashboard() {
             <Icons.List /> Manage Requests
           </button>
           
-          {/* 🟢 SWITCH TO PROJECTS VIEW */}
           <button 
             onClick={() => setActiveView("projects")}
             className={cn(
@@ -124,12 +127,25 @@ export default function AdminDashboard() {
           >
             <Icons.Grid /> Manage Projects
           </button>
+
+          {/* 🟢 NEW: MANAGE RESPONSES OPTION */}
+          <button 
+            onClick={() => setActiveView("responses")}
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 text-[11px] uppercase tracking-[0.15em] transition-all border-l-2",
+              activeView === "responses" 
+                ? "border-black text-black bg-gray-50 font-semibold" 
+                : "border-transparent text-gray-400 hover:text-black hover:bg-gray-50/50"
+            )}
+          >
+            <Icons.Inbox /> Manage Responses
+          </button>
         </div>
 
         {/* Content Panel */}
         <div className="lg:col-span-9">
           
-          {/* VIEW: MANAGE REQUESTS (Preserved) */}
+          {/* VIEW: MANAGE REQUESTS */}
           {activeView === "requests" && (
             <div className="bg-white border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
@@ -238,11 +254,18 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* 🟢 VIEW: PROJECT MANAGER (Replaces old Add Project form) */}
+          {/* VIEW: PROJECT MANAGER */}
           {activeView === "projects" && (
             <div className="bg-white border border-gray-200">
                 <ProjectManager />
             </div>
+          )}
+
+          {/* 🟢 NEW VIEW: RESPONSE MANAGER */}
+          {activeView === "responses" && (
+             <div className="bg-white p-6 border border-gray-200">
+               <ResponseManager />
+             </div>
           )}
 
         </div>

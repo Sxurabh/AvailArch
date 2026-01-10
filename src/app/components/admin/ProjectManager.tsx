@@ -1,155 +1,195 @@
-// src/app/components/admin/ProjectManager.tsx
+// src/components/admin/ProjectManager.tsx
 "use client";
+
 import { useState, useEffect } from "react";
-import { Project } from "@/lib/data";
 import ProjectForm from "./ProjectForm";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function ProjectManager() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [view, setView] = useState<"list" | "create" | "edit">("list");
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("index"); // 'index' | 'create'
+  const [editingProject, setEditingProject] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  
-  const router = useRouter();
 
-  // Fetch projects on load
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [activeTab]);
 
-  const fetchProjects = async () => {
-    setIsLoading(true);
+  async function fetchProjects() {
     try {
       const res = await fetch("/api/projects", { cache: "no-store" });
       const data = await res.json();
-      setProjects(data);
+      // Ensure we treat it as an array
+      setProjects(Array.isArray(data) ? data.reverse() : []); 
     } catch (error) {
-      console.error("Failed to load projects", error);
+      console.error("Failed to fetch projects", error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // HANDLERS
-  const handleCreate = async (data: Partial<Project>) => {
-    setIsSaving(true);
-    try {
-      await fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      await fetchProjects();
-      setView("list");
-      router.refresh();
-    } catch (e) {
-      alert("Error creating project");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleUpdate = async (data: Partial<Project>) => {
-    if (!editingProject) return;
-    setIsSaving(true);
-    try {
-      await fetch(`/api/projects/${editingProject.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      await fetchProjects();
-      setView("list");
-      setEditingProject(null);
-      router.refresh();
-    } catch (e) {
-      alert("Error updating project");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
-    try {
-      await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      setProjects(projects.filter(p => p.id !== id));
-      router.refresh();
-    } catch (e) {
-      alert("Error deleting project");
-    }
-  };
-
-  // RENDER HELPERS
-  const startEdit = (p: Project) => {
-    setEditingProject(p);
-    setView("edit");
-  };
-
-  if (view === "create") {
-    return <ProjectForm isSaving={isSaving} onSubmit={handleCreate} onCancel={() => setView("list")} />;
   }
 
-  if (view === "edit" && editingProject) {
-    return <ProjectForm isSaving={isSaving} initialData={editingProject} onSubmit={handleUpdate} onCancel={() => { setView("list"); setEditingProject(null); }} />;
+  async function handleDelete(id: string) {
+    if (!confirm("Irreversible action. Delete this project?")) return;
+    
+    // 🛑 DEBUG LOG: Check if ID is valid
+    console.log("Attempting to delete ID:", id);
+    if (!id) {
+        alert("Error: Invalid Project ID");
+        return;
+    }
+
+    try {
+      // 🟢 FIX: Correct URL structure for Dynamic Route [id]
+      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to delete");
+      }
+
+      // 🟢 FIX: Filter using 'id' (not _id)
+      setProjects(projects.filter((p) => p.id !== id));
+    } catch (error: any) {
+      console.error("Failed to delete", error);
+      alert(`Error: ${error.message}`);
+    }
   }
+
+  const handleEdit = (project: any) => {
+    setEditingProject(project);
+    setActiveTab("create");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSuccess = () => {
+    setEditingProject(null);
+    setActiveTab("index");
+    fetchProjects();
+  };
 
   return (
-    <div className="bg-white p-6 shadow-sm border border-gray-200">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-light uppercase tracking-widest">Manage Portfolios</h2>
-        <button 
-            onClick={() => setView("create")}
-            className="px-4 py-2 bg-black text-white text-xs uppercase tracking-widest hover:bg-neutral-800"
+    <div className="max-w-4xl mx-auto pt-12 min-h-[60vh] animate-in fade-in slide-in-from-bottom-4">
+      <h1 className="text-2xl font-light uppercase tracking-widest mb-2">
+        Portfolio Manager
+      </h1>
+      <p className="text-xs text-gray-400 mb-12 uppercase tracking-wider">
+        Admin Console
+      </p>
+
+      {/* Tabs */}
+      <div className="flex gap-8 border-b border-gray-100 mb-12">
+        <button
+          onClick={() => {
+            setActiveTab("index");
+            setEditingProject(null);
+          }}
+          className={cn(
+            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
+            activeTab === "index"
+              ? "border-b border-black text-black"
+              : "text-gray-400 hover:text-black"
+          )}
         >
-            + Add New
+          Project Index
+        </button>
+        <button
+          onClick={() => setActiveTab("create")}
+          className={cn(
+            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
+            activeTab === "create"
+              ? "border-b border-black text-black"
+              : "text-gray-400 hover:text-black"
+          )}
+        >
+          {editingProject ? "Edit Entry" : "Create New"}
         </button>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-8 text-gray-400">Loading projects...</div>
+      {/* Content Area */}
+      {activeTab === "create" ? (
+        <ProjectForm
+          existingProject={editingProject}
+          onSuccess={handleSuccess}
+          onCancel={() => {
+            setEditingProject(null);
+            setActiveTab("index");
+          }}
+        />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 uppercase text-xs font-bold text-gray-500">
-              <tr>
-                <th className="p-3">Title</th>
-                <th className="p-3">Category</th>
-                <th className="p-3">Year</th>
-                <th className="p-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {projects.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-3 font-medium text-black">{p.title}</td>
-                  <td className="p-3">{p.category}</td>
-                  <td className="p-3">{p.year}</td>
-                  <td className="p-3 text-right space-x-2">
-                    <button 
-                      onClick={() => startEdit(p)}
-                      className="text-blue-600 hover:underline text-xs uppercase tracking-wider"
+        <div className="space-y-4">
+          {isLoading ? (
+            <div className="text-[10px] uppercase tracking-widest text-gray-400 animate-pulse">
+              Syncing Data...
+            </div>
+          ) : projects.length === 0 ? (
+            <p className="text-xs text-gray-400 italic">No projects found.</p>
+          ) : (
+            <div className="grid gap-4">
+              {/* Header Row */}
+              <div className="hidden md:grid grid-cols-12 gap-4 pb-2 border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-400">
+                <div className="col-span-1">Thumb</div>
+                <div className="col-span-5">Project Details</div>
+                <div className="col-span-3">Category</div>
+                <div className="col-span-3 text-right">Actions</div>
+              </div>
+
+              {/* Rows */}
+              {projects.map((project) => (
+                <div
+                  // 🟢 FIX: Use 'id' as key
+                  key={project.id || Math.random()} 
+                  className="group bg-white border border-transparent hover:border-gray-100 p-4 md:p-0 md:py-4 md:border-b md:border-gray-50 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all"
+                >
+                  {/* Thumb */}
+                  <div className="hidden md:block col-span-1 relative h-10 w-10 bg-gray-100 overflow-hidden">
+                    {project.imageUrl && (
+                      <Image
+                        src={project.imageUrl}
+                        alt="thumb"
+                        fill
+                        className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                      />
+                    )}
+                  </div>
+
+                  {/* Details */}
+                  <div className="col-span-5">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-black">
+                      {project.title}
+                    </h3>
+                    <p className="text-[10px] text-gray-400 mt-1 line-clamp-1 font-mono">
+                      {project.description}
+                    </p>
+                  </div>
+
+                  {/* Category */}
+                  <div className="col-span-3 flex items-center">
+                    <span className="text-[9px] uppercase tracking-widest border border-gray-100 px-2 py-1 text-gray-500">
+                      {project.category}
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="col-span-3 flex justify-end gap-6 md:gap-4 pr-2">
+                    <button
+                      onClick={() => handleEdit(project)}
+                      className="text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black transition-colors"
                     >
                       Edit
                     </button>
-                    <button 
-                      onClick={() => handleDelete(p.id)}
-                      className="text-red-500 hover:underline text-xs uppercase tracking-wider"
+                    <button
+                      // 🟢 FIX: Pass 'project.id', NOT 'project._id'
+                      onClick={() => handleDelete(project.id)} 
+                      className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
                     >
                       Delete
                     </button>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-              {projects.length === 0 && (
-                <tr>
-                    <td colSpan={4} className="p-8 text-center text-gray-400">No projects found.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -18,9 +18,10 @@ export default function ProjectManager() {
 
   async function fetchProjects() {
     try {
-      const res = await fetch("/api/projects");
+      const res = await fetch("/api/projects", { cache: "no-store" });
       const data = await res.json();
-      setProjects(data.reverse()); // Newest first
+      // Ensure we treat it as an array
+      setProjects(Array.isArray(data) ? data.reverse() : []); 
     } catch (error) {
       console.error("Failed to fetch projects", error);
     } finally {
@@ -30,11 +31,28 @@ export default function ProjectManager() {
 
   async function handleDelete(id: string) {
     if (!confirm("Irreversible action. Delete this project?")) return;
+    
+    // 🛑 DEBUG LOG: Check if ID is valid
+    console.log("Attempting to delete ID:", id);
+    if (!id) {
+        alert("Error: Invalid Project ID");
+        return;
+    }
+
     try {
-      await fetch(`/api/projects?id=${id}`, { method: "DELETE" });
-      setProjects(projects.filter((p) => p._id !== id));
-    } catch (error) {
+      // 🟢 FIX: Correct URL structure for Dynamic Route [id]
+      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to delete");
+      }
+
+      // 🟢 FIX: Filter using 'id' (not _id)
+      setProjects(projects.filter((p) => p.id !== id));
+    } catch (error: any) {
       console.error("Failed to delete", error);
+      alert(`Error: ${error.message}`);
     }
   }
 
@@ -59,7 +77,7 @@ export default function ProjectManager() {
         Admin Console
       </p>
 
-      {/* Tabs - Identical to Track Request */}
+      {/* Tabs */}
       <div className="flex gap-8 border-b border-gray-100 mb-12">
         <button
           onClick={() => {
@@ -119,7 +137,8 @@ export default function ProjectManager() {
               {/* Rows */}
               {projects.map((project) => (
                 <div
-                  key={project._id}
+                  // 🟢 FIX: Use 'id' as key
+                  key={project.id || Math.random()} 
                   className="group bg-white border border-transparent hover:border-gray-100 p-4 md:p-0 md:py-4 md:border-b md:border-gray-50 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all"
                 >
                   {/* Thumb */}
@@ -160,7 +179,8 @@ export default function ProjectManager() {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(project._id)}
+                      // 🟢 FIX: Pass 'project.id', NOT 'project._id'
+                      onClick={() => handleDelete(project.id)} 
                       className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
                     >
                       Delete

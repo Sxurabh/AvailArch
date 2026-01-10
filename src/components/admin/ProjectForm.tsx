@@ -3,7 +3,6 @@
 
 import { useState, useEffect } from "react";
 
-// Structure for a single comparison slide
 interface ComparisonSlide {
   before: string;
   after: string;
@@ -28,11 +27,9 @@ export default function ProjectForm({
     description: "",
     category: "Interior Design",
     year: new Date().getFullYear().toString(),
-    // We will still keep a 'main' image for thumbnails
     imageUrl: "", 
   });
 
-  // Dynamic Array for Slides
   const [slides, setSlides] = useState<ComparisonSlide[]>([
     { before: "", after: "" },
   ]);
@@ -47,7 +44,6 @@ export default function ProjectForm({
         imageUrl: existingProject.imageUrl || "",
       });
 
-      // Parse existing slides if available, otherwise fallback
       if (existingProject.comparisons) {
         try {
           const parsed = JSON.parse(existingProject.comparisons);
@@ -56,7 +52,6 @@ export default function ProjectForm({
           setSlides([{ before: "", after: "" }]);
         }
       } else if (existingProject.imageUrl && existingProject.beforeImageUrl) {
-        // Migration support for the previous single-image version
         setSlides([
           {
             before: existingProject.beforeImageUrl,
@@ -82,7 +77,6 @@ export default function ProjectForm({
     newSlides[index][field] = val;
     setSlides(newSlides);
     
-    // Auto-set the main thumbnail to the first 'after' image if empty
     if (index === 0 && field === 'after' && !formData.imageUrl) {
         setFormData(prev => ({ ...prev, imageUrl: val }));
     }
@@ -92,41 +86,43 @@ export default function ProjectForm({
     e.preventDefault();
     setLoading(true);
 
-    // Prepare payload
     const payload = {
       ...formData,
-      // Serialize slides to store in Google Sheets
       comparisons: JSON.stringify(slides), 
     };
 
     try {
       const method = existingProject ? "PUT" : "POST";
+      
+      // 🟢 FIX: Correctly append the ID to the URL if updating
+      // Ensure we use 'id', not '_id'
       const url = existingProject
-        ? `/api/projects/${existingProject._id}`
+        ? `/api/projects/${existingProject.id}`
         : "/api/projects";
 
-      await fetch(url, {
+      const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
+      if (!res.ok) throw new Error("Operation failed");
+
       if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error submitting form:", error);
+      alert("Failed to save project.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Minimal Input Styles
   const labelStyle = "block text-[10px] uppercase tracking-widest text-gray-400 mb-2";
   const inputStyle = "w-full border-b border-gray-200 py-2 text-sm bg-transparent focus:outline-none focus:border-black rounded-none placeholder:text-gray-300 transition-colors";
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl animate-fade-in-up">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
-        {/* Left Col: Details */}
         <div className="space-y-8">
           <h3 className="text-xs font-bold uppercase tracking-widest border-b border-gray-100 pb-2 mb-6 text-black">
             01. Project Data
@@ -203,7 +199,6 @@ export default function ProjectForm({
           </div>
         </div>
 
-        {/* Right Col: Gallery Manager */}
         <div className="space-y-8">
           <div className="flex justify-between items-end border-b border-gray-100 pb-2 mb-6">
             <h3 className="text-xs font-bold uppercase tracking-widest text-black">
@@ -261,7 +256,6 @@ export default function ProjectForm({
         </div>
       </div>
 
-      {/* Action Bar */}
       <div className="pt-6 border-t border-gray-100 flex justify-end gap-6">
         <button
             type="button"
