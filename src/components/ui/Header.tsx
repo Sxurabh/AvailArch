@@ -103,7 +103,7 @@ export default function Header() {
             {session?.user ? (
               <div className="relative" ref={dropdownRef}>
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="w-8 h-8 rounded-full overflow-hidden border hover:border-black transition-colors">
-                  {session.user.image ? <Image src={session.user.image} alt="User" fill className="object-cover" /> : <div className="bg-gray-200 w-full h-full" />}
+                  {session.user.image ? <Image src={session.user.image} alt="User" fill className="object-cover " /> : <div className="bg-gray-200 w-full h-full" />}
                 </button>
                 {/* Dropdown Content omitted for brevity - same as before */}
                 {isDropdownOpen && (

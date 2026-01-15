@@ -10,18 +10,45 @@ body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
   font-family: var(--font-inter);
-  /* Crucial for the thin/clean aesthetic */
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; 
+  -moz-osx-font-smoothing: grayscale;
+  cursor: none; /* Hides default cursor for your CustomCursor */
 }
 
-/* Hide default scrollbar */
+/* --- LENIS SCROLL REQUIRED STYLES --- */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+/* ----------------------------------- */
+
+/* Restore cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    body {
+        cursor: auto;
+    }
+}
+
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
 }
 
-/* High-contrast selection */
 ::selection {
   background: #000;
   color: #fff;
