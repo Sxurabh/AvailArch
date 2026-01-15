@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ProjectManager from "@/components/admin/ProjectManager";
-import ResponseManager from "@/app/components/admin/ResponseManager"; // Importing the new component
+import ResponseManager from "@/app/components/admin/ResponseManager";
 
 // --- Icons ---
 const Icons = {
@@ -15,6 +15,7 @@ const Icons = {
   ChevronRight: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
   Refresh: () => <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
   Inbox: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>,
+  Close: () => <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
 };
 
 export default function AdminDashboard() {
@@ -25,10 +26,12 @@ export default function AdminDashboard() {
 
   // --- Request Management State ---
   const [requests, setRequests] = useState<any[]>([]);
-  // 🟢 Updated activeView type to include "responses"
   const [activeView, setActiveView] = useState<"requests" | "projects" | "responses">("requests"); 
   const [loading, setLoading] = useState(true);
   
+  // --- Modal State ---
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -76,8 +79,88 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="max-w-[1600px] mx-auto pt-12 pb-24 animate-fade-in-up px-6 md:px-0">
+    <div className="max-w-[1600px] mx-auto pt-12 pb-24 animate-fade-in-up px-6 md:px-0 relative">
       
+      {/* --- Request Detail Modal --- */}
+      {selectedRequest && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedRequest(null)}>
+          <div 
+            className="bg-white w-full max-w-2xl p-8 shadow-2xl border border-gray-100 relative animate-in fade-in zoom-in-95 duration-200" 
+            onClick={e => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setSelectedRequest(null)} 
+              className="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors"
+            >
+              <Icons.Close />
+            </button>
+            
+            <div className="mb-6 border-b border-gray-100 pb-4">
+              <h3 className="text-xl uppercase tracking-[0.15em] font-light text-black mb-1">Request Details</h3>
+              <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+                ID: #{selectedRequest.id?.slice(-4)} • {selectedRequest.date}
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <span className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2 font-semibold">Client</span>
+                  <p className="text-sm font-medium text-black break-words">{selectedRequest.userEmail}</p>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2 font-semibold">Project Type</span>
+                  <p className="text-sm font-medium text-black">{selectedRequest.type}</p>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2 font-semibold">Description</span>
+                <div className="bg-gray-50 p-4 border border-gray-100 text-sm leading-relaxed text-gray-600">
+                  {selectedRequest.description}
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2 font-semibold">Current Status</span>
+                <div className="flex justify-between items-center">
+                   <span className={cn(
+                      "text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 rounded-sm border inline-block",
+                      selectedRequest.status === "Pending" ? "border-yellow-200 text-yellow-700 bg-yellow-50" :
+                      selectedRequest.status === "Approved" ? "border-purple-200 text-purple-700 bg-purple-50" :
+                      selectedRequest.status === "Completed" ? "border-green-200 text-green-700 bg-green-50" : 
+                      selectedRequest.status === "In Progress" ? "border-blue-200 text-blue-700 bg-blue-50" : "border-red-200 text-red-700 bg-red-50"
+                    )}>
+                      {selectedRequest.status}
+                    </span>
+                    
+                    <select 
+                      value={selectedRequest.status}
+                      onChange={(e) => updateStatus(selectedRequest.id, e.target.value)}
+                      className="bg-white border-b border-gray-300 text-[10px] py-1 px-4 focus:outline-none focus:border-black cursor-pointer uppercase tracking-wider"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Approved">Approve</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Complete</option>
+                      <option value="Rejected">Reject</option>
+                    </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-gray-100 flex justify-end">
+              <button 
+                onClick={() => setSelectedRequest(null)}
+                className="px-6 py-2 bg-black text-white text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-12">
         <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-6">
@@ -128,7 +211,6 @@ export default function AdminDashboard() {
             <Icons.Grid /> Manage Projects
           </button>
 
-          {/* 🟢 NEW: MANAGE RESPONSES OPTION */}
           <button 
             onClick={() => setActiveView("responses")}
             className={cn(
@@ -150,7 +232,7 @@ export default function AdminDashboard() {
             <div className="bg-white border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
                 <h3 className="text-[11px] uppercase tracking-widest font-semibold text-black">Incoming Requests</h3>
-                <span className="text-[10px] text-gray-400 uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
+                <span className="text-[10px] text-gray-400 uppercase tracking-widest">Page {currentPage} of {totalPages || 1}</span>
               </div>
 
               <div className="overflow-x-auto">
@@ -181,9 +263,15 @@ export default function AdminDashboard() {
                           </td>
                           <td className="py-4 px-6 align-top max-w-sm">
                             <span className="block font-bold text-[10px] uppercase mb-1 tracking-wider text-black">{req.type}</span>
-                            <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2 group-hover:line-clamp-none transition-all duration-300">
+                            <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2 mb-2">
                               {req.description}
                             </p>
+                            <button 
+                              onClick={() => setSelectedRequest(req)}
+                              className="text-[9px] uppercase font-bold tracking-widest border-b border-black pb-0.5 hover:text-gray-600 transition-colors"
+                            >
+                              Read More
+                            </button>
                           </td>
                           <td className="py-4 px-6 align-top">
                             <span className={cn(
@@ -261,7 +349,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* 🟢 NEW VIEW: RESPONSE MANAGER */}
+          {/* VIEW: RESPONSE MANAGER */}
           {activeView === "responses" && (
              <div className="bg-white p-6 border border-gray-200">
                <ResponseManager />
