@@ -21,8 +21,8 @@ const serializeProjectData = (data: any) => {
   const complexFields = ["sections", "spaces", "gallery", "heroImages"];
   
   complexFields.forEach((field) => {
-    // If field exists and is NOT a string (it's an array), convert to JSON string
-    if (serialized[field] && typeof serialized[field] !== "string") {
+    // If field exists and is NOT a string (it's an array/object), convert to JSON string
+    if (serialized[field] !== undefined && serialized[field] !== null && typeof serialized[field] !== "string") {
       serialized[field] = JSON.stringify(serialized[field]);
     }
   });
@@ -44,7 +44,7 @@ const parseProjectData = (row: any) => {
         if (data[field]) {
             try {
                 // Only parse if it looks like a JSON array/object (starts with [ or {)
-                if (typeof data[field] === 'string' && (data[field].startsWith("[") || data[field].startsWith("{"))) {
+                if (typeof data[field] === 'string' && (data[field].trim().startsWith("[") || data[field].trim().startsWith("{"))) {
                      data[field] = JSON.parse(data[field]);
                 }
             } catch (e) {
@@ -60,7 +60,7 @@ const parseProjectData = (row: any) => {
 export async function getSheetData(title: "Requests" | "Projects") {
   await doc.loadInfo();
   const sheet = doc.sheetsByTitle[title];
-  if (!sheet) throw new Error(`Sheet '${title}' not found.`);
+  if (!sheet) throw new Error(`Sheet '${title}' not found. Check your Google Sheet tab names.`);
 
   const rows = await sheet.getRows();
   
@@ -84,8 +84,10 @@ export async function updateRow(title: "Projects", id: string, data: any) {
   const sheet = doc.sheetsByTitle[title];
   const rows = await sheet.getRows();
   
-  const row = rows.find((r) => r.get("id") === id);
-  if (!row) throw new Error(`Row with ID ${id} not found.`);
+  // Robust string comparison for ID
+  const row = rows.find((r) => String(r.get("id")) === String(id));
+  
+  if (!row) throw new Error(`Row with ID ${id} not found in sheet '${title}'.`);
   
   // Serialize arrays to strings before updating
   const dataToSave = serializeProjectData(data);
@@ -99,7 +101,7 @@ export async function deleteRow(title: "Projects", id: string) {
   const sheet = doc.sheetsByTitle[title];
   const rows = await sheet.getRows();
 
-  const row = rows.find((r) => r.get("id") === id);
+  const row = rows.find((r) => String(r.get("id")) === String(id));
   if (!row) throw new Error(`Row with ID ${id} not found.`);
   
   await row.delete();
