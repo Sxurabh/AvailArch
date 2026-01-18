@@ -5,22 +5,27 @@ import { useState, useEffect } from "react";
 import ProjectForm from "./ProjectForm";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Project } from "@/lib/data";
 
 export default function ProjectManager() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("index"); // 'index' | 'create'
-  const [editingProject, setEditingProject] = useState<any | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeTab, setActiveTab] = useState<"index" | "create">("index");
+  const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    fetchProjects();
+    if (activeTab === "index") {
+      fetchProjects();
+    }
   }, [activeTab]);
 
   async function fetchProjects() {
+    setIsLoading(true);
     try {
       const res = await fetch("/api/projects", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      // Ensure we treat it as an array
       setProjects(Array.isArray(data) ? data.reverse() : []); 
     } catch (error) {
       console.error("Failed to fetch projects", error);
@@ -29,18 +34,56 @@ export default function ProjectManager() {
     }
   }
 
+  // --- 🟢 ADDED: SAVE LOGIC (CREATE & UPDATE) ---
+  async function handleSaveProject(formData: Project) {
+    setIsSaving(true);
+    try {
+      let res;
+      
+      // Determine if we are Updating (PUT) or Creating (POST)
+      if (editingProject && editingProject.id) {
+        res = await fetch(`/api/projects/${editingProject.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        res = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      }
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save project");
+      }
+
+      // Success Logic
+      alert("Project saved successfully!");
+      setEditingProject(undefined);
+      setActiveTab("index");
+      fetchProjects(); // Refresh the list
+
+    } catch (error: any) {
+      console.error("Save Error:", error);
+      alert(`Error saving project: ${error.message}`);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  // --- DELETE LOGIC ---
   async function handleDelete(id: string) {
     if (!confirm("Irreversible action. Delete this project?")) return;
     
-    // 🛑 DEBUG LOG: Check if ID is valid
-    console.log("Attempting to delete ID:", id);
     if (!id) {
         alert("Error: Invalid Project ID");
         return;
     }
 
     try {
-      // 🟢 FIX: Correct URL structure for Dynamic Route [id]
       const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
       
       if (!res.ok) {
@@ -48,24 +91,18 @@ export default function ProjectManager() {
         throw new Error(err.error || "Failed to delete");
       }
 
-      // 🟢 FIX: Filter using 'id' (not _id)
-      setProjects(projects.filter((p) => p.id !== id));
+      // Optimistic update
+      setProjects((prev) => prev.filter((p) => p.id !== id));
     } catch (error: any) {
       console.error("Failed to delete", error);
       alert(`Error: ${error.message}`);
     }
   }
 
-  const handleEdit = (project: any) => {
+  const handleEdit = (project: Project) => {
     setEditingProject(project);
     setActiveTab("create");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleSuccess = () => {
-    setEditingProject(null);
-    setActiveTab("index");
-    fetchProjects();
   };
 
   return (
@@ -82,7 +119,7 @@ export default function ProjectManager() {
         <button
           onClick={() => {
             setActiveTab("index");
-            setEditingProject(null);
+            setEditingProject(undefined);
           }}
           className={cn(
             "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
@@ -108,13 +145,11 @@ export default function ProjectManager() {
 
       {/* Content Area */}
       {activeTab === "create" ? (
+        // 🟢 FIXED: Props now match ProjectForm exactly
         <ProjectForm
-          existingProject={editingProject}
-          onSuccess={handleSuccess}
-          onCancel={() => {
-            setEditingProject(null);
-            setActiveTab("index");
-          }}
+          initialData={editingProject}
+          onSubmit={handleSaveProject}
+          isLoading={isSaving}
         />
       ) : (
         <div className="space-y-4">
@@ -137,20 +172,13 @@ export default function ProjectManager() {
               {/* Rows */}
               {projects.map((project) => (
                 <div
-                  // 🟢 FIX: Use 'id' as key
                   key={project.id || Math.random()} 
                   className="group bg-white border border-transparent hover:border-gray-100 p-4 md:p-0 md:py-4 md:border-b md:border-gray-50 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all"
                 >
                   {/* Thumb */}
                   <div className="hidden md:block col-span-1 relative h-10 w-10 bg-gray-100 overflow-hidden">
-                    {project.imageUrl && (
-                      <Image
-                        src={project.imageUrl}
-                        alt="thumb"
-                        fill
-                        className="object-cover grayscale group-hover:grayscale-0 transition-all"
-                      />
-                    )}
+                    {/* Assuming image ID is stored. If you have a URL helper, use it here */}
+                    <div className="w-full h-full bg-gray-200" /> 
                   </div>
 
                   {/* Details */}
@@ -159,7 +187,7 @@ export default function ProjectManager() {
                       {project.title}
                     </h3>
                     <p className="text-[10px] text-gray-400 mt-1 line-clamp-1 font-mono">
-                      {project.description}
+                      {project.id}
                     </p>
                   </div>
 
@@ -179,7 +207,6 @@ export default function ProjectManager() {
                       Edit
                     </button>
                     <button
-                      // 🟢 FIX: Pass 'project.id', NOT 'project._id'
                       onClick={() => handleDelete(project.id)} 
                       className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
                     >

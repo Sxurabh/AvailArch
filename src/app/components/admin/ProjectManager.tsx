@@ -5,12 +5,12 @@ import { useState, useEffect } from "react";
 import ProjectForm from "./ProjectForm";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Project } from "@/lib/data"; // Ensure you import the type if available, or use 'any'
+import { Project } from "@/lib/data";
 
 export default function ProjectManager() {
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [activeTab, setActiveTab] = useState<"index" | "create">("index");
-  const [editingProject, setEditingProject] = useState<any | null>(null);
+  const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -34,21 +34,20 @@ export default function ProjectManager() {
     }
   }
 
-  // --- CRUD OPERATIONS ---
-
+  // --- 🟢 ADDED: SAVE LOGIC (CREATE & UPDATE) ---
   async function handleSaveProject(formData: Project) {
     setIsSaving(true);
     try {
       let res;
+      
+      // Determine if we are Updating (PUT) or Creating (POST)
       if (editingProject && editingProject.id) {
-        // UPDATE Existing
         res = await fetch(`/api/projects/${editingProject.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
       } else {
-        // CREATE New
         res = await fetch("/api/projects", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -57,15 +56,15 @@ export default function ProjectManager() {
       }
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to save");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save project");
       }
 
-      // Success! Reset states
+      // Success Logic
       alert("Project saved successfully!");
-      setEditingProject(null);
+      setEditingProject(undefined);
       setActiveTab("index");
-      fetchProjects(); // Refresh list
+      fetchProjects(); // Refresh the list
 
     } catch (error: any) {
       console.error("Save Error:", error);
@@ -75,6 +74,7 @@ export default function ProjectManager() {
     }
   }
 
+  // --- DELETE LOGIC ---
   async function handleDelete(id: string) {
     if (!confirm("Irreversible action. Delete this project?")) return;
     
@@ -99,10 +99,9 @@ export default function ProjectManager() {
     }
   }
 
-  const handleEdit = (project: any) => {
+  const handleEdit = (project: Project) => {
     setEditingProject(project);
     setActiveTab("create");
-    // Scroll to top to see form
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -120,7 +119,7 @@ export default function ProjectManager() {
         <button
           onClick={() => {
             setActiveTab("index");
-            setEditingProject(null);
+            setEditingProject(undefined);
           }}
           className={cn(
             "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
@@ -146,6 +145,7 @@ export default function ProjectManager() {
 
       {/* Content Area */}
       {activeTab === "create" ? (
+        // 🟢 FIXED: Props now match ProjectForm exactly
         <ProjectForm
           initialData={editingProject}
           onSubmit={handleSaveProject}
@@ -177,8 +177,8 @@ export default function ProjectManager() {
                 >
                   {/* Thumb */}
                   <div className="hidden md:block col-span-1 relative h-10 w-10 bg-gray-100 overflow-hidden">
-                    {/* Assuming image ID is stored in project.image, you might need a helper to convert ID to URL */}
-                    <div className="w-full h-full bg-gray-200" />
+                    {/* Assuming image ID is stored. If you have a URL helper, use it here */}
+                    <div className="w-full h-full bg-gray-200" /> 
                   </div>
 
                   {/* Details */}

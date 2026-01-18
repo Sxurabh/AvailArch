@@ -1,9 +1,10 @@
+// src/components/admin/ProjectForm.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { Project, ProjectSection, ProjectSpace, ProjectGalleryItem, normalizeGallery } from "@/lib/data";
-import { Trash2, Plus, GripVertical, Image as ImageIcon, LayoutGrid } from "lucide-react";
+import { Project, normalizeGallery } from "@/lib/data";
+import { Trash2, Plus, Image as ImageIcon, LayoutGrid } from "lucide-react";
 
 interface ProjectFormProps {
   initialData?: Project;
@@ -11,37 +12,51 @@ interface ProjectFormProps {
   isLoading?: boolean;
 }
 
-export default function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormProps) {
-  // normalize gallery for the form state
-  const defaultValues = {
-    ...initialData,
-    sections: initialData?.sections || [],
-    spaces: initialData?.spaces || [],
-    gallery: normalizeGallery(initialData?.gallery),
-  };
+const defaultEmptyValues = {
+  title: "",
+  image: "",
+  year: new Date().getFullYear().toString(),
+  category: "",
+  description: "",
+  sections: [],
+  spaces: [],
+  gallery: [],
+};
 
-  const { register, control, handleSubmit, watch, formState: { errors } } = useForm<Project>({
-    defaultValues: defaultValues as any,
+export default function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormProps) {
+  
+  const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm<Project>({
+    defaultValues: defaultEmptyValues as any,
   });
 
-  // --- FIELD ARRAYS FOR DYNAMIC LISTS ---
-  
-  // 1. Hero Sections (Carousel)
+  // 🟢 ADDED: Watch for initialData changes to reset form (Important for switching between Edit/Create)
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        ...initialData,
+        sections: initialData.sections || [],
+        spaces: initialData.spaces || [],
+        gallery: normalizeGallery(initialData.gallery),
+      });
+    } else {
+      reset(defaultEmptyValues);
+    }
+  }, [initialData, reset]);
+
+  // --- FIELD ARRAYS ---
   const { fields: sectionFields, append: appendSection, remove: removeSection } = useFieldArray({
     control,
     name: "sections",
   });
 
-  // 2. Spaces (Design Process)
   const { fields: spaceFields, append: appendSpace, remove: removeSpace } = useFieldArray({
     control,
     name: "spaces",
   });
 
-  // 3. Gallery (Final Execution)
   const { fields: galleryFields, append: appendGallery, remove: removeGallery } = useFieldArray({
     control,
-    name: "gallery" as any, // Cast because usage is slightly complex with unions
+    name: "gallery" as any, 
   });
 
   const [activeTab, setActiveTab] = useState<"general" | "hero" | "spaces" | "gallery">("general");
@@ -50,13 +65,13 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
       
       {/* TABS HEADER */}
-      <div className="flex border-b border-gray-100 mb-8">
+      <div className="flex border-b border-gray-100 mb-8 overflow-x-auto">
         {["general", "hero", "spaces", "gallery"].map((tab) => (
           <button
             type="button"
             key={tab}
             onClick={() => setActiveTab(tab as any)}
-            className={`px-6 py-3 text-sm font-medium uppercase tracking-widest transition-colors relative ${
+            className={`px-6 py-3 text-sm font-medium uppercase tracking-widest transition-colors relative whitespace-nowrap ${
               activeTab === tab ? "text-black" : "text-gray-400 hover:text-gray-600"
             }`}
           >
@@ -94,7 +109,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
         </div>
       </div>
 
-      {/* --- TAB 2: HERO CAROUSEL SECTIONS --- */}
+      {/* --- TAB 2: HERO SECTIONS --- */}
       <div className={activeTab === "hero" ? "block space-y-6" : "hidden"}>
         <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold uppercase tracking-widest">Hero Sections</h3>
@@ -123,11 +138,9 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                     <input 
                         {...register(`sections.${index}.title` as const, { required: true })} 
                         className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none"
-                        placeholder="e.g. Living Area" 
                     />
                 </div>
                 
-                {/* Nested Image Array Handling (Simplified as comma separated string for easy editing) */}
                 <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Images (Comma Separated IDs)</label>
                     <Controller
@@ -143,14 +156,13 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                             />
                         )}
                     />
-                    <p className="text-[10px] text-gray-400">Paste Google Drive IDs separated by commas.</p>
                 </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* --- TAB 3: SPACES (DESIGN PROCESS) --- */}
+      {/* --- TAB 3: SPACES --- */}
       <div className={activeTab === "spaces" ? "block space-y-6" : "hidden"}>
         <div className="flex justify-between items-center mb-4">
             <h3 className="text-sm font-bold uppercase tracking-widest">Process Spaces</h3>
@@ -179,46 +191,30 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                         <input 
                             {...register(`spaces.${index}.name` as const, { required: true })} 
                             className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none"
-                            placeholder="e.g. Master Bedroom" 
                         />
                     </div>
-                    
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Main Concept Image ID</label>
-                        <input 
-                            {...register(`spaces.${index}.mainImage` as const)} 
-                            className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs"
-                        />
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Main Image ID</label>
+                        <input {...register(`spaces.${index}.mainImage` as const)} className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs" />
                     </div>
-
+                    <div className="space-y-2"></div>
                     <div className="space-y-2">
-                         {/* Empty Spacer or Additional options */}
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">2D Drawing ID</label>
+                        <input {...register(`spaces.${index}.slider2d` as const)} className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs" />
                     </div>
-
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">2D Drawing ID (Before)</label>
-                        <input 
-                            {...register(`spaces.${index}.slider2d` as const)} 
-                            className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">3D Render ID (After)</label>
-                        <input 
-                            {...register(`spaces.${index}.slider3d` as const)} 
-                            className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs"
-                        />
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">3D Render ID</label>
+                        <input {...register(`spaces.${index}.slider3d` as const)} className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs" />
                     </div>
                 </div>
             </div>
         ))}
       </div>
 
-      {/* --- TAB 4: FINAL GALLERY (GRID CONTROL) --- */}
+      {/* --- TAB 4: GALLERY --- */}
       <div className={activeTab === "gallery" ? "block space-y-6" : "hidden"}>
         <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold uppercase tracking-widest">Execution Gallery</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest">Gallery</h3>
              <button
                 type="button"
                 onClick={() => appendGallery({ id: "", size: "normal" })}
@@ -244,28 +240,24 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                         <input 
                             {...register(`gallery.${index}.id` as const, { required: true })} 
                             className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none font-mono text-xs"
-                            placeholder="Drive ID"
                         />
                     </div>
-
+                    
+                    {/* Size Selector */}
                     <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Grid Size</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Size</label>
                         <select
                             {...register(`gallery.${index}.size` as const)}
                             className="w-full p-2 bg-white border border-gray-200 focus:border-black outline-none text-xs uppercase"
                         >
-                            <option value="normal">Normal (1 Col)</option>
-                            <option value="wide">Wide (2 Cols)</option>
+                            <option value="normal">Normal</option>
+                            <option value="wide">Wide</option>
                         </select>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-200">
-                        {watch(`gallery.${index}.size` as any) === "wide" ? (
-                            <LayoutGrid size={16} className="text-black" />
-                        ) : (
-                            <ImageIcon size={16} className="text-gray-400" />
-                        )}
-                        <span className="text-[10px] text-gray-500 uppercase tracking-widest">
+                         {watch(`gallery.${index}.size` as any) === "wide" ? <LayoutGrid size={16}/> : <ImageIcon size={16}/>}
+                         <span className="text-[10px] text-gray-500 uppercase tracking-widest">
                             {watch(`gallery.${index}.size` as any) === "wide" ? "Wide Span" : "Standard"}
                         </span>
                     </div>
@@ -274,7 +266,6 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
         </div>
       </div>
 
-      {/* SUBMIT */}
       <div className="pt-8 border-t border-gray-100 flex justify-end">
         <button
           type="submit"
@@ -290,18 +281,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
 
 function XIcon({size, className}: {size?: number, className?: string}) {
     return (
-        <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width={size || 24} 
-            height={size || 24} 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={className}
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
             <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
         </svg>
     )

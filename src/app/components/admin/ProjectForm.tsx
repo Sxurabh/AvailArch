@@ -1,8 +1,9 @@
+// src/components/admin/ProjectForm.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { Project, normalizeGallery } from "@/lib/data"; // Ensure these imports exist
+import { Project, normalizeGallery } from "@/lib/data";
 import { Trash2, Plus, Image as ImageIcon, LayoutGrid } from "lucide-react";
 
 interface ProjectFormProps {
@@ -28,7 +29,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
     defaultValues: defaultEmptyValues as any,
   });
 
-  // ⚡ FIX: Reset form when initialData changes (Switching from Create -> Edit or vice versa)
+  // 🟢 ADDED: Watch for initialData changes to reset form (Important for switching between Edit/Create)
   useEffect(() => {
     if (initialData) {
       reset({
