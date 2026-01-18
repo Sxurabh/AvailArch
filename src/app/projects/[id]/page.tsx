@@ -1,10 +1,13 @@
 import { getSheetData } from "@/lib/googleSheets";
-import { Project } from "@/lib/data";
-import Image from "next/image";
-import Link from "next/link";
+import { Project, ProjectSection } from "@/lib/data";
 import { notFound } from "next/navigation";
-import BeforeAfterSlider from "@/app/components/BeforeAfterSlider";
-import { getDriveImage } from "@/lib/driveUtils"; // Import Utility
+import Link from "next/link";
+import { getDriveImage } from "@/lib/driveUtils";
+
+// Components
+import ProjectHero from "@/components/project/ProjectHero";
+import ImageHub from "@/components/project/ImageHub";
+import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider"; // Adjusted path to your UI folder if needed
 
 // Force dynamic rendering to fetch fresh data
 export const dynamic = "force-dynamic";
@@ -20,61 +23,59 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     return notFound();
   }
 
-  // 🟢 PROCESS IMAGES
+  // ---------------------------------------------------------
+  // 🟢 MOCK DATA INJECTION (Remove this block when Sheet has columns)
+  // This ensures you see the UI elements even without backend changes.
+  // We reuse the main image or specific IDs if you have them.
+  if (!project.sections) {
+    project.sections = [
+      {
+        title: "Entrance Hall",
+        images: [project.image, project.image] // Using main image twice as placeholder
+      },
+      {
+        title: "Living Area",
+        images: [project.image]
+      },
+      {
+        title: "Exterior",
+        images: [project.image, project.image, project.image]
+      }
+    ] as ProjectSection[];
+  }
+  
+  if (!project.gallery) {
+    // Mock gallery with existing images to show layout
+    project.gallery = [project.image, project.image, project.image, project.image];
+  }
+  // ---------------------------------------------------------
+
+  // Process Main Images
   const mainImage = getDriveImage(project.image);
   const beforeImg = getDriveImage(project.beforeImage);
   const afterImg = getDriveImage(project.afterImage);
-
-  const hasMainImage = Boolean(mainImage);
   const hasSlider = Boolean(beforeImg && afterImg);
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      {/* 1. HERO SECTION */}
-      <div className="relative w-full h-[60vh] md:h-[80vh] bg-gray-100">
-         
-         {hasMainImage ? (
-           <Image 
-             src={mainImage!} 
-             alt={project.title} 
-             fill 
-             className="object-cover"
-             priority
-           />
-         ) : (
-           <div className="w-full h-full flex items-center justify-center bg-neutral-800">
-              <span className="text-white/30 text-sm uppercase tracking-widest font-mono">
-                Image Not Available
-              </span>
-           </div>
-         )}
+      
+      {/* 1. NEW INTERACTIVE HERO */}
+      <ProjectHero 
+        project={project} 
+        mainImageSrc={mainImage} 
+      />
 
-         <div className="absolute inset-0 bg-black/20" />
-         
-         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 bg-gradient-to-t from-black/80 to-transparent">
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-white text-4xl md:text-6xl font-light uppercase tracking-widest mb-2">
-                    {project.title}
-                </h1>
-                <div className="flex gap-4 text-white/80 text-xs md:text-sm uppercase tracking-[0.2em]">
-                    <span>{project.category}</span>
-                    <span>•</span>
-                    <span>{project.year}</span>
-                </div>
-            </div>
-         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-12">
         <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-colors mb-12">
             ← Back to Projects
         </Link>
 
+        {/* 2. OVERVIEW & DETAILS GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
             
             <div className="lg:col-span-8">
                 <h2 className="text-xl font-light uppercase tracking-widest mb-8 border-b border-black/10 pb-4">Project Overview</h2>
-                <div className="prose prose-neutral max-w-none text-gray-600 font-light leading-relaxed whitespace-pre-line">
+                <div className="prose prose-neutral max-w-none text-gray-600 font-light leading-relaxed whitespace-pre-line text-sm md:text-base">
                     {project.description || "No description provided for this project."}
                 </div>
             </div>
@@ -105,7 +106,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </div>
         </div>
 
-        {/* 4. BEFORE / AFTER SLIDER */}
+        {/* 3. IMAGE HUB (New Section) */}
+        {project.gallery && (
+          <ImageHub images={project.gallery} />
+        )}
+
+        {/* 4. BEFORE / AFTER SLIDER (Existing) */}
         {hasSlider && (
             <div className="mt-24">
                 <h2 className="text-xl font-light uppercase tracking-widest mb-8 border-b border-black/10 pb-4 text-center">Transformation</h2>
