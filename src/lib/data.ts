@@ -1,18 +1,20 @@
+// src/lib/data.ts
+
 export interface ProjectSpace {
-  name: string;      // e.g., "Dining Hall"
-  mainImage: string; // The "box" image ID
-  slider2d: string;  // Left slider image (2D) ID
-  slider3d: string;  // Right slider image (3D Render) ID
+  name: string;      
+  mainImage: string; 
+  slider2d: string;  
+  slider3d: string;  
 }
 
 export interface ProjectSection {
   title: string;
-  images: string[]; // Array of Image IDs
+  images: string[]; 
 }
 
 export interface ProjectGalleryItem {
-  id: string;       // Image ID
-  size?: "normal" | "wide"; // Desktop layout control
+  id: string;       
+  size?: "normal" | "wide"; 
 }
 
 export interface Project {
@@ -20,10 +22,13 @@ export interface Project {
   title: string;
   year: string;
   category: string;
-  image: string; // Main thumbnail
+  image: string; 
   
+  // 🟢 NEW: Controls homepage grid layout
+  gridSize?: "normal" | "wide" | "tall" | "big";
+
   // Complex Dynamic Fields
-  heroImages?: string[]; // Fallback
+  heroImages?: string[]; 
   sections?: ProjectSection[]; 
   spaces?: ProjectSpace[];
   

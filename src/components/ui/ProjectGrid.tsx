@@ -1,3 +1,4 @@
+// src/components/ui/ProjectGrid.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { Project } from "@/lib/data"; 
@@ -34,17 +35,14 @@ export default function ProjectGrid() {
       ? allProjects
       : allProjects.filter((project) => project.year === filter);
 
-  // Responsive Grid Logic
-  const getGridClass = (index: number) => {
-    // Mobile: Always span 1 column (default)
-    // Desktop (md): Use the fancy bento grid layout
-    const patternIndex = index % 12; 
-    switch (patternIndex) {
-      case 0: return "md:col-span-2 md:row-span-2"; 
-      case 3: return "md:col-span-1 md:row-span-2"; 
-      case 6: return "md:col-span-2 md:row-span-1"; 
-      case 9: return "md:col-span-1 md:row-span-2"; 
-      default: return "md:col-span-1 md:row-span-1";
+  // 🟢 UPDATED: Layout based on Project settings
+  const getGridClass = (project: Project) => {
+    // Defaults to Standard (1x1) if not set
+    switch (project.gridSize) {
+      case "wide": return "md:col-span-2 md:row-span-1"; // 2x1
+      case "tall": return "md:col-span-1 md:row-span-2"; // 1x2
+      case "big":  return "md:col-span-2 md:row-span-2"; // 2x2
+      default:     return "md:col-span-1 md:row-span-1"; // 1x1
     }
   };
 
@@ -80,11 +78,11 @@ export default function ProjectGrid() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-dense">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, index) => (
+              {filteredProjects.map((project) => (
                 <ProjectCard 
                   key={project.id} 
                   project={project} 
-                  className={getGridClass(index)}
+                  className={getGridClass(project)}
                 />
               ))}
             </AnimatePresence>

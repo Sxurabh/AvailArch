@@ -6,6 +6,8 @@ import ProjectForm from "./ProjectForm";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Project } from "@/lib/data";
+import Toast, { ToastType } from "@/components/ui/Toast"; 
+import { getDriveImage } from "@/lib/driveUtils"; // 🟢 Import Image Helper
 
 export default function ProjectManager() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -13,6 +15,18 @@ export default function ProjectManager() {
   const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Toast State
+  const [toast, setToast] = useState<{ msg: string; type: ToastType; visible: boolean }>({
+    msg: "",
+    type: "success",
+    visible: false,
+  });
+
+  const showToast = (msg: string, type: ToastType = "success") => {
+    setToast({ msg, type, visible: true });
+    setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), 3000);
+  };
 
   useEffect(() => {
     if (activeTab === "index") {
@@ -29,18 +43,16 @@ export default function ProjectManager() {
       setProjects(Array.isArray(data) ? data.reverse() : []); 
     } catch (error) {
       console.error("Failed to fetch projects", error);
+      showToast("Failed to sync projects", "error");
     } finally {
       setIsLoading(false);
     }
   }
 
-  // --- 🟢 ADDED: SAVE LOGIC (CREATE & UPDATE) ---
   async function handleSaveProject(formData: Project) {
     setIsSaving(true);
     try {
       let res;
-      
-      // Determine if we are Updating (PUT) or Creating (POST)
       if (editingProject && editingProject.id) {
         res = await fetch(`/api/projects/${editingProject.id}`, {
           method: "PUT",
@@ -60,42 +72,35 @@ export default function ProjectManager() {
         throw new Error(errorData.error || "Failed to save project");
       }
 
-      // Success Logic
-      alert("Project saved successfully!");
+      showToast("Project saved successfully", "success");
       setEditingProject(undefined);
       setActiveTab("index");
-      fetchProjects(); // Refresh the list
+      fetchProjects(); 
 
     } catch (error: any) {
       console.error("Save Error:", error);
-      alert(`Error saving project: ${error.message}`);
+      showToast(error.message, "error");
     } finally {
       setIsSaving(false);
     }
   }
 
-  // --- DELETE LOGIC ---
   async function handleDelete(id: string) {
     if (!confirm("Irreversible action. Delete this project?")) return;
     
     if (!id) {
-        alert("Error: Invalid Project ID");
+        showToast("Invalid Project ID", "error");
         return;
     }
 
     try {
       const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to delete");
-      }
+      if (!res.ok) throw new Error("Failed to delete");
 
-      // Optimistic update
       setProjects((prev) => prev.filter((p) => p.id !== id));
+      showToast("Project deleted", "info");
     } catch (error: any) {
-      console.error("Failed to delete", error);
-      alert(`Error: ${error.message}`);
+      showToast(error.message, "error");
     }
   }
 
@@ -106,115 +111,151 @@ export default function ProjectManager() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pt-12 min-h-[60vh] animate-in fade-in slide-in-from-bottom-4">
-      <h1 className="text-2xl font-light uppercase tracking-widest mb-2">
-        Portfolio Manager
-      </h1>
-      <p className="text-xs text-gray-400 mb-12 uppercase tracking-wider">
-        Admin Console
-      </p>
+    <div className="max-w-6xl mx-auto pt-20 px-6 min-h-[80vh] font-sans">
+      <Toast 
+        message={toast.msg} 
+        type={toast.type} 
+        isVisible={toast.visible} 
+        onClose={() => setToast((prev) => ({ ...prev, visible: false }))} 
+      />
 
-      {/* Tabs */}
-      <div className="flex gap-8 border-b border-gray-100 mb-12">
+      <div className="flex justify-between items-end mb-16 border-b border-gray-100 pb-6">
+        <div>
+          <h1 className="text-3xl font-light uppercase tracking-tighter mb-2">
+            Portfolio <span className="font-bold">Manager</span>
+          </h1>
+          <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em]">
+            Admin Console v1.0
+          </p>
+        </div>
+      </div>
+
+      {/* Modern Tabs */}
+      <div className="flex gap-12 mb-12">
         <button
           onClick={() => {
             setActiveTab("index");
             setEditingProject(undefined);
           }}
           className={cn(
-            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-2",
             activeTab === "index"
-              ? "border-b border-black text-black"
+              ? "text-black font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#bfff00]"
               : "text-gray-400 hover:text-black"
           )}
         >
-          Project Index
+          Index
         </button>
         <button
           onClick={() => setActiveTab("create")}
           className={cn(
-            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-2",
             activeTab === "create"
-              ? "border-b border-black text-black"
+              ? "text-black font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#bfff00]"
               : "text-gray-400 hover:text-black"
           )}
         >
-          {editingProject ? "Edit Entry" : "Create New"}
+          {editingProject ? `Edit: ${editingProject.title}` : "Create Entry"}
         </button>
       </div>
 
       {/* Content Area */}
       {activeTab === "create" ? (
-        // 🟢 FIXED: Props now match ProjectForm exactly
-        <ProjectForm
-          initialData={editingProject}
-          onSubmit={handleSaveProject}
-          isLoading={isSaving}
-        />
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <ProjectForm
+            initialData={editingProject}
+            onSubmit={handleSaveProject}
+            isLoading={isSaving}
+          />
+        </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {isLoading ? (
-            <div className="text-[10px] uppercase tracking-widest text-gray-400 animate-pulse">
-              Syncing Data...
+            <div className="h-64 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400">
+              <span className="animate-pulse">Loading Projects...</span>
             </div>
           ) : projects.length === 0 ? (
-            <p className="text-xs text-gray-400 italic">No projects found.</p>
+            <div className="h-64 flex items-center justify-center border border-dashed border-gray-200 bg-gray-50/50">
+               <p className="text-xs text-gray-400 uppercase tracking-widest">No projects found</p>
+            </div>
           ) : (
-            <div className="grid gap-4">
-              {/* Header Row */}
-              <div className="hidden md:grid grid-cols-12 gap-4 pb-2 border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-400">
-                <div className="col-span-1">Thumb</div>
-                <div className="col-span-5">Project Details</div>
-                <div className="col-span-3">Category</div>
+            <div className="flex flex-col gap-2">
+              {/* Header - Fixed */}
+              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-3 border-b border-gray-100 text-[9px] uppercase tracking-widest text-gray-400 font-medium bg-white z-10">
+                <div className="col-span-1">Preview</div>
+                <div className="col-span-4">Project Info</div>
+                <div className="col-span-4">Meta</div>
                 <div className="col-span-3 text-right">Actions</div>
               </div>
 
-              {/* Rows */}
-              {projects.map((project) => (
-                <div
-                  key={project.id || Math.random()} 
-                  className="group bg-white border border-transparent hover:border-gray-100 p-4 md:p-0 md:py-4 md:border-b md:border-gray-50 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all"
-                >
-                  {/* Thumb */}
-                  <div className="hidden md:block col-span-1 relative h-10 w-10 bg-gray-100 overflow-hidden">
-                    {/* Assuming image ID is stored. If you have a URL helper, use it here */}
-                    <div className="w-full h-full bg-gray-200" /> 
-                  </div>
-
-                  {/* Details */}
-                  <div className="col-span-5">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-black">
-                      {project.title}
-                    </h3>
-                    <p className="text-[10px] text-gray-400 mt-1 line-clamp-1 font-mono">
-                      {project.id}
-                    </p>
-                  </div>
-
-                  {/* Category */}
-                  <div className="col-span-3 flex items-center">
-                    <span className="text-[9px] uppercase tracking-widest border border-gray-100 px-2 py-1 text-gray-500">
-                      {project.category}
-                    </span>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="col-span-3 flex justify-end gap-6 md:gap-4 pr-2">
-                    <button
-                      onClick={() => handleEdit(project)}
-                      className="text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black transition-colors"
+              {/* Rows - Scrollable Container */}
+              {/* 🟢 ADDED: Custom Scrollbar + Max Height + Data Lenis Prevent */}
+              <div 
+                className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10" 
+                data-lenis-prevent
+              >
+                {projects.map((project) => {
+                  // 🟢 FIX: Generate Thumbnail URL safely
+                  const thumbUrl = getDriveImage(project.image);
+                  
+                  return (
+                    <div
+                      key={project.id || Math.random()} 
+                      className="group bg-white border border-transparent hover:border-[#bfff00] hover:shadow-lg transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
                     >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(project.id)} 
-                      className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                      {/* Thumb */}
+                      <div className="hidden md:block col-span-1 aspect-square bg-gray-100 relative overflow-hidden">
+                        {thumbUrl ? (
+                          <Image 
+                            src={thumbUrl} 
+                            alt={project.title} 
+                            fill 
+                            className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-neutral-200" /> 
+                        )}
+                      </div>
+
+                      {/* Details */}
+                      <div className="col-span-4">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-black">
+                          {project.title}
+                        </h3>
+                        <p className="text-[10px] text-gray-400 mt-1 font-mono truncate">
+                          ID: {project.id}
+                        </p>
+                      </div>
+
+                      {/* Meta */}
+                      <div className="col-span-4 flex flex-col gap-1">
+                        <span className="text-[10px] uppercase tracking-widest text-gray-500">
+                          {project.category}
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-400">
+                          {project.year}
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="col-span-3 flex justify-end gap-6 items-center">
+                        <button
+                          onClick={() => handleEdit(project)}
+                          className="text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(project.id)} 
+                          className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

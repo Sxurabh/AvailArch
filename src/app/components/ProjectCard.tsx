@@ -1,11 +1,11 @@
-// src/app/components/ProjectCard.tsx
+// src/components/ui/ProjectCard.tsx
 "use client";
 import { Project } from "@/lib/data";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getDriveImage } from "@/lib/driveUtils"; // Import the new utility
+import { getDriveImage } from "@/lib/driveUtils";
 
 interface ProjectCardProps {
   project: Project;
@@ -14,7 +14,6 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, className }: ProjectCardProps) {
   
-  // 🛡️ SAFE PARSING: Converts Drive links or validates URLs
   const imageUrl = getDriveImage(project.image);
   const hasImage = Boolean(imageUrl);
 
@@ -34,18 +33,21 @@ export default function ProjectCard({ project, className }: ProjectCardProps) {
       <Link href={`/projects/${project.id}`} className="block w-full h-full">
         
         {/* Image Container */}
-        <div className="relative w-full h-full min-h-[300px] bg-gray-100">
+        <div className="relative w-full h-full min-h-[300px] bg-gray-100 overflow-hidden">
           
           {hasImage ? (
             <Image
-              src={imageUrl!} // Safe because we checked Boolean(imageUrl)
+              src={imageUrl!}
               alt={project.title || "Project Image"}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 z-0"
-              // 🛡️ onError handler prevents crashes if the image link expires
+              className="object-cover transition-all duration-700 ease-out z-0 
+              group-hover:scale-105 
+              group-hover:blur-[3px] 
+              group-hover:brightness-50" 
+              // 👆 Blur + Darken on Hover
               onError={(e) => {
-                e.currentTarget.style.display = 'none'; // Hide broken image
+                e.currentTarget.style.display = 'none'; 
               }}
             />
           ) : (
@@ -56,18 +58,25 @@ export default function ProjectCard({ project, className }: ProjectCardProps) {
             </div>
           )}
           
-          {/* Overlay Content */}
-          <div className="absolute inset-0 z-10 bg-[#bfff00] opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center text-center p-4">
+          {/* Text Overlay (No Background Color, Just Text) */}
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-4">
             <div className="relative z-20 flex flex-col items-center">
-              <h3 className="text-black text-xl font-bold uppercase tracking-[0.2em] translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+              
+              {/* Title */}
+              <h3 className="text-white text-2xl font-bold uppercase tracking-[0.2em] translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out">
                 {project.title}
               </h3>
-              <span className="text-black/80 text-xs uppercase tracking-widest mt-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 ease-out font-medium">
+              
+              {/* Category */}
+              <span className="text-[#bfff00] text-xs uppercase tracking-widest mt-3 translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-100 ease-out font-medium">
                 {project.category}
               </span>
-              <span className="text-black/70 text-[10px] font-mono mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-150">
+              
+              {/* Year */}
+              <span className="text-white/70 text-[10px] font-mono mt-4 translate-y-4 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-150">
                 {project.year}
               </span>
+              
             </div>
           </div>
         </div>

@@ -2,8 +2,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Project } from "@/lib/data"; 
-import ProjectCard from "./ProjectCard";
-import { AnimatePresence, motion } from "framer-motion";
+import ProjectCard from "./ProjectCard"; // Ensure this path is correct based on your folder structure
+import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function ProjectGrid() {
@@ -36,23 +36,15 @@ export default function ProjectGrid() {
       ? allProjects
       : allProjects.filter((project) => project.year === filter);
 
-  const getGridClass = (index: number) => {
-    // 🆕 Mobile: Always col-span-1. md/lg: Use complex pattern
-    const patternIndex = index % 12; 
-    switch (patternIndex) {
-      case 0: return "md:col-span-2 md:row-span-2"; 
-      case 1: return "md:col-span-1 md:row-span-1"; 
-      case 2: return "md:col-span-1 md:row-span-1"; 
-      case 3: return "md:col-span-1 md:row-span-2"; 
-      case 4: return "md:col-span-1 md:row-span-1"; 
-      case 5: return "md:col-span-1 md:row-span-1"; 
-      case 6: return "md:col-span-2 md:row-span-1"; 
-      case 7: return "md:col-span-1 md:row-span-1"; 
-      case 8: return "md:col-span-1 md:row-span-1"; 
-      case 9: return "md:col-span-1 md:row-span-2"; 
-      case 10: return "md:col-span-1 md:row-span-1"; 
-      case 11: return "md:col-span-1 md:row-span-1"; 
-      default: return "md:col-span-1 md:row-span-1";
+  // 🟢 UPDATED: Use the project's 'gridSize' property
+  const getGridClass = (project: Project) => {
+    // Defaults to "normal" (1x1) if field is missing/empty
+    switch (project.gridSize) {
+      case "wide": return "md:col-span-2 md:row-span-1"; // 2 Cols, 1 Row
+      case "tall": return "md:col-span-1 md:row-span-2"; // 1 Col, 2 Rows
+      case "big":  return "md:col-span-2 md:row-span-2"; // 2 Cols, 2 Rows
+      case "normal":
+      default:     return "md:col-span-1 md:row-span-1"; // Standard Square
     }
   };
 
@@ -74,14 +66,13 @@ export default function ProjectGrid() {
         <>
           {/* Floating Filter Menu */}
           <div className="sticky top-24 z-40 mb-12 flex justify-center pointer-events-none">
-            {/* 🆕 Added max-w-full and overflow handling for mobile swiping */}
             <div className="pointer-events-auto bg-white/80 backdrop-blur-md px-6 py-3 rounded-full border border-gray-100 shadow-sm flex gap-6 overflow-x-auto max-w-[90vw] md:max-w-none no-scrollbar">
               {years.map((year) => (
                 <button
                   key={year}
                   onClick={() => setFilter(year)}
                   className={cn(
-                    "text-[10px] uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex-shrink-0", // 🆕 whitespace-nowrap prevents line breaks
+                    "text-[10px] uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex-shrink-0",
                     filter === year
                       ? "text-black font-bold scale-105"
                       : "text-gray-400 hover:text-black"
@@ -96,11 +87,12 @@ export default function ProjectGrid() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-dense auto-rows-[minmax(300px,auto)]">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, index) => (
+              {filteredProjects.map((project) => (
                 <ProjectCard 
                   key={project.id} 
                   project={project} 
-                  className={getGridClass(index)}
+                  // 🟢 Pass the PROJECT, not the index
+                  className={getGridClass(project)} 
                 />
               ))}
             </AnimatePresence>
@@ -111,18 +103,10 @@ export default function ProjectGrid() {
                </div>
             )}
           </div>
-          
-          {filteredProjects.length > 0 && (
-            <div className="mt-24 text-center">
-              <span className="inline-block w-1 h-1 bg-black rounded-full mx-1"></span>
-              <span className="inline-block w-1 h-1 bg-black rounded-full mx-1"></span>
-              <span className="inline-block w-1 h-1 bg-black rounded-full mx-1"></span>
-            </div>
-          )}
         </>
       )}
       
-      {/* 🆕 Hide Scrollbar Utility */}
+      {/* Scrollbar Utility */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;

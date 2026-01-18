@@ -1,9 +1,11 @@
+/* src/app/globals.css */
 @import "tailwindcss";
 
 :root {
   --foreground-rgb: 17, 17, 17;
   --background-rgb: 255, 255, 255;
   --font-inter: 'Inter', sans-serif;
+  --brand-color: #bfff00; /* Define brand color for easy usage */
 }
 
 body {
@@ -12,7 +14,7 @@ body {
   font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: none; /* Hides default cursor for your CustomCursor */
+  cursor: none; 
 }
 
 /* --- LENIS SCROLL REQUIRED STYLES --- */
@@ -37,16 +39,42 @@ html.lenis, html.lenis body {
 }
 /* ----------------------------------- */
 
-/* Restore cursor on touch devices */
 @media (hover: none) and (pointer: coarse) {
     body {
         cursor: auto;
     }
 }
 
+/* 🟢 GLOBAL SCROLLBAR (Hidden by default as per your design) */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
+}
+
+/* 🟢 CUSTOM SCROLLBAR UTILITY (Visible when applied) 
+   Usage: className="custom-scrollbar" 
+*/
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #e5e5e5 transparent; /* Firefox */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Thin, elegant width */
+  display: block; /* Force display override */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e5e5; /* Subtle gray default */
+  border-radius: 0px;  /* Square/Architectural look */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bfff00; /* Brand Green on hover */
 }
 
 ::selection {
