@@ -1,4 +1,3 @@
-// src/components/ui/BeforeAfterSlider.tsx
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
@@ -6,15 +5,17 @@ import Image from "next/image";
 interface BeforeAfterSliderProps {
   beforeImage: string;
   afterImage: string;
-  leftLabel?: string;  // Custom label for left image (default: Before)
-  rightLabel?: string; // Custom label for right image (default: After)
+  leftLabel?: string;
+  rightLabel?: string;
+  className?: string; // NEW: Allow parent to control sizing
 }
 
 export default function BeforeAfterSlider({ 
   beforeImage, 
   afterImage, 
   leftLabel = "Before", 
-  rightLabel = "After" 
+  rightLabel = "After",
+  className = "" 
 }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -52,7 +53,8 @@ export default function BeforeAfterSlider({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-[500px] overflow-hidden cursor-ew-resize select-none bg-gray-100 group border border-gray-200"
+      // CHANGED: h-[500px] -> h-full, added className prop
+      className={`relative w-full h-full min-h-[300px] overflow-hidden cursor-ew-resize select-none bg-gray-100 group border border-gray-200 ${className}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
     >

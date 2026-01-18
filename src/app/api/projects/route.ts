@@ -1,41 +1,35 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { addRow, getSheetData } from "@/lib/googleSheets"; // Added getSheetData
+// src/app/api/projects/route.ts
 import { NextResponse } from "next/server";
+import { getSheetData, addRow, updateRow } from "@/lib/googleSheets";
 
-// 1. GET: Fetch all projects from Google Sheets
 export async function GET() {
   try {
     const projects = await getSheetData("Projects");
-    
-    // Ensure cache is disabled so new projects show immediately
-    return NextResponse.json(projects, {
-      headers: {
-        "Cache-Control": "no-store, max-age=0",
-      },
-    });
+    return NextResponse.json(projects);
   } catch (error) {
-    console.error("Error fetching projects:", error);
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
   }
 }
 
-// 2. POST: Add a new project (Only Admin)
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  if ((session?.user as any).role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    
+    // If body has an 'id', it's an UPDATE
+    if (body.id) {
+       await updateRow("Projects", body.id, body);
+       return NextResponse.json({ success: true, mode: "update" });
+    } 
+    
+    // Otherwise it's a CREATE
+    else {
+       const newId = Date.now().toString();
+       await addRow("Projects", { ...body, id: newId });
+       return NextResponse.json({ success: true, mode: "create", id: newId });
+    }
+
+  } catch (error) {
+    console.error("API Error:", error);
+    return NextResponse.json({ error: "Failed to save project" }, { status: 500 });
   }
-
-  const body = await req.json();
-  
-  // Create a unique ID based on timestamp
-  const newProject = {
-    id: Date.now().toString(),
-    ...body // title, year, category, image
-  };
-
-  await addRow("Projects", newProject);
-
-  return NextResponse.json({ success: true, project: newProject });
 }

@@ -1,9 +1,18 @@
 export interface ProjectSpace {
   name: string;      // e.g., "Dining Hall"
-  mainImage: string; // The "box" image
-  slider2d: string;  // Left slider image (2D)
-  slider3d: string;  // Right slider image (3D Render)
-  finalImages: string[]; // Grid at the bottom
+  mainImage: string; // The "box" image ID
+  slider2d: string;  // Left slider image (2D) ID
+  slider3d: string;  // Right slider image (3D Render) ID
+}
+
+export interface ProjectSection {
+  title: string;
+  images: string[]; // Array of Image IDs
+}
+
+export interface ProjectGalleryItem {
+  id: string;       // Image ID
+  size?: "normal" | "wide"; // Desktop layout control
 }
 
 export interface Project {
@@ -11,13 +20,16 @@ export interface Project {
   title: string;
   year: string;
   category: string;
-  image: string; // Fallback Main display image
+  image: string; // Main thumbnail
   
-  // New Fields for Enhanced Layout
-  heroImages?: string[]; // List of images for the top carousel
-  spaces?: ProjectSpace[]; // List of spaces (Dining, Living, etc.)
+  // Complex Dynamic Fields
+  heroImages?: string[]; // Fallback
+  sections?: ProjectSection[]; 
+  spaces?: ProjectSpace[];
+  
+  // Gallery can now be simple strings OR objects with layout info
+  gallery?: (string | ProjectGalleryItem)[]; 
 
-  // Existing Fields
   description?: string;
   client?: string;
   location?: string;
@@ -25,5 +37,13 @@ export interface Project {
   afterImage?: string;  
 }
 
-// Keep the array empty as we rely on Sheets
+// Helper to safely parse gallery items whether they are strings or objects
+export const normalizeGallery = (gallery?: (string | ProjectGalleryItem)[]): ProjectGalleryItem[] => {
+  if (!gallery) return [];
+  return gallery.map(item => {
+    if (typeof item === 'string') return { id: item, size: 'normal' };
+    return item;
+  });
+};
+
 export const projects: Project[] = [];
