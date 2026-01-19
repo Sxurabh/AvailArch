@@ -13,13 +13,14 @@ interface ProjectFormProps {
   isLoading?: boolean;
 }
 
+// 🟢 FIX: Added 'as const' to gridSize so it matches the Project type definition
 const defaultEmptyValues = {
   title: "",
   image: "",
   year: new Date().getFullYear().toString(),
   category: "",
   description: "",
-  gridSize: "normal", // Default
+  gridSize: "normal" as const, 
   sections: [],
   spaces: [],
   gallery: [],
