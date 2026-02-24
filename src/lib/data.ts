@@ -50,5 +50,3 @@ export const normalizeGallery = (gallery?: (string | ProjectGalleryItem)[]): Pro
     return item;
   });
 };
-
-export const projects: Project[] = [];
