@@ -21,7 +21,8 @@ const defaultEmptyValues = {
   year: new Date().getFullYear().toString(),
   category: "",
   description: "",
-  gridSize: "normal" as const,
+  gridColSpan: 1,
+  gridRowSpan: 1,
   sections: [],
   spaces: [],
   gallery: [],
@@ -53,7 +54,8 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
       reset({
         ...initialData,
         // Ensure defaults if fields are missing
-        gridSize: initialData.gridSize || "normal",
+        gridColSpan: initialData.gridColSpan || 1,
+        gridRowSpan: initialData.gridRowSpan || 1,
         sections: initialData.sections || [],
         spaces: initialData.spaces || [],
         gallery: normalizeGallery(initialData.gallery),
@@ -125,23 +127,10 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               />
             </div>
 
-            {/* 🟢 NEW GRID SIZE SELECTOR */}
-            <div className="space-y-2 group">
-              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-[#1c1c1c] transition-colors">
-                Homepage Grid Size
-              </label>
-              <div className="relative">
-                <select
-                  {...register("gridSize")}
-                  className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium cursor-pointer uppercase appearance-none"
-                >
-                  <option value="normal">Standard (1x1)</option>
-                  <option value="wide">Wide (2x1)</option>
-                  <option value="tall">Tall (1x2)</option>
-                  <option value="big">Large (2x2)</option>
-                </select>
-                <Maximize size={14} className="absolute right-0 top-0 text-gray-400 pointer-events-none" />
-              </div>
+            {/* 🟢 NEW GRID SIZE SELECTOR USING COL/ROW SPANS */}
+            <div className="grid grid-cols-2 gap-4 w-full">
+              <ArchitecturalInput label="Grid Col Span" register={register} name="gridColSpan" type="number" placeholder="1" />
+              <ArchitecturalInput label="Grid Row Span" register={register} name="gridRowSpan" type="number" placeholder="1" />
             </div>
 
             <div className="md:col-span-2 space-y-2 mt-4 group">
