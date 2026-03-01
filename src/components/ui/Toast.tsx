@@ -26,12 +26,12 @@ export default function Toast({ message, type = "success", isVisible, onClose }:
           {/* Accent Line */}
           <div 
             className={`absolute left-0 top-0 bottom-0 w-1 ${
-              type === "success" ? "bg-[#bfff00]" : type === "error" ? "bg-red-500" : "bg-blue-500"
+              type === "success" ? "bg-[#8a9a5b]" : type === "error" ? "bg-red-500" : "bg-blue-500"
             }`} 
           />
 
           <div className="flex-shrink-0">
-            {type === "success" && <Check size={16} className="text-[#bfff00]" />}
+            {type === "success" && <Check size={16} className="text-[#8a9a5b]" />}
             {type === "error" && <X size={16} className="text-red-500" />}
             {type === "info" && <Info size={16} className="text-blue-500" />}
           </div>

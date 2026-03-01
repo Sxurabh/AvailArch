@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16">
-        <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-black transition-colors mb-16">
+        <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-[#1c1c1c] transition-colors mb-16">
           ← Back to Projects
         </Link>
 
@@ -121,19 +121,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
           <div className="lg:col-span-4">
             <div className="bg-gray-50 p-8 border border-gray-100 sticky top-24">
-              <h3 className="text-xs font-bold uppercase tracking-widest mb-6 text-black">Details</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest mb-6 text-[#1c1c1c]">Details</h3>
               <div className="space-y-6">
                 <div>
                   <span className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Client</span>
-                  <span className="text-sm text-black">{project.client || "Private Client"}</span>
+                  <span className="text-sm text-[#1c1c1c]">{project.client || "Private Client"}</span>
                 </div>
                 <div>
                   <span className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Location</span>
-                  <span className="text-sm text-black">{project.location || "Unknown"}</span>
+                  <span className="text-sm text-[#1c1c1c]">{project.location || "Unknown"}</span>
                 </div>
                 <div>
                   <span className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Year</span>
-                  <span className="text-sm text-black">{project.year}</span>
+                  <span className="text-sm text-[#1c1c1c]">{project.year}</span>
                 </div>
               </div>
             </div>

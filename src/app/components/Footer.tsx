@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="w-full pb-12 mt-16">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12">
-        <div className="bg-black text-white pt-24 pb-12 px-8 md:px-16 lg:px-24 selection:bg-[#bfff00] selection:text-black">
+        <div className="pt-24 pb-12 px-8 md:px-16 lg:px-24 selection:bg-[#8a9a5b]" style={{ background: 'rgb(var(--fg))', color: 'rgb(var(--bg))' }}>
           <div className="flex flex-col gap-24">
 
             {/* Top Section: Asymmetric Layout */}
@@ -25,16 +25,16 @@ export default function Footer() {
                 </div>
 
                 <div className="mt-20 md:mt-32 max-w-md">
-                  <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#bfff00] mb-4">
+                  <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#8a9a5b] mb-4">
                     Studio Briefing
                   </p>
-                  <div className="flex border-b border-white/30 focus-within:border-[#bfff00] transition-colors pb-2">
+                  <div className="flex border-b border-white/30 focus-within:border-[#8a9a5b] transition-colors pb-2">
                     <input
                       type="email"
                       placeholder="Email address for studio updates"
                       className="bg-transparent w-full outline-none text-sm placeholder:text-white/30 text-white font-mono"
                     />
-                    <button className="text-white/50 hover:text-[#bfff00] transition-colors">
+                    <button className="text-white/50 hover:text-[#8a9a5b] transition-colors">
                       <ArrowRight className="w-5 h-5" />
                     </button>
                   </div>
@@ -45,18 +45,18 @@ export default function Footer() {
               <div className="md:col-span-4 grid grid-cols-2 gap-8 md:pl-12 lg:pl-24">
                 <div className="flex flex-col gap-4">
                   <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 mb-2">Platform</p>
-                  <Link href="/" className="text-sm font-medium hover:text-[#bfff00] transition-colors">Home</Link>
-                  <Link href="/about" className="text-sm font-medium hover:text-[#bfff00] transition-colors">Studio</Link>
-                  <Link href="/process" className="text-sm font-medium hover:text-[#bfff00] transition-colors">Process</Link>
-                  <Link href="/track-request" className="text-sm font-medium hover:text-[#bfff00] transition-colors">Initiate</Link>
+                  <Link href="/" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">Home</Link>
+                  <Link href="/about" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">Studio</Link>
+                  <Link href="/process" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">Process</Link>
+                  <Link href="/track-request" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">Initiate</Link>
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 mb-2">Social</p>
-                  <a href="#" className="text-sm font-medium hover:text-[#bfff00] transition-colors">Instagram</a>
-                  <a href="#" className="text-sm font-medium hover:text-[#bfff00] transition-colors">LinkedIn</a>
-                  <a href="#" className="text-sm font-medium hover:text-[#bfff00] transition-colors">Behance</a>
-                  <a href="#" className="text-sm font-medium hover:text-[#bfff00] transition-colors">ArchDaily</a>
+                  <a href="#" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">Instagram</a>
+                  <a href="#" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">LinkedIn</a>
+                  <a href="#" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">Behance</a>
+                  <a href="#" className="text-sm font-medium hover:text-[#8a9a5b] transition-colors">ArchDaily</a>
                 </div>
               </div>
 

@@ -6,7 +6,7 @@ import ProjectForm from "./ProjectForm";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Project } from "@/lib/data";
-import Toast, { ToastType } from "@/components/ui/Toast"; 
+import Toast, { ToastType } from "@/components/ui/Toast";
 import { getDriveImage } from "@/lib/driveUtils"; // 🟢 Import Image Helper
 
 export default function ProjectManager() {
@@ -40,7 +40,7 @@ export default function ProjectManager() {
       const res = await fetch("/api/projects", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setProjects(Array.isArray(data) ? data.reverse() : []); 
+      setProjects(Array.isArray(data) ? data.reverse() : []);
     } catch (error) {
       console.error("Failed to fetch projects", error);
       showToast("Failed to sync projects", "error");
@@ -75,7 +75,7 @@ export default function ProjectManager() {
       showToast("Project saved successfully", "success");
       setEditingProject(undefined);
       setActiveTab("index");
-      fetchProjects(); 
+      fetchProjects();
 
     } catch (error: any) {
       console.error("Save Error:", error);
@@ -87,10 +87,10 @@ export default function ProjectManager() {
 
   async function handleDelete(id: string) {
     if (!confirm("Irreversible action. Delete this project?")) return;
-    
+
     if (!id) {
-        showToast("Invalid Project ID", "error");
-        return;
+      showToast("Invalid Project ID", "error");
+      return;
     }
 
     try {
@@ -111,37 +111,37 @@ export default function ProjectManager() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto pt-20 px-6 min-h-[80vh] font-sans">
-      <Toast 
-        message={toast.msg} 
-        type={toast.type} 
-        isVisible={toast.visible} 
-        onClose={() => setToast((prev) => ({ ...prev, visible: false }))} 
+    <div className="w-full pt-6 md:pt-10 px-0 md:px-6 min-h-[60vh] font-sans">
+      <Toast
+        message={toast.msg}
+        type={toast.type}
+        isVisible={toast.visible}
+        onClose={() => setToast((prev) => ({ ...prev, visible: false }))}
       />
 
-      <div className="flex justify-between items-end mb-16 border-b border-gray-100 pb-6">
+      <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-6">
         <div>
-          <h1 className="text-3xl font-light uppercase tracking-tighter mb-2">
+          <h1 className="text-3xl font-light uppercase tracking-tighter text-white mb-2">
             Portfolio <span className="font-bold">Manager</span>
           </h1>
-          <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em]">
+          <p className="text-[10px] text-[#8a9a5b] uppercase tracking-[0.2em]">
             Admin Console v1.0
           </p>
         </div>
       </div>
 
       {/* Modern Tabs */}
-      <div className="flex gap-12 mb-12">
+      <div className="flex gap-12 mb-12 border-b border-white/5 pb-0">
         <button
           onClick={() => {
             setActiveTab("index");
             setEditingProject(undefined);
           }}
           className={cn(
-            "text-xs uppercase tracking-[0.15em] transition-all relative py-2",
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
             activeTab === "index"
-              ? "text-black font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#bfff00]"
-              : "text-gray-400 hover:text-black"
+              ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
+              : "text-white/40 hover:text-white"
           )}
         >
           Index
@@ -149,10 +149,10 @@ export default function ProjectManager() {
         <button
           onClick={() => setActiveTab("create")}
           className={cn(
-            "text-xs uppercase tracking-[0.15em] transition-all relative py-2",
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
             activeTab === "create"
-              ? "text-black font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#bfff00]"
-              : "text-gray-400 hover:text-black"
+              ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
+              : "text-white/40 hover:text-white"
           )}
         >
           {editingProject ? `Edit: ${editingProject.title}` : "Create Entry"}
@@ -171,17 +171,17 @@ export default function ProjectManager() {
       ) : (
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {isLoading ? (
-            <div className="h-64 flex items-center justify-center text-[10px] uppercase tracking-widest text-gray-400">
+            <div className="h-64 flex items-center justify-center text-[10px] uppercase tracking-widest text-[#8a9a5b]">
               <span className="animate-pulse">Loading Projects...</span>
             </div>
           ) : projects.length === 0 ? (
-            <div className="h-64 flex items-center justify-center border border-dashed border-gray-200 bg-gray-50/50">
-               <p className="text-xs text-gray-400 uppercase tracking-widest">No projects found</p>
+            <div className="h-64 flex items-center justify-center border border-dashed border-white/20 bg-white/5">
+              <p className="text-xs text-white/40 uppercase tracking-widest">No projects found</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               {/* Header - Fixed */}
-              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-3 border-b border-gray-100 text-[9px] uppercase tracking-widest text-gray-400 font-medium bg-white z-10">
+              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-4 border-b border-white/10 text-[9px] uppercase tracking-widest text-white/40 font-medium bg-[#222222] z-10 sticky top-0">
                 <div className="col-span-1">Preview</div>
                 <div className="col-span-4">Project Info</div>
                 <div className="col-span-4">Meta</div>
@@ -189,50 +189,48 @@ export default function ProjectManager() {
               </div>
 
               {/* Rows - Scrollable Container */}
-              {/* 🟢 ADDED: Custom Scrollbar + Max Height + Data Lenis Prevent */}
-              <div 
-                className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10" 
+              <div
+                className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10"
                 data-lenis-prevent
               >
                 {projects.map((project) => {
-                  // 🟢 FIX: Generate Thumbnail URL safely
                   const thumbUrl = getDriveImage(project.image);
-                  
+
                   return (
                     <div
-                      key={project.id || Math.random()} 
-                      className="group bg-white border border-transparent hover:border-[#bfff00] hover:shadow-lg transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
+                      key={project.id || Math.random()}
+                      className="group bg-[#1c1c1c]/40 border border-white/5 hover:border-[#8a9a5b]/50 hover:bg-white/5 transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
                     >
                       {/* Thumb */}
-                      <div className="hidden md:block col-span-1 aspect-square bg-gray-100 relative overflow-hidden">
+                      <div className="hidden md:block col-span-1 aspect-square bg-white/5 relative overflow-hidden ring-1 ring-white/10">
                         {thumbUrl ? (
-                          <Image 
-                            src={thumbUrl} 
-                            alt={project.title} 
-                            fill 
-                            className="object-cover grayscale group-hover:grayscale-0 transition-all"
+                          <Image
+                            src={thumbUrl}
+                            alt={project.title}
+                            fill
+                            className="object-cover grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100"
                           />
                         ) : (
-                          <div className="w-full h-full bg-neutral-200" /> 
+                          <div className="w-full h-full bg-white/5" />
                         )}
                       </div>
 
                       {/* Details */}
                       <div className="col-span-4">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-black">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-white group-hover:text-[#8a9a5b] transition-colors">
                           {project.title}
                         </h3>
-                        <p className="text-[10px] text-gray-400 mt-1 font-mono truncate">
+                        <p className="text-[10px] text-white/40 mt-1 font-mono truncate">
                           ID: {project.id}
                         </p>
                       </div>
 
                       {/* Meta */}
                       <div className="col-span-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-500">
+                        <span className="text-[10px] uppercase tracking-widest text-white/60">
                           {project.category}
                         </span>
-                        <span className="text-[10px] font-mono text-gray-400">
+                        <span className="text-[10px] font-mono text-[#8a9a5b]/70">
                           {project.year}
                         </span>
                       </div>
@@ -241,13 +239,13 @@ export default function ProjectManager() {
                       <div className="col-span-3 flex justify-end gap-6 items-center">
                         <button
                           onClick={() => handleEdit(project)}
-                          className="text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black transition-colors"
+                          className="text-[10px] uppercase tracking-widest font-bold text-white/40 hover:text-[#8a9a5b] transition-colors border-b border-transparent hover:border-[#8a9a5b]"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDelete(project.id)} 
-                          className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
+                          onClick={() => handleDelete(project.id)}
+                          className="text-[10px] uppercase tracking-widest font-bold text-white/30 hover:text-red-500 transition-colors"
                         >
                           Delete
                         </button>

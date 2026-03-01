@@ -2,23 +2,36 @@
 @import "tailwindcss";
 
 :root {
-  --foreground-rgb: 17, 17, 17;
-  --background-rgb: 255, 255, 255;
+  --bg: 255, 255, 255;
+  --fg: 28, 28, 28;
+  --bg-surface: 245, 245, 245;
+  --fg-muted: 156, 163, 175;
+  --border: 229, 229, 229;
+  --brand-color: #8a9a5b;
   --font-inter: 'Inter', sans-serif;
-  --brand-color: #bfff00; /* Define brand color for easy usage */
+}
+
+[data-theme="dark"] {
+  --bg: 28, 28, 28;
+  --fg: 245, 245, 245;
+  --bg-surface: 34, 34, 34;
+  --fg-muted: 120, 120, 120;
+  --border: 55, 55, 55;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  color: rgb(var(--fg));
+  background: rgb(var(--bg));
   font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: none; 
+  cursor: none;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* --- LENIS SCROLL REQUIRED STYLES --- */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 
@@ -37,12 +50,13 @@ html.lenis, html.lenis body {
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
 }
+
 /* ----------------------------------- */
 
 @media (hover: none) and (pointer: coarse) {
-    body {
-        cursor: auto;
-    }
+  body {
+    cursor: auto;
+  }
 }
 
 /* 🟢 GLOBAL SCROLLBAR (Hidden by default as per your design) */
@@ -55,13 +69,13 @@ html.lenis, html.lenis body {
    Usage: className="custom-scrollbar" 
 */
 .custom-scrollbar {
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #e5e5e5 transparent; /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--border)) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 4px; /* Thin, elegant width */
-  display: block; /* Force display override */
+  width: 4px;
+  display: block;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -69,15 +83,15 @@ html.lenis, html.lenis body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e5e5e5; /* Subtle gray default */
-  border-radius: 0px;  /* Square/Architectural look */
+  background: rgb(var(--border));
+  border-radius: 0px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #bfff00; /* Brand Green on hover */
+  background: #8a9a5b;
 }
 
 ::selection {
-  background: #000;
-  color: #fff;
+  background: rgb(var(--fg));
+  color: rgb(var(--bg));
 }

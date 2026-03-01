@@ -102,6 +102,38 @@ export async function PUT(
   }
 }
 
+// 🟢 PATCH: Partial Update (freeform grid spans)
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const body = await req.json();
+
+  try {
+    const supabase = await createClient();
+    console.log(`Partial update for project ${id}...`, body);
+
+    const updatePayload: Record<string, any> = {};
+    if (body.gridColSpan !== undefined) updatePayload.grid_col_span = body.gridColSpan;
+    if (body.gridRowSpan !== undefined) updatePayload.grid_row_span = body.gridRowSpan;
+
+    // Try UUID match first, then fallback to legacy_id
+    let result = await supabase.from('projects').update(updatePayload).eq('id', id);
+
+    if (result.error || result.count === 0) {
+      result = await supabase.from('projects').update(updatePayload).eq('legacy_id', id);
+    }
+
+    if (result.error) throw result.error;
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("Patch Error:", error);
+    return NextResponse.json({ error: error.message || "Failed to patch project" }, { status: 500 });
+  }
+}
+
 // 🟢 DELETE: Remove Project
 export async function DELETE(
   req: Request,

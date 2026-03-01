@@ -30,13 +30,13 @@ const defaultEmptyValues = {
 // --- CUSTOM INPUT COMPONENT ---
 const ArchitecturalInput = ({ label, register, name, required, placeholder, ...props }: any) => (
   <div className="space-y-2 group">
-    <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-black transition-colors">
+    <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-[#1c1c1c] transition-colors">
       {label}
     </label>
     <input
       {...register(name, { required })}
       placeholder={placeholder}
-      className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#bfff00] transition-colors outline-none text-sm font-medium placeholder:text-gray-300 font-mono"
+      className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium placeholder:text-gray-300 font-mono"
       {...props}
     />
   </div>
@@ -88,8 +88,8 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             className={cn(
               "text-xs uppercase tracking-[0.2em] text-left transition-all py-2 px-2 border-l-2",
               activeTab === tab
-                ? "border-[#bfff00] text-black font-bold pl-4 bg-gray-50"
-                : "border-transparent text-gray-400 hover:text-black hover:pl-4"
+                ? "border-[#8a9a5b] text-[#1c1c1c] font-bold pl-4 bg-gray-50"
+                : "border-transparent text-gray-400 hover:text-[#1c1c1c] hover:pl-4"
             )}
           >
             {tab}
@@ -127,13 +127,13 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
 
             {/* 🟢 NEW GRID SIZE SELECTOR */}
             <div className="space-y-2 group">
-              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-black transition-colors">
+              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-[#1c1c1c] transition-colors">
                 Homepage Grid Size
               </label>
               <div className="relative">
                 <select
                   {...register("gridSize")}
-                  className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#bfff00] transition-colors outline-none text-sm font-medium cursor-pointer uppercase appearance-none"
+                  className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium cursor-pointer uppercase appearance-none"
                 >
                   <option value="normal">Standard (1x1)</option>
                   <option value="wide">Wide (2x1)</option>
@@ -145,11 +145,11 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             </div>
 
             <div className="md:col-span-2 space-y-2 mt-4 group">
-              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-black">Description</label>
+              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 group-focus-within:text-[#1c1c1c]">Description</label>
               <textarea
                 {...register("description")}
                 rows={5}
-                className="w-full p-4 bg-gray-50/50 border border-gray-100 focus:border-[#bfff00] transition-colors outline-none text-sm font-mono resize-none"
+                className="w-full p-4 bg-gray-50/50 border border-gray-100 focus:border-[#8a9a5b] transition-colors outline-none text-sm font-mono resize-none"
                 placeholder="Project details..."
               />
             </div>
@@ -163,7 +163,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             <button
               type="button"
               onClick={() => appendSection({ title: "New Section", images: [] })}
-              className="flex items-center gap-2 text-[10px] bg-black text-white hover:bg-[#bfff00] hover:text-black px-4 py-3 uppercase tracking-widest transition-colors"
+              className="flex items-center gap-2 text-[10px] bg-[#1c1c1c] text-white hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
               <Plus size={14} /> Add Section
             </button>
@@ -210,7 +210,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             <button
               type="button"
               onClick={() => appendSpace({ name: "New Space", mainImage: "", slider2d: "", slider3d: "" })}
-              className="flex items-center gap-2 text-[10px] bg-black text-white hover:bg-[#bfff00] hover:text-black px-4 py-3 uppercase tracking-widest transition-colors"
+              className="flex items-center gap-2 text-[10px] bg-[#1c1c1c] text-white hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
               <Plus size={14} /> Add Space
             </button>
@@ -249,7 +249,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             <button
               type="button"
               onClick={() => appendGallery({ id: "", size: "normal" })}
-              className="flex items-center gap-2 text-[10px] bg-black text-white hover:bg-[#bfff00] hover:text-black px-4 py-3 uppercase tracking-widest transition-colors"
+              className="flex items-center gap-2 text-[10px] bg-[#1c1c1c] text-white hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
               <Plus size={14} /> Add Image
             </button>
@@ -273,7 +273,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                     <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400">Grid Size</label>
                     <select
                       {...register(`gallery.${index}.size` as const)}
-                      className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#bfff00] outline-none text-xs uppercase cursor-pointer"
+                      className="w-full pb-2 bg-transparent border-b border-gray-200 focus:border-[#8a9a5b] outline-none text-xs uppercase cursor-pointer"
                     >
                       <option value="normal">Normal</option>
                       <option value="wide">Wide</option>
@@ -297,7 +297,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-black text-white hover:bg-[#bfff00] hover:text-black transition-all px-10 py-4 uppercase tracking-[0.2em] text-xs font-bold disabled:opacity-50"
+            className="bg-[#1c1c1c] text-white hover:bg-[#8a9a5b] hover:text-[#1c1c1c] transition-all px-10 py-4 uppercase tracking-[0.2em] text-xs font-bold disabled:opacity-50"
           >
             {isLoading ? "Saving..." : "Save Project Changes"}
           </button>

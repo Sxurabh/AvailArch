@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ProcessPage() {
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-[#bfff00] selection:text-black">
+        <div className="min-h-screen selection:bg-[#8a9a5b]" style={{ background: 'rgb(var(--bg-surface))', color: 'rgb(var(--fg))' }}>
             <ProcessContent />
         </div>
     );

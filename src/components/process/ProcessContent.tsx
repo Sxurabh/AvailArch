@@ -54,11 +54,11 @@ export default function ProcessContent() {
     });
 
     return (
-        <div ref={containerRef} className="relative w-full overflow-hidden bg-black text-white pb-32 pt-[100px]">
+        <div ref={containerRef} className="relative w-full overflow-hidden pb-32 pt-[100px]" style={{ background: 'rgb(var(--bg-surface))', color: 'rgb(var(--fg))' }}>
 
             {/* Dynamic Progress Bar */}
             <motion.div
-                className="fixed top-0 left-0 h-1 bg-[#bfff00] z-50 transform origin-left"
+                className="fixed top-0 left-0 h-1 bg-[#8a9a5b] z-50 transform origin-left"
                 style={{ scaleX: scrollYProgress }}
             />
 
@@ -70,8 +70,8 @@ export default function ProcessContent() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <p className="text-[#bfff00] text-xs uppercase tracking-[0.3em] mb-6 flex items-center gap-4">
-                            <span className="w-8 h-[1px] bg-[#bfff00]"></span>
+                        <p className="text-[#8a9a5b] text-xs uppercase tracking-[0.3em] mb-6 flex items-center gap-4">
+                            <span className="w-8 h-[1px] bg-[#8a9a5b]"></span>
                             Methodology
                         </p>
                         <h1 className="text-5xl md:text-8xl lg:text-[10rem] font-bold uppercase tracking-tighter leading-[0.8] mix-blend-difference mb-8">
@@ -113,7 +113,7 @@ export default function ProcessContent() {
             </div>
 
             {/* --- CTA --- */}
-            <section className="py-40 px-6 md:px-12 bg-[#bfff00] text-black">
+            <section className="py-40 px-6 md:px-12 bg-[#8a9a5b] text-[#1c1c1c]">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
                     <div>
                         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none mb-4">
@@ -126,7 +126,7 @@ export default function ProcessContent() {
 
                     <Link
                         href="/track-request"
-                        className="group relative inline-flex items-center gap-4 px-10 py-6 bg-black text-white hover:bg-white hover:text-black transition-colors duration-300"
+                        className="group relative inline-flex items-center gap-4 px-10 py-6 bg-[#1c1c1c] text-white hover:bg-white hover:text-[#1c1c1c] transition-colors duration-300"
                     >
                         <span className="text-xs font-bold uppercase tracking-[0.2em] relative z-10">
                             Start a Project
@@ -171,7 +171,7 @@ function PhaseSection({ phase, index }: { phase: any, index: number }) {
                     style={{ y: textY }}
                     className={cn("flex flex-col gap-6", index % 2 !== 0 && "lg:col-start-2 lg:pl-12")}
                 >
-                    <div className="flex items-center gap-4 text-[#bfff00]">
+                    <div className="flex items-center gap-4 text-[#8a9a5b]">
                         <phase.icon className="w-8 h-8 stroke-[1.5]" />
                         <span className="text-sm font-mono font-bold">PHASE {phase.id}</span>
                     </div>
@@ -186,7 +186,7 @@ function PhaseSection({ phase, index }: { phase: any, index: number }) {
                     </p>
 
                     <div className="mt-8 pt-8 border-t border-white/10">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-[#bfff00] mb-6 font-bold">Key Deliverables</p>
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-[#8a9a5b] mb-6 font-bold">Key Deliverables</p>
                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                             {phase.deliverables.map((item: string, i: number) => (
                                 <li key={i} className="flex items-start gap-3 text-sm text-white/70">

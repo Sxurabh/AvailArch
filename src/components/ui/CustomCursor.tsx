@@ -52,7 +52,7 @@ export default function CustomCursor() {
     >
       {/* Optional: Add text inside cursor on hover */}
       {isHovered && (
-        <span className="flex items-center justify-center w-full h-full text-[4px] font-bold text-black uppercase tracking-widest">
+        <span className="flex items-center justify-center w-full h-full text-[4px] font-bold text-[#1c1c1c] uppercase tracking-widest">
           
         </span>
       )}

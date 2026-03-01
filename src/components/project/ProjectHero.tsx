@@ -132,14 +132,14 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
                         className="group/card relative flex items-center gap-4 bg-white/5 hover:bg-white backdrop-blur-md border border-white/10 hover:border-white px-5 py-4 transition-all duration-300 min-w-[180px] text-left"
                       >
                         <div className="flex flex-col">
-                          <span className="text-[9px] text-white/50 group-hover/card:text-black/50 uppercase tracking-widest mb-1">
+                          <span className="text-[9px] text-white/50 group-hover/card:text-[#1c1c1c]/50 uppercase tracking-widest mb-1">
                             Explore
                           </span>
-                          <span className="text-sm text-white group-hover/card:text-black uppercase tracking-widest font-semibold">
+                          <span className="text-sm text-white group-hover/card:text-[#1c1c1c] uppercase tracking-widest font-semibold">
                             {section.title}
                           </span>
                         </div>
-                        <ArrowUpRight className="w-4 h-4 text-white group-hover/card:text-black ml-auto opacity-50 group-hover/card:opacity-100" />
+                        <ArrowUpRight className="w-4 h-4 text-white group-hover/card:text-[#1c1c1c] ml-auto opacity-50 group-hover/card:opacity-100" />
                       </button>
                     );
                   })}
@@ -176,7 +176,7 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
           
           <button 
             onClick={handleClose}
-            className="p-3 border border-white/20 rounded-full hover:bg-white hover:text-black text-white transition-all duration-300"
+            className="p-3 border border-white/20 rounded-full hover:bg-white hover:text-[#1c1c1c] text-white transition-all duration-300"
           >
             <X className="w-6 h-6" />
           </button>
@@ -186,14 +186,14 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
         <div className="absolute inset-0 flex items-center justify-between px-4 md:px-12 pointer-events-none">
           <button 
             onClick={prevImage}
-            className="pointer-events-auto p-4 text-white/50 hover:text-white hover:bg-black/30 rounded-full backdrop-blur-sm transition-all"
+            className="pointer-events-auto p-4 text-white/50 hover:text-white hover:bg-[#1c1c1c]/30 rounded-full backdrop-blur-sm transition-all"
           >
             <ChevronLeft className="w-12 h-12 font-thin" strokeWidth={0.5} />
           </button>
 
           <button 
             onClick={nextImage}
-            className="pointer-events-auto p-4 text-white/50 hover:text-white hover:bg-black/30 rounded-full backdrop-blur-sm transition-all"
+            className="pointer-events-auto p-4 text-white/50 hover:text-white hover:bg-[#1c1c1c]/30 rounded-full backdrop-blur-sm transition-all"
           >
             <ChevronRight className="w-12 h-12 font-thin" strokeWidth={0.5} />
           </button>
@@ -201,7 +201,7 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
 
         {/* Bottom Counter */}
         <div className="w-full p-8 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
-           <div className="bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
+           <div className="bg-[#1c1c1c]/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
             <span className="text-xs text-white uppercase tracking-widest font-mono">
               Image {currentImageIndex + 1} of {currentSection?.images.length}
             </span>

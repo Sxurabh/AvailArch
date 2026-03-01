@@ -84,7 +84,7 @@ export default function ImageHub({ spaces, finalGallery }: ImageHubProps) {
                       </div>
                     )}
                     <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-black">Concept View</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#1c1c1c]">Concept View</span>
                     </div>
                   </div>
 
@@ -127,7 +127,7 @@ export default function ImageHub({ spaces, finalGallery }: ImageHubProps) {
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+                    <div className="absolute inset-0 bg-[#1c1c1c]/0 group-hover:bg-[#1c1c1c]/10 transition-colors duration-500" />
                   </div>
                 );
               })}

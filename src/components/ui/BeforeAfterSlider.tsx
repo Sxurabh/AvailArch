@@ -60,14 +60,14 @@ export default function BeforeAfterSlider({
     >
       {/* RIGHT Image (Background - Usually 3D/After) */}
       <Image src={afterImage} alt={rightLabel} fill className="object-cover" />
-      <div className="absolute top-4 right-4 bg-black/60 text-white text-[10px] uppercase tracking-widest px-3 py-1 backdrop-blur-md z-10 font-medium rounded-sm">
+      <div className="absolute top-4 right-4 bg-[#1c1c1c]/60 text-white text-[10px] uppercase tracking-widest px-3 py-1 backdrop-blur-md z-10 font-medium rounded-sm">
         {rightLabel}
       </div>
 
       {/* LEFT Image (Clipped - Usually 2D/Before) */}
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPosition}%` }}>
         <Image src={beforeImage} alt={leftLabel} fill className="object-cover" />
-        <div className="absolute top-4 left-4 bg-black/60 text-white text-[10px] uppercase tracking-widest px-3 py-1 backdrop-blur-md z-10 font-medium rounded-sm">
+        <div className="absolute top-4 left-4 bg-[#1c1c1c]/60 text-white text-[10px] uppercase tracking-widest px-3 py-1 backdrop-blur-md z-10 font-medium rounded-sm">
            {leftLabel}
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function BeforeAfterSlider({
         style={{ left: `${sliderPosition}%` }}
       >
         <div className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center border border-gray-200 transform hover:scale-110 transition-transform">
-            <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-[#1c1c1c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
             </svg>
         </div>

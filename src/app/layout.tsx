@@ -7,7 +7,8 @@ import Footer from "./components/Footer";
 import Providers from "./components/Providers";
 import SmoothScroll from "../components/ui/SmoothScroll";
 import CustomCursor from "../components/ui/CustomCursor";
-import FloatingInquiry from "../components/ui/FloatingInquiry"; // 🆕
+import FloatingInquiry from "../components/ui/FloatingInquiry";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -25,19 +26,21 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans min-h-screen flex flex-col`}>
         <Providers>
-          <SmoothScroll>
-            {/* UI Overlays */}
-            <div className="hidden md:block">
-               <CustomCursor />
-            </div>
-            <FloatingInquiry /> {/* 🆕 Added here */}
-            
-            <Header />
-            <main className="flex-grow pt-32 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
-              {children}
-            </main>
-            <Footer />
-          </SmoothScroll>
+          <ThemeProvider>
+            <SmoothScroll>
+              {/* UI Overlays */}
+              <div className="hidden md:block">
+                <CustomCursor />
+              </div>
+              <FloatingInquiry />
+
+              <Header />
+              <main className="flex-grow pt-32 px-6 md:px-12 max-w-[1600px] mx-auto w-full">
+                {children}
+              </main>
+              <Footer />
+            </SmoothScroll>
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

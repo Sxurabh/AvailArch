@@ -54,7 +54,7 @@ export default function TrackRequestPage() {
             onClick={() => setActiveTab(tab)}
             className={cn(
               "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all",
-              activeTab === tab ? "border-b border-black text-black" : "text-gray-400 hover:text-black"
+              activeTab === tab ? "border-b border-black text-[#1c1c1c]" : "text-gray-400 hover:text-[#1c1c1c]"
             )}
           >
             {tab === "new" ? "Start New Project" : "Request History"}
@@ -90,7 +90,7 @@ export default function TrackRequestPage() {
           </div>
           <button
             disabled={isSubmitting}
-            className="bg-black text-white px-8 py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 disabled:opacity-50 transition-colors w-full md:w-auto"
+            className="bg-[#1c1c1c] text-white px-8 py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 disabled:opacity-50 transition-colors w-full md:w-auto"
           >
             {isSubmitting ? "Submitting..." : "Submit Request"}
           </button>

@@ -7,16 +7,18 @@ import { useUser } from "@/hooks/useUser";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Menu, X } from "lucide-react"; // 🆕 Icons
-import { AnimatePresence, motion } from "framer-motion"; // 🆕 Animations
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, session } = useUser();
+  const { theme, toggleTheme } = useTheme();
   const supabase = createClient();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 🆕
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,7 +85,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-sm transition-all duration-500 border-b border-transparent hover:border-gray-100">
+      <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-sm transition-all duration-500 border-b" style={{ background: `rgba(var(--bg), 0.95)`, borderColor: `rgba(var(--border), 0.5)` }}>
         <div className="flex justify-between items-center px-6 py-6 md:px-12 max-w-[1600px] mx-auto">
           <Link href="/" className="text-sm font-bold tracking-[0.25em] uppercase hover:opacity-50 transition-opacity z-50 relative">
             Avail Arch
@@ -102,14 +104,24 @@ export default function Header() {
                     rel={isExternal ? "noopener noreferrer" : undefined}
                     className={cn(
                       "text-[10px] font-semibold tracking-[0.2em] transition-colors duration-300 uppercase",
-                      pathname === item.path ? "text-black" : "text-gray-400 hover:text-black"
+                      pathname === item.path ? "" : "opacity-40 hover:opacity-100"
                     )}
+                    style={{ color: 'rgb(var(--fg))' }}
                   >
                     {item.name}
                   </Link>
                 );
               })}
             </nav>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="hidden md:flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300 hover:bg-[rgba(var(--fg),0.1)]"
+              title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+            >
+              {theme === "light" ? <Moon size={16} style={{ color: 'rgb(var(--fg))' }} /> : <Sun size={16} style={{ color: 'rgb(var(--fg))' }} />}
+            </button>
 
             {/* Auth Button / User Dropdown */}
             {user ? (
@@ -126,7 +138,7 @@ export default function Header() {
                   <div className="absolute right-0 mt-4 w-56 bg-white border border-gray-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.1)] py-2 animate-fade-in-up z-50">
                     <div className="px-4 py-3 border-b border-gray-50 mb-2">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Signed in as</p>
-                      <p className="text-xs font-medium truncate text-black">{user.email}</p>
+                      <p className="text-xs font-medium truncate text-[#1c1c1c]">{user.email}</p>
                     </div>
 
                     {!isAdmin && (
@@ -146,7 +158,7 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <button onClick={handleSignIn} className="hidden md:block text-[10px] font-semibold tracking-[0.2em] uppercase bg-black text-white px-5 py-2 hover:bg-gray-800 transition-colors">
+              <button onClick={handleSignIn} className="hidden md:block text-[10px] font-semibold tracking-[0.2em] uppercase px-5 py-2 transition-colors" style={{ background: 'rgb(var(--fg))', color: 'rgb(var(--bg))' }}>
                 Sign In
               </button>
             )}
@@ -154,7 +166,7 @@ export default function Header() {
             {/* 🆕 Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 -mr-2 text-black z-50 relative"
+              className="md:hidden p-2 -mr-2 text-[#1c1c1c] z-50 relative"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -170,7 +182,8 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center gap-8 md:hidden"
+            className="fixed inset-0 z-40 flex flex-col justify-center items-center gap-8 md:hidden"
+            style={{ background: 'rgb(var(--bg))' }}
           >
             {navItems.map((item, index) => (
               <motion.div
@@ -181,7 +194,8 @@ export default function Header() {
               >
                 <Link
                   href={item.path}
-                  className="text-2xl font-light uppercase tracking-widest text-black hover:text-gray-500 transition-colors"
+                  className="text-2xl font-light uppercase tracking-widest transition-colors hover:opacity-50"
+                  style={{ color: 'rgb(var(--fg))' }}
                 >
                   {item.name}
                 </Link>
@@ -198,7 +212,7 @@ export default function Header() {
                   setIsMobileMenuOpen(false);
                   handleSignIn();
                 }}
-                className="mt-8 text-xs font-bold uppercase tracking-[0.2em] border border-black px-8 py-3 hover:bg-black hover:text-white transition-all"
+                className="mt-8 text-xs font-bold uppercase tracking-[0.2em] border border-black px-8 py-3 hover:bg-[#1c1c1c] hover:text-white transition-all"
               >
                 Sign In
               </motion.button>

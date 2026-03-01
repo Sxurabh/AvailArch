@@ -146,7 +146,7 @@ export default function ImageUploader({
                         <Upload className="w-8 h-8 text-gray-300" />
                         <p className="text-sm text-gray-500">
                             Drag & drop images here, or{" "}
-                            <span className="text-black font-medium underline">browse</span>
+                            <span className="text-[#1c1c1c] font-medium underline">browse</span>
                         </p>
                         <p className="text-[10px] text-gray-400 uppercase tracking-widest">
                             JPEG, PNG, WebP — Max {maxFiles} files, 15MB each
@@ -156,7 +156,7 @@ export default function ImageUploader({
 
                 {status === "uploading" && (
                     <div className="flex flex-col items-center gap-3">
-                        <Loader2 className="w-8 h-8 text-black animate-spin" />
+                        <Loader2 className="w-8 h-8 text-[#1c1c1c] animate-spin" />
                         <p className="text-sm text-gray-600 font-medium">{progress}</p>
                     </div>
                 )}
@@ -205,11 +205,11 @@ export default function ImageUploader({
                                     e.stopPropagation();
                                     removeUrl(i);
                                 }}
-                                className="absolute top-1 right-1 bg-black/70 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute top-1 right-1 bg-[#1c1c1c]/70 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                                 <X className="w-3 h-3" />
                             </button>
-                            <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-white text-center py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1c]/60 text-[8px] text-white text-center py-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {i + 1} / {existingUrls.length}
                             </div>
                         </div>
