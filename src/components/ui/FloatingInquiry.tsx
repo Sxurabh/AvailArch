@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { useSession } from "next-auth/react"; // 1. Import useSession
-import MagneticButton from "./MagneticButton"; 
+import { useUser } from "@/hooks/useUser";
+import MagneticButton from "./MagneticButton";
 
 export default function FloatingInquiry() {
-  const { data: session } = useSession(); // 2. Get Session Data
+  const { user } = useUser();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -24,9 +24,10 @@ export default function FloatingInquiry() {
   }, []);
 
   // 3. Early return if user is admin
-  if (session?.user && (session.user as any).role === "admin") {
+  if (user && user.role === "admin") {
     return null;
   }
+
 
   return (
     <AnimatePresence>

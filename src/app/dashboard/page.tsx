@@ -1,6 +1,6 @@
 // src/app/dashboard/page.tsx
 "use client";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -19,16 +19,19 @@ const Icons = {
 };
 
 export default function AdminDashboard() {
-  const { data: session } = useSession({
-    required: true,
-    onUnauthenticated() { redirect("/"); },
-  });
+  const { user, loading: userLoading } = useUser();
+
+  useEffect(() => {
+    if (!userLoading && !user) {
+      redirect("/");
+    }
+  }, [user, userLoading]);
 
   // --- Request Management State ---
   const [requests, setRequests] = useState<any[]>([]);
-  const [activeView, setActiveView] = useState<"requests" | "projects" | "responses">("requests"); 
+  const [activeView, setActiveView] = useState<"requests" | "projects" | "responses">("requests");
   const [loading, setLoading] = useState(true);
-  
+
   // --- Modal State ---
   const [selectedRequest, setSelectedRequest] = useState<any>(null);
 
@@ -62,7 +65,8 @@ export default function AdminDashboard() {
     });
   };
 
-  if (session?.user && (session.user as any).role !== "admin") return null;
+  if (userLoading) return <div className="p-12 text-center text-gray-500 uppercase text-xs tracking-widest">Loading Dashboard...</div>;
+  if (user && user.role !== "admin") return <div className="p-12 text-center text-red-500 uppercase text-xs tracking-widest">Access Denied</div>;
 
   // Pagination Logic
   const totalPages = Math.ceil(requests.length / itemsPerPage);
@@ -80,21 +84,21 @@ export default function AdminDashboard() {
 
   return (
     <div className="max-w-[1600px] mx-auto pt-12 pb-24 animate-fade-in-up px-6 md:px-0 relative">
-      
+
       {/* --- Request Detail Modal --- */}
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedRequest(null)}>
-          <div 
-            className="bg-white w-full max-w-2xl p-8 shadow-2xl border border-gray-100 relative animate-in fade-in zoom-in-95 duration-200" 
+          <div
+            className="bg-white w-full max-w-2xl p-8 shadow-2xl border border-gray-100 relative animate-in fade-in zoom-in-95 duration-200"
             onClick={e => e.stopPropagation()}
           >
-            <button 
-              onClick={() => setSelectedRequest(null)} 
+            <button
+              onClick={() => setSelectedRequest(null)}
               className="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors"
             >
               <Icons.Close />
             </button>
-            
+
             <div className="mb-6 border-b border-gray-100 pb-4">
               <h3 className="text-xl uppercase tracking-[0.15em] font-light text-black mb-1">Request Details</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-widest">
@@ -124,33 +128,33 @@ export default function AdminDashboard() {
               <div>
                 <span className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2 font-semibold">Current Status</span>
                 <div className="flex justify-between items-center">
-                   <span className={cn(
-                      "text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 rounded-sm border inline-block",
-                      selectedRequest.status === "Pending" ? "border-yellow-200 text-yellow-700 bg-yellow-50" :
+                  <span className={cn(
+                    "text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 rounded-sm border inline-block",
+                    selectedRequest.status === "Pending" ? "border-yellow-200 text-yellow-700 bg-yellow-50" :
                       selectedRequest.status === "Approved" ? "border-purple-200 text-purple-700 bg-purple-50" :
-                      selectedRequest.status === "Completed" ? "border-green-200 text-green-700 bg-green-50" : 
-                      selectedRequest.status === "In Progress" ? "border-blue-200 text-blue-700 bg-blue-50" : "border-red-200 text-red-700 bg-red-50"
-                    )}>
-                      {selectedRequest.status}
-                    </span>
-                    
-                    <select 
-                      value={selectedRequest.status}
-                      onChange={(e) => updateStatus(selectedRequest.id, e.target.value)}
-                      className="bg-white border-b border-gray-300 text-[10px] py-1 px-4 focus:outline-none focus:border-black cursor-pointer uppercase tracking-wider"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Approved">Approve</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Completed">Complete</option>
-                      <option value="Rejected">Reject</option>
-                    </select>
+                        selectedRequest.status === "Completed" ? "border-green-200 text-green-700 bg-green-50" :
+                          selectedRequest.status === "In Progress" ? "border-blue-200 text-blue-700 bg-blue-50" : "border-red-200 text-red-700 bg-red-50"
+                  )}>
+                    {selectedRequest.status}
+                  </span>
+
+                  <select
+                    value={selectedRequest.status}
+                    onChange={(e) => updateStatus(selectedRequest.id, e.target.value)}
+                    className="bg-white border-b border-gray-300 text-[10px] py-1 px-4 focus:outline-none focus:border-black cursor-pointer uppercase tracking-wider"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approve</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Complete</option>
+                    <option value="Rejected">Reject</option>
+                  </select>
                 </div>
               </div>
             </div>
 
             <div className="mt-8 pt-4 border-t border-gray-100 flex justify-end">
-              <button 
+              <button
                 onClick={() => setSelectedRequest(null)}
                 className="px-6 py-2 bg-black text-white text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 transition-colors"
               >
@@ -184,39 +188,39 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        
+
         {/* Sidebar */}
         <div className="lg:col-span-3 flex flex-col gap-2">
-          <button 
+          <button
             onClick={() => setActiveView("requests")}
             className={cn(
               "flex items-center gap-3 px-4 py-3 text-[11px] uppercase tracking-[0.15em] transition-all border-l-2",
-              activeView === "requests" 
-                ? "border-black text-black bg-gray-50 font-semibold" 
+              activeView === "requests"
+                ? "border-black text-black bg-gray-50 font-semibold"
                 : "border-transparent text-gray-400 hover:text-black hover:bg-gray-50/50"
             )}
           >
             <Icons.List /> Manage Requests
           </button>
-          
-          <button 
+
+          <button
             onClick={() => setActiveView("projects")}
             className={cn(
               "flex items-center gap-3 px-4 py-3 text-[11px] uppercase tracking-[0.15em] transition-all border-l-2",
-              activeView === "projects" 
-                ? "border-black text-black bg-gray-50 font-semibold" 
+              activeView === "projects"
+                ? "border-black text-black bg-gray-50 font-semibold"
                 : "border-transparent text-gray-400 hover:text-black hover:bg-gray-50/50"
             )}
           >
             <Icons.Grid /> Manage Projects
           </button>
 
-          <button 
+          <button
             onClick={() => setActiveView("responses")}
             className={cn(
               "flex items-center gap-3 px-4 py-3 text-[11px] uppercase tracking-[0.15em] transition-all border-l-2",
-              activeView === "responses" 
-                ? "border-black text-black bg-gray-50 font-semibold" 
+              activeView === "responses"
+                ? "border-black text-black bg-gray-50 font-semibold"
                 : "border-transparent text-gray-400 hover:text-black hover:bg-gray-50/50"
             )}
           >
@@ -226,7 +230,7 @@ export default function AdminDashboard() {
 
         {/* Content Panel */}
         <div className="lg:col-span-9">
-          
+
           {/* VIEW: MANAGE REQUESTS */}
           {activeView === "requests" && (
             <div className="bg-white border border-gray-200">
@@ -266,7 +270,7 @@ export default function AdminDashboard() {
                             <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2 mb-2">
                               {req.description}
                             </p>
-                            <button 
+                            <button
                               onClick={() => setSelectedRequest(req)}
                               className="text-[9px] uppercase font-bold tracking-widest border-b border-black pb-0.5 hover:text-gray-600 transition-colors"
                             >
@@ -277,15 +281,15 @@ export default function AdminDashboard() {
                             <span className={cn(
                               "text-[9px] uppercase font-bold tracking-widest px-2 py-1 rounded-sm border inline-block min-w-[80px] text-center",
                               req.status === "Pending" ? "border-yellow-200 text-yellow-700 bg-yellow-50" :
-                              req.status === "Approved" ? "border-purple-200 text-purple-700 bg-purple-50" :
-                              req.status === "Completed" ? "border-green-200 text-green-700 bg-green-50" : 
-                              req.status === "In Progress" ? "border-blue-200 text-blue-700 bg-blue-50" : "border-red-200 text-red-700 bg-red-50"
+                                req.status === "Approved" ? "border-purple-200 text-purple-700 bg-purple-50" :
+                                  req.status === "Completed" ? "border-green-200 text-green-700 bg-green-50" :
+                                    req.status === "In Progress" ? "border-blue-200 text-blue-700 bg-blue-50" : "border-red-200 text-red-700 bg-red-50"
                             )}>
                               {req.status}
                             </span>
                           </td>
                           <td className="py-4 px-6 align-top text-right">
-                            <select 
+                            <select
                               value={req.status}
                               onChange={(e) => updateStatus(req.id, e.target.value)}
                               className="bg-transparent border-b border-gray-300 text-[10px] py-1 px-2 focus:outline-none focus:border-black cursor-pointer uppercase tracking-wider text-right w-full"
@@ -307,7 +311,7 @@ export default function AdminDashboard() {
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50/30">
-                  <button 
+                  <button
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                     className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-500 hover:text-black disabled:opacity-30 disabled:hover:text-gray-500 transition-colors"
@@ -321,8 +325,8 @@ export default function AdminDashboard() {
                         onClick={() => setCurrentPage(i + 1)}
                         className={cn(
                           "w-6 h-6 flex items-center justify-center text-[10px] rounded-full transition-all",
-                          currentPage === i + 1 
-                            ? "bg-black text-white font-bold" 
+                          currentPage === i + 1
+                            ? "bg-black text-white font-bold"
                             : "text-gray-400 hover:bg-gray-100"
                         )}
                       >
@@ -330,7 +334,7 @@ export default function AdminDashboard() {
                       </button>
                     ))}
                   </div>
-                  <button 
+                  <button
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
                     className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-500 hover:text-black disabled:opacity-30 disabled:hover:text-gray-500 transition-colors"
@@ -345,15 +349,15 @@ export default function AdminDashboard() {
           {/* VIEW: PROJECT MANAGER */}
           {activeView === "projects" && (
             <div className="bg-white border border-gray-200">
-                <ProjectManager />
+              <ProjectManager />
             </div>
           )}
 
           {/* VIEW: RESPONSE MANAGER */}
           {activeView === "responses" && (
-             <div className="bg-white p-6 border border-gray-200">
-               <ResponseManager />
-             </div>
+            <div className="bg-white p-6 border border-gray-200">
+              <ResponseManager />
+            </div>
           )}
 
         </div>

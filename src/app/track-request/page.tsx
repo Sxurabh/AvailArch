@@ -1,10 +1,11 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export default function TrackRequestPage() {
-  const { data: session } = useSession();
+  const { user, loading: userLoading } = useUser();
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("new"); // 'new' | 'history'
@@ -14,8 +15,14 @@ export default function TrackRequestPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!userLoading && !user) {
+      redirect("/");
+    }
+  }, [user, userLoading]);
+
+  useEffect(() => {
     fetch("/api/requests").then(res => res.json()).then(data => {
-      setRequests(data);
+      if (Array.isArray(data)) setRequests(data);
       setLoading(false);
     });
   }, [activeTab]); // Refresh when switching tabs
@@ -32,10 +39,12 @@ export default function TrackRequestPage() {
     setActiveTab("history");
   };
 
+  if (userLoading) return <div className="p-12 text-center text-gray-500 uppercase text-xs tracking-widest">Loading...</div>;
+
   return (
     <div className="max-w-4xl mx-auto pt-12 animate-fade-in-up min-h-[60vh]">
       <h1 className="text-2xl font-light uppercase tracking-widest mb-2">Client Portal</h1>
-      <p className="text-xs text-gray-400 mb-12">Welcome, {session?.user?.name}</p>
+      <p className="text-xs text-gray-400 mb-12">Welcome, {user?.user_metadata?.name || user?.email}</p>
 
       {/* Tabs */}
       <div className="flex gap-8 border-b border-gray-100 mb-8">
@@ -57,9 +66,9 @@ export default function TrackRequestPage() {
         <form onSubmit={handleSubmit} className="max-w-lg space-y-6">
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Project Type</label>
-            <select 
+            <select
               value={formData.type}
-              onChange={(e) => setFormData({...formData, type: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
               className="w-full border-b border-gray-200 py-2 text-sm bg-transparent focus:outline-none focus:border-black rounded-none"
             >
               <option>Interior Design</option>
@@ -70,16 +79,16 @@ export default function TrackRequestPage() {
           </div>
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Brief Description</label>
-            <textarea 
+            <textarea
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               required
               rows={4}
               className="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-black transition-colors resize-none"
               placeholder="Tell us about your space, requirements, and vision..."
             />
           </div>
-          <button 
+          <button
             disabled={isSubmitting}
             className="bg-black text-white px-8 py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 disabled:opacity-50 transition-colors w-full md:w-auto"
           >
@@ -98,7 +107,7 @@ export default function TrackRequestPage() {
                     <span className={cn(
                       "w-2 h-2 rounded-full",
                       req.status === "Completed" ? "bg-green-500" :
-                      req.status === "In Progress" ? "bg-blue-500" : "bg-yellow-500"
+                        req.status === "In Progress" ? "bg-blue-500" : "bg-yellow-500"
                     )} />
                     <h3 className="text-xs font-bold uppercase tracking-widest">{req.type}</h3>
                   </div>

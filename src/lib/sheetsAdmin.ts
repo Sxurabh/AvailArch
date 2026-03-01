@@ -24,12 +24,12 @@ export async function getFormResponses() {
 
     // 2. Find the tab named "Form responses" (or "Form Responses 1")
     let targetSheet = sheetsList.find(
-      (s) => s.properties?.title?.trim() === "Form responses"
+      (s: any) => s.properties?.title?.trim() === "Form responses"
     );
-    
+
     if (!targetSheet) {
       targetSheet = sheetsList.find(
-        (s) => s.properties?.title?.trim() === "Form Responses 1"
+        (s: any) => s.properties?.title?.trim() === "Form Responses 1"
       );
     }
 
@@ -54,14 +54,14 @@ export async function getFormResponses() {
     });
 
     const rows = response.data.values;
-    
+
     if (!rows || rows.length === 0) {
       return { headers: [], data: [] };
     }
 
     // Process headers and data
     const headers = rows[0];
-    const data = rows.slice(1).reverse(); 
+    const data = rows.slice(1).reverse();
 
     return { headers, data };
 

@@ -1,7 +1,7 @@
 // src/app/components/ProjectGrid.tsx
 "use client";
 import { useState, useEffect } from "react";
-import { Project } from "@/lib/data"; 
+import { Project } from "@/lib/data";
 import ProjectCard from "./ProjectCard"; // Ensure this path is correct based on your folder structure
 import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ export default function ProjectGrid() {
         const res = await fetch("/api/projects", { cache: "no-store" });
         if (res.ok) {
           const data: Project[] = await res.json();
-          setAllProjects(data.reverse()); 
+          setAllProjects(data.reverse());
         }
       } catch (error) {
         console.error("Failed to load projects", error);
@@ -28,7 +28,7 @@ export default function ProjectGrid() {
 
     fetchProjects();
   }, []);
-  
+
   const years = ["All", ...Array.from(new Set(allProjects.map((p) => p.year))).sort().reverse()];
 
   const filteredProjects =
@@ -42,9 +42,9 @@ export default function ProjectGrid() {
     switch (project.gridSize) {
       case "wide": return "md:col-span-2 md:row-span-1"; // 2 Cols, 1 Row
       case "tall": return "md:col-span-1 md:row-span-2"; // 1 Col, 2 Rows
-      case "big":  return "md:col-span-2 md:row-span-2"; // 2 Cols, 2 Rows
+      case "big": return "md:col-span-2 md:row-span-2"; // 2 Cols, 2 Rows
       case "normal":
-      default:     return "md:col-span-1 md:row-span-1"; // Standard Square
+      default: return "md:col-span-1 md:row-span-1"; // Standard Square
     }
   };
 
@@ -52,13 +52,13 @@ export default function ProjectGrid() {
     <div className="w-full pb-24">
       {/* Loading State */}
       {isLoading && (
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-            <div className="h-[400px] bg-gray-200 md:col-span-2 md:row-span-2"></div>
-            <div className="h-[200px] bg-gray-200"></div>
-            <div className="h-[200px] bg-gray-200"></div>
-            <div className="h-[400px] bg-gray-200 md:row-span-2"></div>
-            <div className="h-[200px] bg-gray-200"></div>
-         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+          <div className="h-[400px] bg-gray-200 md:col-span-2 md:row-span-2"></div>
+          <div className="h-[200px] bg-gray-200"></div>
+          <div className="h-[200px] bg-gray-200"></div>
+          <div className="h-[400px] bg-gray-200 md:row-span-2"></div>
+          <div className="h-[200px] bg-gray-200"></div>
+        </div>
       )}
 
       {/* Content */}
@@ -88,24 +88,24 @@ export default function ProjectGrid() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-dense auto-rows-[minmax(300px,auto)]">
             <AnimatePresence mode="popLayout">
               {filteredProjects.map((project) => (
-                <ProjectCard 
-                  key={project.id} 
-                  project={project} 
+                <ProjectCard
+                  key={project.id}
+                  project={project}
                   // 🟢 Pass the PROJECT, not the index
-                  className={getGridClass(project)} 
+                  className={getGridClass(project)}
                 />
               ))}
             </AnimatePresence>
-            
+
             {filteredProjects.length === 0 && (
-               <div className="col-span-full py-24 text-center">
-                 <p className="text-xs uppercase tracking-widest text-gray-400">No projects found.</p>
-               </div>
+              <div className="col-span-full py-24 text-center">
+                <p className="text-xs uppercase tracking-widest text-gray-400">No projects found.</p>
+              </div>
             )}
           </div>
         </>
       )}
-      
+
       {/* Scrollbar Utility */}
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {

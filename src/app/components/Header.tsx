@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
+import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Menu, X } from "lucide-react"; // 🆕 Icons
@@ -12,7 +13,8 @@ import { AnimatePresence, motion } from "framer-motion"; // 🆕 Animations
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: session, update } = useSession();
+  const { user, session } = useUser();
+  const supabase = createClient();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 🆕
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -42,47 +44,31 @@ export default function Header() {
     return () => { document.body.style.overflow = "unset"; };
   }, [isMobileMenuOpen]);
 
-  useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return;
-      if (event.data === "auth-success") {
-        await update(); 
-        setIsDropdownOpen(false);
-        router.push("/");
-        router.refresh();
-      }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [update, router]);
-
+  // Supabase Google SignIn
   const handleSignIn = async () => {
-    const width = 500;
-    const height = 600;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
-    const popup = window.open("", "google-auth-popup", `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`);
-    
-    if (popup) popup.document.body.innerHTML = "<p>Contacting Google...</p>";
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  };
 
-    try {
-      const res = await signIn("google", { redirect: false, callbackUrl: "/auth-success" });
-      if (popup && res?.url) popup.location.href = res.url;
-      else popup?.close();
-    } catch (error) {
-      popup?.close();
-      console.error("Sign in failed", error);
-    }
+  const handleSignOut = async () => {
+    setIsDropdownOpen(false);
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
   };
 
   // 🟢 Role Logic
-  const userRole = (session?.user as any)?.role;
-  const isAdmin = userRole === "admin";
-  const isClient = session?.user && !isAdmin;
+  const isAdmin = user?.role === "admin";
+  const isClient = user && !isAdmin;
 
   // Base Items
   const navItems = [
     { name: "PROJECTS", path: "/" },
+    { name: "PROCESS", path: "/process" },
     { name: "ABOUT ME", path: "/about" },
   ];
 
@@ -126,13 +112,13 @@ export default function Header() {
             </nav>
 
             {/* Auth Button / User Dropdown */}
-            {session?.user ? (
+            {user ? (
               <div className="relative" ref={dropdownRef}>
-                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:border-black transition-colors">
-                  {session.user.image ? (
-                    <Image src={session.user.image} alt="User" fill className="object-cover" />
+                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:border-black transition-colors bg-gray-100 flex items-center justify-center">
+                  {user.user_metadata?.avatar_url ? (
+                    <Image src={user.user_metadata.avatar_url} alt="User" fill className="object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-[10px]">{session.user.name?.charAt(0)}</div>
+                    <div className="text-[10px] text-gray-600">{user.email?.charAt(0).toUpperCase()}</div>
                   )}
                 </button>
 
@@ -140,20 +126,20 @@ export default function Header() {
                   <div className="absolute right-0 mt-4 w-56 bg-white border border-gray-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.1)] py-2 animate-fade-in-up z-50">
                     <div className="px-4 py-3 border-b border-gray-50 mb-2">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Signed in as</p>
-                      <p className="text-xs font-medium truncate text-black">{session.user.email}</p>
+                      <p className="text-xs font-medium truncate text-black">{user.email}</p>
                     </div>
-                    
+
                     {!isAdmin && (
-                       <Link 
-                         href="/track-request"
-                         onClick={() => setIsDropdownOpen(false)}
-                         className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
-                       >
-                         Track Request
-                       </Link>
+                      <Link
+                        href="/track-request"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
+                      >
+                        Track Request
+                      </Link>
                     )}
-                    
-                    <button onClick={() => { setIsDropdownOpen(false); signOut({ callbackUrl: "/" }); }} className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 hover:bg-gray-50 transition-colors">
+
+                    <button onClick={handleSignOut} className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 hover:bg-gray-50 transition-colors">
                       Sign Out
                     </button>
                   </div>
@@ -166,8 +152,8 @@ export default function Header() {
             )}
 
             {/* 🆕 Mobile Menu Toggle */}
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 -mr-2 text-black z-50 relative"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -204,7 +190,7 @@ export default function Header() {
 
             {/* Mobile Sign In (if not logged in) */}
             {!session?.user && (
-               <motion.button
+              <motion.button
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
@@ -213,9 +199,9 @@ export default function Header() {
                   handleSignIn();
                 }}
                 className="mt-8 text-xs font-bold uppercase tracking-[0.2em] border border-black px-8 py-3 hover:bg-black hover:text-white transition-all"
-               >
-                 Sign In
-               </motion.button>
+              >
+                Sign In
+              </motion.button>
             )}
           </motion.div>
         )}
