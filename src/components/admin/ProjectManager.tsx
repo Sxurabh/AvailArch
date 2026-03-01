@@ -119,9 +119,9 @@ export default function ProjectManager() {
         onClose={() => setToast((prev) => ({ ...prev, visible: false }))}
       />
 
-      <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-6">
+      <div className="flex justify-between items-end mb-12 border-b border-[rgba(var(--fg),0.1)] pb-6">
         <div>
-          <h1 className="text-3xl font-light uppercase tracking-tighter text-white mb-2">
+          <h1 className="text-3xl font-light uppercase tracking-tighter text-[rgba(var(--fg),1)] mb-2">
             Portfolio <span className="font-bold">Manager</span>
           </h1>
           <p className="text-[10px] text-[#8a9a5b] uppercase tracking-[0.2em]">
@@ -131,7 +131,7 @@ export default function ProjectManager() {
       </div>
 
       {/* Modern Tabs */}
-      <div className="flex gap-12 mb-12 border-b border-white/5 pb-0">
+      <div className="flex gap-12 mb-12 border-b border-[rgba(var(--fg),0.05)] pb-0">
         <button
           onClick={() => {
             setActiveTab("index");
@@ -141,7 +141,7 @@ export default function ProjectManager() {
             "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
             activeTab === "index"
               ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
-              : "text-white/40 hover:text-white"
+              : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
           )}
         >
           Index
@@ -152,7 +152,7 @@ export default function ProjectManager() {
             "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
             activeTab === "create"
               ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
-              : "text-white/40 hover:text-white"
+              : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
           )}
         >
           {editingProject ? `Edit: ${editingProject.title}` : "Create Entry"}
@@ -175,13 +175,13 @@ export default function ProjectManager() {
               <span className="animate-pulse">Loading Projects...</span>
             </div>
           ) : projects.length === 0 ? (
-            <div className="h-64 flex items-center justify-center border border-dashed border-white/20 bg-white/5">
-              <p className="text-xs text-white/40 uppercase tracking-widest">No projects found</p>
+            <div className="h-64 flex items-center justify-center border border-dashed border-[rgba(var(--fg),0.2)] bg-[rgba(var(--fg),0.05)]">
+              <p className="text-xs text-[rgba(var(--fg),0.4)] uppercase tracking-widest">No projects found</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               {/* Header - Fixed */}
-              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-4 border-b border-white/10 text-[9px] uppercase tracking-widest text-white/40 font-medium bg-[#222222] z-10 sticky top-0">
+              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-4 border-b border-[rgba(var(--fg),0.1)] text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium bg-[rgba(var(--bg-surface),1)] z-10 sticky top-0">
                 <div className="col-span-1">Preview</div>
                 <div className="col-span-4">Project Info</div>
                 <div className="col-span-4">Meta</div>
@@ -199,10 +199,10 @@ export default function ProjectManager() {
                   return (
                     <div
                       key={project.id || Math.random()}
-                      className="group bg-[#1c1c1c]/40 border border-white/5 hover:border-[#8a9a5b]/50 hover:bg-white/5 transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
+                      className="group bg-[rgba(var(--bg),1)]/40 border border-[rgba(var(--fg),0.05)] hover:border-[#8a9a5b]/50 hover:bg-[rgba(var(--fg),0.05)] transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
                     >
                       {/* Thumb */}
-                      <div className="hidden md:block col-span-1 aspect-square bg-white/5 relative overflow-hidden ring-1 ring-white/10">
+                      <div className="hidden md:block col-span-1 aspect-square bg-[rgba(var(--fg),0.05)] relative overflow-hidden ring-1 ring-[rgba(var(--fg),0.1)]">
                         {thumbUrl ? (
                           <Image
                             src={thumbUrl}
@@ -211,23 +211,23 @@ export default function ProjectManager() {
                             className="object-cover grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100"
                           />
                         ) : (
-                          <div className="w-full h-full bg-white/5" />
+                          <div className="w-full h-full bg-[rgba(var(--fg),0.05)]" />
                         )}
                       </div>
 
                       {/* Details */}
                       <div className="col-span-4">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-white group-hover:text-[#8a9a5b] transition-colors">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-[rgba(var(--fg),1)] group-hover:text-[#8a9a5b] transition-colors">
                           {project.title}
                         </h3>
-                        <p className="text-[10px] text-white/40 mt-1 font-mono truncate">
+                        <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-1 font-mono truncate">
                           ID: {project.id}
                         </p>
                       </div>
 
                       {/* Meta */}
                       <div className="col-span-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase tracking-widest text-white/60">
+                        <span className="text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.6)]">
                           {project.category}
                         </span>
                         <span className="text-[10px] font-mono text-[#8a9a5b]/70">
@@ -239,13 +239,13 @@ export default function ProjectManager() {
                       <div className="col-span-3 flex justify-end gap-6 items-center">
                         <button
                           onClick={() => handleEdit(project)}
-                          className="text-[10px] uppercase tracking-widest font-bold text-white/40 hover:text-[#8a9a5b] transition-colors border-b border-transparent hover:border-[#8a9a5b]"
+                          className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.4)] hover:text-[#8a9a5b] transition-colors border-b border-transparent hover:border-[#8a9a5b]"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(project.id)}
-                          className="text-[10px] uppercase tracking-widest font-bold text-white/30 hover:text-red-500 transition-colors"
+                          className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.3)] hover:text-red-500 transition-colors"
                         >
                           Delete
                         </button>

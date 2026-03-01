@@ -32,7 +32,7 @@ export default function ProjectCard({ project, className, style, isAdmin, onSpan
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         "group relative h-full w-full overflow-hidden box-border",
-        "border border-transparent hover:border-black transition-colors duration-300",
+        "border border-transparent hover:border-[rgb(var(--fg))] transition-colors duration-300",
         className
       )}
       style={style}
@@ -40,7 +40,7 @@ export default function ProjectCard({ project, className, style, isAdmin, onSpan
       <Link href={`/projects/${project.id}`} className="block w-full h-full">
 
         {/* Image Container */}
-        <div className="relative w-full h-full min-h-[250px] bg-gray-100 overflow-hidden">
+        <div className="relative w-full h-full min-h-[250px] overflow-hidden" style={{ background: 'rgb(var(--bg-surface))' }}>
 
           {hasImage ? (
             <Image
@@ -57,8 +57,8 @@ export default function ProjectCard({ project, className, style, isAdmin, onSpan
               }}
             />
           ) : (
-            <div className="absolute inset-0 bg-neutral-200 z-0 flex items-center justify-center">
-              <span className="text-neutral-400 text-[10px] uppercase tracking-widest font-mono">
+            <div className="absolute inset-0 z-0 flex items-center justify-center" style={{ background: 'rgb(var(--bg-surface))' }}>
+              <span className="text-[10px] uppercase tracking-widest font-mono" style={{ color: 'rgb(var(--fg-muted))' }}>
                 No Image
               </span>
             </div>

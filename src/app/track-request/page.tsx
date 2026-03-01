@@ -39,23 +39,29 @@ export default function TrackRequestPage() {
     setActiveTab("history");
   };
 
-  if (userLoading) return <div className="p-12 text-center text-gray-500 uppercase text-xs tracking-widest">Loading...</div>;
+  if (userLoading) return (
+    <div className="p-12 text-center text-xs uppercase tracking-widest" style={{ color: 'rgb(var(--fg-muted))' }}>
+      Loading...
+    </div>
+  );
 
   return (
     <div className="max-w-4xl mx-auto pt-12 animate-fade-in-up min-h-[60vh]">
-      <h1 className="text-2xl font-light uppercase tracking-widest mb-2">Client Portal</h1>
-      <p className="text-xs text-gray-400 mb-12">Welcome, {user?.user_metadata?.name || user?.email}</p>
+      <h1 className="text-2xl font-light uppercase tracking-widest mb-2" style={{ color: 'rgb(var(--fg))' }}>Client Portal</h1>
+      <p className="text-xs mb-12" style={{ color: 'rgb(var(--fg-muted))' }}>Welcome, {user?.user_metadata?.name || user?.email}</p>
 
       {/* Tabs */}
-      <div className="flex gap-8 border-b border-gray-100 mb-8">
+      <div className="flex gap-8 mb-8 border-b" style={{ borderColor: 'rgb(var(--border))' }}>
         {["new", "history"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={cn(
-              "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all",
-              activeTab === tab ? "border-b border-black text-[#1c1c1c]" : "text-gray-400 hover:text-[#1c1c1c]"
-            )}
+            className="pb-3 text-[10px] uppercase tracking-[0.2em] transition-all"
+            style={{
+              color: activeTab === tab ? 'rgb(var(--fg))' : 'rgb(var(--fg-muted))',
+              fontWeight: activeTab === tab ? '700' : '400',
+              borderBottom: activeTab === tab ? '1px solid rgb(var(--fg))' : 'none',
+            }}
           >
             {tab === "new" ? "Start New Project" : "Request History"}
           </button>
@@ -65,43 +71,56 @@ export default function TrackRequestPage() {
       {activeTab === "new" ? (
         <form onSubmit={handleSubmit} className="max-w-lg space-y-6">
           <div>
-            <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Project Type</label>
+            <label className="block text-[10px] uppercase tracking-widest mb-2" style={{ color: 'rgb(var(--fg-muted))' }}>Project Type</label>
             <select
               value={formData.type}
               onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              className="w-full border-b border-gray-200 py-2 text-sm bg-transparent focus:outline-none focus:border-black rounded-none"
+              className="w-full py-2 text-sm bg-transparent focus:outline-none rounded-none border-b"
+              style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--fg))' }}
             >
-              <option>Interior Design</option>
-              <option>Architectural Planning</option>
-              <option>Renovation</option>
-              <option>Consultation</option>
+              <option style={{ background: 'rgb(var(--bg))', color: 'rgb(var(--fg))' }}>Interior Design</option>
+              <option style={{ background: 'rgb(var(--bg))', color: 'rgb(var(--fg))' }}>Architectural Planning</option>
+              <option style={{ background: 'rgb(var(--bg))', color: 'rgb(var(--fg))' }}>Renovation</option>
+              <option style={{ background: 'rgb(var(--bg))', color: 'rgb(var(--fg))' }}>Consultation</option>
             </select>
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">Brief Description</label>
+            <label className="block text-[10px] uppercase tracking-widest mb-2" style={{ color: 'rgb(var(--fg-muted))' }}>Brief Description</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               required
               rows={4}
-              className="w-full border border-gray-200 p-4 text-sm focus:outline-none focus:border-black transition-colors resize-none"
+              className="w-full p-4 text-sm focus:outline-none transition-colors resize-none border"
+              style={{
+                borderColor: 'rgb(var(--border))',
+                color: 'rgb(var(--fg))',
+                background: 'transparent',
+              }}
               placeholder="Tell us about your space, requirements, and vision..."
             />
           </div>
           <button
             disabled={isSubmitting}
-            className="bg-[#1c1c1c] text-white px-8 py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-gray-800 disabled:opacity-50 transition-colors w-full md:w-auto"
+            className="px-8 py-3 text-[10px] uppercase tracking-[0.2em] disabled:opacity-50 transition-colors w-full md:w-auto"
+            style={{ background: 'rgb(var(--fg))', color: 'rgb(var(--bg))' }}
           >
             {isSubmitting ? "Submitting..." : "Submit Request"}
           </button>
         </form>
       ) : (
         <div className="space-y-4">
-          {loading ? <p className="text-xs">Loading records...</p> : requests.length === 0 ? (
-            <p className="text-xs text-gray-400 italic">No past requests found.</p>
+          {loading ? (
+            <p className="text-xs" style={{ color: 'rgb(var(--fg-muted))' }}>Loading records...</p>
+          ) : requests.length === 0 ? (
+            <p className="text-xs italic" style={{ color: 'rgb(var(--fg-muted))' }}>No past requests found.</p>
           ) : (
             requests.map((req) => (
-              <div key={req.id} className="border border-gray-100 p-6 flex justify-between items-start hover:border-gray-200 transition-colors bg-white">
+              <div
+                key={req.id}
+                className="p-6 flex justify-between items-start transition-colors border"
+                style={{ borderColor: 'rgb(var(--border))', background: 'rgb(var(--bg-surface))' }}
+              >
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <span className={cn(
@@ -109,18 +128,18 @@ export default function TrackRequestPage() {
                       req.status === "Completed" ? "bg-green-500" :
                         req.status === "In Progress" ? "bg-blue-500" : "bg-yellow-500"
                     )} />
-                    <h3 className="text-xs font-bold uppercase tracking-widest">{req.type}</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgb(var(--fg))' }}>{req.type}</h3>
                   </div>
-                  <p className="text-sm text-gray-600 mb-3">{req.description}</p>
+                  <p className="text-sm mb-3" style={{ color: 'rgb(var(--fg-muted))' }}>{req.description}</p>
                   {req.adminNotes && (
-                    <div className="text-[10px] bg-gray-50 p-3 text-gray-500 border-l-2 border-gray-200">
+                    <div className="text-[10px] p-3 border-l-2" style={{ background: 'rgba(var(--border), 0.3)', borderColor: 'rgb(var(--border))', color: 'rgb(var(--fg-muted))' }}>
                       <span className="font-bold">ADMIN NOTE:</span> {req.adminNotes}
                     </div>
                   )}
                 </div>
                 <div className="text-right">
-                  <span className="block text-[10px] text-gray-400 mb-1">{req.date}</span>
-                  <span className="text-[10px] uppercase font-bold tracking-widest border border-gray-200 px-2 py-1 rounded">
+                  <span className="block text-[10px] mb-1" style={{ color: 'rgb(var(--fg-muted))' }}>{req.date}</span>
+                  <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded border" style={{ borderColor: 'rgb(var(--border))', color: 'rgb(var(--fg))' }}>
                     {req.status}
                   </span>
                 </div>

@@ -111,11 +111,11 @@ export default function ProjectGrid() {
       {/* Loading State */}
       {isLoading && (
         <div className="grid grid-cols-12 gap-4 animate-pulse">
-          <div className="h-[400px] bg-gray-200 col-span-8 row-span-2"></div>
-          <div className="h-[200px] bg-gray-200 col-span-4"></div>
-          <div className="h-[200px] bg-gray-200 col-span-4"></div>
-          <div className="h-[400px] bg-gray-200 col-span-4 row-span-2"></div>
-          <div className="h-[200px] bg-gray-200 col-span-4"></div>
+          <div className="h-[400px] col-span-8 row-span-2" style={{ background: 'rgb(var(--border))' }}></div>
+          <div className="h-[200px] col-span-4" style={{ background: 'rgb(var(--border))' }}></div>
+          <div className="h-[200px] col-span-4" style={{ background: 'rgb(var(--border))' }}></div>
+          <div className="h-[400px] col-span-4 row-span-2" style={{ background: 'rgb(var(--border))' }}></div>
+          <div className="h-[200px] col-span-4" style={{ background: 'rgb(var(--border))' }}></div>
         </div>
       )}
 
@@ -124,17 +124,20 @@ export default function ProjectGrid() {
         <>
           {/* Floating Filter Menu */}
           <div className="sticky top-24 z-40 mb-12 flex justify-center pointer-events-none">
-            <div className="pointer-events-auto bg-white/80 backdrop-blur-md px-6 py-3 rounded-full border border-gray-100 shadow-sm flex gap-6 overflow-x-auto max-w-[90vw] md:max-w-none no-scrollbar">
+            <div
+              className="pointer-events-auto backdrop-blur-md px-6 py-3 rounded-full shadow-sm flex gap-6 overflow-x-auto max-w-[90vw] md:max-w-none no-scrollbar border"
+              style={{ background: 'rgba(var(--bg), 0.8)', borderColor: 'rgb(var(--border))' }}
+            >
               {years.map((year) => (
                 <button
                   key={year}
                   onClick={() => setFilter(year)}
-                  className={cn(
-                    "text-[10px] uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex-shrink-0",
-                    filter === year
-                      ? "text-[#1c1c1c] font-bold scale-105"
-                      : "text-gray-400 hover:text-[#1c1c1c]"
-                  )}
+                  className="text-[10px] uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                  style={{
+                    color: filter === year ? 'rgb(var(--fg))' : 'rgb(var(--fg-muted))',
+                    fontWeight: filter === year ? '700' : '400',
+                    transform: filter === year ? 'scale(1.05)' : 'scale(1)',
+                  }}
                 >
                   {year}
                 </button>
@@ -165,7 +168,7 @@ export default function ProjectGrid() {
 
             {filteredProjects.length === 0 && (
               <div className="col-span-full py-24 text-center">
-                <p className="text-xs uppercase tracking-widest text-gray-400">No projects found.</p>
+                <p className="text-xs uppercase tracking-widest" style={{ color: 'rgb(var(--fg-muted))' }}>No projects found.</p>
               </div>
             )}
           </div>

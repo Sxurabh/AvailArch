@@ -63,7 +63,7 @@ export default function ProcessContent() {
             />
 
             {/* --- HERO SECTION --- */}
-            <section className="relative h-screen flex flex-col justify-end pb-24 px-6 md:px-12 border-b border-white/10">
+            <section className="relative h-screen flex flex-col justify-end pb-24 px-6 md:px-12 border-b border-[rgba(var(--fg),0.1)]">
                 <div className="max-w-7xl mx-auto w-full flex flex-col items-start z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -86,7 +86,7 @@ export default function ProcessContent() {
                         transition={{ duration: 1, delay: 0.4 }}
                         className="w-full md:w-1/2 ml-auto"
                     >
-                        <p className="text-xl md:text-2xl text-white/70 font-light leading-relaxed">
+                        <p className="text-xl md:text-2xl text-[rgba(var(--fg),0.7)] font-light leading-relaxed">
                             We do not impose a predetermined style. Our design language emerges from a rigorous, 4-phase methodology that transforms complex constraints into curated spaces tailored to how you live.
                         </p>
                     </motion.div>
@@ -126,7 +126,7 @@ export default function ProcessContent() {
 
                     <Link
                         href="/track-request"
-                        className="group relative inline-flex items-center gap-4 px-10 py-6 bg-[#1c1c1c] text-white hover:bg-white hover:text-[#1c1c1c] transition-colors duration-300"
+                        className="group relative inline-flex items-center gap-4 px-10 py-6 bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-white hover:text-[#1c1c1c] transition-colors duration-300"
                     >
                         <span className="text-xs font-bold uppercase tracking-[0.2em] relative z-10">
                             Start a Project
@@ -178,19 +178,19 @@ function PhaseSection({ phase, index }: { phase: any, index: number }) {
 
                     <div>
                         <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter mb-2">{phase.title}</h2>
-                        <h3 className="text-xl md:text-2xl text-white/50 font-light italic">{phase.subtitle}</h3>
+                        <h3 className="text-xl md:text-2xl text-[rgba(var(--fg),0.5)] font-light italic">{phase.subtitle}</h3>
                     </div>
 
-                    <p className="text-lg text-white/80 leading-relaxed font-light mt-4">
+                    <p className="text-lg text-[rgba(var(--fg),0.8)] leading-relaxed font-light mt-4">
                         {phase.description}
                     </p>
 
-                    <div className="mt-8 pt-8 border-t border-white/10">
+                    <div className="mt-8 pt-8 border-t border-[rgba(var(--fg),0.1)]">
                         <p className="text-[10px] uppercase tracking-[0.2em] text-[#8a9a5b] mb-6 font-bold">Key Deliverables</p>
                         <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                             {phase.deliverables.map((item: string, i: number) => (
-                                <li key={i} className="flex items-start gap-3 text-sm text-white/70">
-                                    <span className="w-1.5 h-1.5 bg-white/30 rounded-full mt-1.5 flex-shrink-0" />
+                                <li key={i} className="flex items-start gap-3 text-sm text-[rgba(var(--fg),0.7)]">
+                                    <span className="w-1.5 h-1.5 bg-[rgba(var(--fg),0.3)] rounded-full mt-1.5 flex-shrink-0" />
                                     {item}
                                 </li>
                             ))}
@@ -200,7 +200,7 @@ function PhaseSection({ phase, index }: { phase: any, index: number }) {
 
                 {/* Image Block */}
                 <div className={cn(
-                    "relative h-[60vh] lg:h-[80vh] w-full overflow-hidden bg-white/5",
+                    "relative h-[60vh] lg:h-[80vh] w-full overflow-hidden bg-[rgba(var(--fg),0.05)]",
                     index % 2 !== 0 && "lg:col-start-1"
                 )}>
                     <motion.div
@@ -216,14 +216,14 @@ function PhaseSection({ phase, index }: { phase: any, index: number }) {
                     </motion.div>
 
                     {/* Architectural Overlay Lines */}
-                    <div className="absolute inset-0 border border-white/20 z-10 pointer-events-none" />
-                    <div className="absolute top-1/2 w-full h-[1px] bg-white/10 z-10 pointer-events-none mix-blend-overlay" />
-                    <div className="absolute left-1/2 w-[1px] h-full bg-white/10 z-10 pointer-events-none mix-blend-overlay" />
+                    <div className="absolute inset-0 border border-[rgba(var(--fg),0.2)] z-10 pointer-events-none" />
+                    <div className="absolute top-1/2 w-full h-[1px] bg-[rgba(var(--fg),0.1)] z-10 pointer-events-none mix-blend-overlay" />
+                    <div className="absolute left-1/2 w-[1px] h-full bg-[rgba(var(--fg),0.1)] z-10 pointer-events-none mix-blend-overlay" />
                 </div>
             </div>
 
             {/* Background Phase Number Watermark */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-black text-white/[0.02] pointer-events-none z-0 user-select-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-black text-[rgba(var(--fg),1)]/[0.02] pointer-events-none z-0 user-select-none">
                 {phase.id}
             </div>
         </section>

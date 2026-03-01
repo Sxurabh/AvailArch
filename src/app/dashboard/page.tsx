@@ -73,10 +73,10 @@ export default function AdminDashboard() {
   const currentData = requests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const StatCard = ({ title, value, sub }: { title: string, value: string | number, sub?: string }) => (
-    <div className="bg-white/5 border border-white/10 p-6 flex flex-col justify-between h-32 hover:border-[#8a9a5b]/50 transition-colors duration-300">
-      <h3 className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-semibold">{title}</h3>
+    <div className="bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] p-6 flex flex-col justify-between h-32 hover:border-[#8a9a5b]/50 transition-colors duration-300">
+      <h3 className="text-[10px] uppercase tracking-[0.2em] text-[rgba(var(--fg),0.5)] font-semibold">{title}</h3>
       <div>
-        <p className="text-3xl font-light tracking-tight text-white">{value}</p>
+        <p className="text-3xl font-light tracking-tight text-[rgba(var(--fg),1)]">{value}</p>
         {sub && <p className="text-[10px] text-[#8a9a5b] mt-1 uppercase tracking-wider">{sub}</p>}
       </div>
     </div>
@@ -88,20 +88,20 @@ export default function AdminDashboard() {
 
         {/* --- Request Detail Modal --- */}
         {selectedRequest && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1c1c1c]/80 backdrop-blur-sm" onClick={() => setSelectedRequest(null)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[rgba(var(--bg),1)]/80 backdrop-blur-sm" onClick={() => setSelectedRequest(null)}>
             <div
-              className="bg-[#222222] w-full max-w-2xl p-8 shadow-2xl border border-white/10 relative animate-in fade-in zoom-in-95 duration-200"
+              className="bg-[rgba(var(--bg-surface),1)] w-full max-w-2xl p-8 shadow-2xl border border-[rgba(var(--fg),0.1)] relative animate-in fade-in zoom-in-95 duration-200"
               onClick={e => e.stopPropagation()}
             >
               <button
                 onClick={() => setSelectedRequest(null)}
-                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
+                className="absolute top-6 right-6 text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)] transition-colors"
               >
                 <Icons.Close />
               </button>
 
-              <div className="mb-6 border-b border-white/10 pb-4">
-                <h3 className="text-xl uppercase tracking-[0.15em] font-light text-white mb-1">Request Details</h3>
+              <div className="mb-6 border-b border-[rgba(var(--fg),0.1)] pb-4">
+                <h3 className="text-xl uppercase tracking-[0.15em] font-light text-[rgba(var(--fg),1)] mb-1">Request Details</h3>
                 <p className="text-[10px] text-[#8a9a5b] uppercase tracking-widest">
                   ID: #{selectedRequest.id?.slice(-4)} • {selectedRequest.date}
                 </p>
@@ -110,24 +110,24 @@ export default function AdminDashboard() {
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <span className="text-[9px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Client</span>
-                    <p className="text-sm font-medium text-white break-words">{selectedRequest.userEmail}</p>
+                    <span className="text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] block mb-2 font-semibold">Client</span>
+                    <p className="text-sm font-medium text-[rgba(var(--fg),1)] break-words">{selectedRequest.userEmail}</p>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Project Type</span>
-                    <p className="text-sm font-medium text-white">{selectedRequest.type}</p>
+                    <span className="text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] block mb-2 font-semibold">Project Type</span>
+                    <p className="text-sm font-medium text-[rgba(var(--fg),1)]">{selectedRequest.type}</p>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[9px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Description</span>
-                  <div className="bg-[#1c1c1c]/50 p-4 border border-white/5 text-sm leading-relaxed text-white/70">
+                  <span className="text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] block mb-2 font-semibold">Description</span>
+                  <div className="bg-[rgba(var(--bg),1)]/50 p-4 border border-[rgba(var(--fg),0.05)] text-sm leading-relaxed text-[rgba(var(--fg),0.7)]">
                     {selectedRequest.description}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[9px] uppercase tracking-widest text-white/40 block mb-2 font-semibold">Current Status</span>
+                  <span className="text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] block mb-2 font-semibold">Current Status</span>
                   <div className="flex justify-between items-center">
                     <span className={cn(
                       "text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 border inline-block",
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
                     <select
                       value={selectedRequest.status}
                       onChange={(e) => updateStatus(selectedRequest.id, e.target.value)}
-                      className="bg-[#1c1c1c] border border-white/20 text-white text-[10px] py-2 px-4 focus:outline-none focus:border-[#8a9a5b] cursor-pointer uppercase tracking-wider"
+                      className="bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] text-[10px] py-2 px-4 focus:outline-none focus:border-[#8a9a5b] cursor-pointer uppercase tracking-wider"
                     >
                       <option value="Pending">Pending</option>
                       <option value="Approved">Approve</option>
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-white/10 flex justify-end">
+              <div className="mt-8 pt-4 border-t border-[rgba(var(--fg),0.1)] flex justify-end">
                 <button
                   onClick={() => setSelectedRequest(null)}
                   className="px-6 py-3 bg-[#8a9a5b] text-[#1c1c1c] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-white transition-colors"
@@ -168,13 +168,13 @@ export default function AdminDashboard() {
 
         {/* Header */}
         <div className="mb-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-white/10 pb-6 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-[rgba(var(--fg),0.1)] pb-6 gap-4">
             <div>
               <p className="text-[#8a9a5b] text-[10px] uppercase tracking-[0.3em] flex items-center gap-4 mb-2">
                 <span className="w-8 h-[1px] bg-[#8a9a5b]"></span>
                 System Overview
               </p>
-              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-white leading-none">Admin Dashboard</h1>
+              <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-[rgba(var(--fg),1)] leading-none">Admin Dashboard</h1>
             </div>
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-[#8a9a5b]">
               <span className="animate-spin-slow"><Icons.Refresh /></span>
@@ -201,7 +201,7 @@ export default function AdminDashboard() {
                 "flex items-center gap-4 px-6 py-4 text-[11px] uppercase tracking-[0.2em] transition-all border-l-2",
                 activeView === "requests"
                   ? "border-[#8a9a5b] text-[#1c1c1c] bg-[#8a9a5b] font-bold"
-                  : "border-transparent text-white/50 hover:text-white hover:bg-white/5"
+                  : "border-transparent text-[rgba(var(--fg),0.5)] hover:text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--fg),0.05)]"
               )}
             >
               <Icons.List /> Manage Requests
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
                 "flex items-center gap-4 px-6 py-4 text-[11px] uppercase tracking-[0.2em] transition-all border-l-2",
                 activeView === "projects"
                   ? "border-[#8a9a5b] text-[#1c1c1c] bg-[#8a9a5b] font-bold"
-                  : "border-transparent text-white/50 hover:text-white hover:bg-white/5"
+                  : "border-transparent text-[rgba(var(--fg),0.5)] hover:text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--fg),0.05)]"
               )}
             >
               <Icons.Grid /> Manage Projects
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
                 "flex items-center gap-4 px-6 py-4 text-[11px] uppercase tracking-[0.2em] transition-all border-l-2",
                 activeView === "responses"
                   ? "border-[#8a9a5b] text-[#1c1c1c] bg-[#8a9a5b] font-bold"
-                  : "border-transparent text-white/50 hover:text-white hover:bg-white/5"
+                  : "border-transparent text-[rgba(var(--fg),0.5)] hover:text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--fg),0.05)]"
               )}
             >
               <Icons.Inbox /> Manage Responses
@@ -237,41 +237,41 @@ export default function AdminDashboard() {
 
             {/* VIEW: MANAGE REQUESTS */}
             {activeView === "requests" && (
-              <div className="bg-[#222222] border border-white/10">
-                <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-[#1c1c1c]/50">
-                  <h3 className="text-[11px] uppercase tracking-widest font-semibold text-white">Incoming Requests</h3>
-                  <span className="text-[10px] text-white/40 uppercase tracking-widest">Page {currentPage} of {totalPages || 1}</span>
+              <div className="bg-[rgba(var(--bg-surface),1)] border border-[rgba(var(--fg),0.1)]">
+                <div className="px-6 py-4 border-b border-[rgba(var(--fg),0.1)] flex justify-between items-center bg-[rgba(var(--bg),1)]/50">
+                  <h3 className="text-[11px] uppercase tracking-widest font-semibold text-[rgba(var(--fg),1)]">Incoming Requests</h3>
+                  <span className="text-[10px] text-[rgba(var(--fg),0.4)] uppercase tracking-widest">Page {currentPage} of {totalPages || 1}</span>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
-                    <thead className="bg-[#222222]">
-                      <tr className="border-b border-white/10">
-                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-white/40 font-medium w-32">Date</th>
-                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-white/40 font-medium w-48">Client</th>
-                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-white/40 font-medium">Description</th>
-                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-white/40 font-medium w-40">Status</th>
-                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-white/40 font-medium w-32 text-right">Action</th>
+                    <thead className="bg-[rgba(var(--bg-surface),1)]">
+                      <tr className="border-b border-[rgba(var(--fg),0.1)]">
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium w-32">Date</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium w-48">Client</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium">Description</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium w-40">Status</th>
+                        <th className="py-4 px-6 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium w-32 text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {loading ? (
-                        <tr><td colSpan={5} className="py-8 text-center text-[10px] uppercase tracking-widest text-white/40">Loading data...</td></tr>
+                        <tr><td colSpan={5} className="py-8 text-center text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)]">Loading data...</td></tr>
                       ) : currentData.length === 0 ? (
-                        <tr><td colSpan={5} className="py-8 text-center text-[10px] uppercase tracking-widest text-white/40">No requests found</td></tr>
+                        <tr><td colSpan={5} className="py-8 text-center text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.4)]">No requests found</td></tr>
                       ) : (
                         currentData.map((req) => (
-                          <tr key={req.id} className="hover:bg-white/5 transition-colors group">
+                          <tr key={req.id} className="hover:bg-[rgba(var(--fg),0.05)] transition-colors group">
                             <td className="py-4 px-6 align-top">
                               <span className="block font-mono text-[11px] text-[#8a9a5b] mb-1">#{req.id?.slice(-4)}</span>
-                              <span className="text-[10px] text-white/40">{req.date}</span>
+                              <span className="text-[10px] text-[rgba(var(--fg),0.4)]">{req.date}</span>
                             </td>
                             <td className="py-4 px-6 align-top">
-                              <div className="text-[11px] font-medium text-white break-words">{req.userEmail}</div>
+                              <div className="text-[11px] font-medium text-[rgba(var(--fg),1)] break-words">{req.userEmail}</div>
                             </td>
                             <td className="py-4 px-6 align-top max-w-sm">
-                              <span className="block font-bold text-[10px] uppercase mb-1 tracking-wider text-white">{req.type}</span>
-                              <p className="text-[11px] text-white/60 leading-relaxed line-clamp-2 mb-2">
+                              <span className="block font-bold text-[10px] uppercase mb-1 tracking-wider text-[rgba(var(--fg),1)]">{req.type}</span>
+                              <p className="text-[11px] text-[rgba(var(--fg),0.6)] leading-relaxed line-clamp-2 mb-2">
                                 {req.description}
                               </p>
                               <button
@@ -296,13 +296,13 @@ export default function AdminDashboard() {
                               <select
                                 value={req.status}
                                 onChange={(e) => updateStatus(req.id, e.target.value)}
-                                className="bg-transparent border-b border-white/20 text-[10px] py-1 px-2 text-white focus:outline-none focus:border-[#8a9a5b] cursor-pointer uppercase tracking-wider text-right w-full"
+                                className="bg-transparent border-b border-[rgba(var(--fg),0.2)] text-[10px] py-1 px-2 text-[rgba(var(--fg),1)] focus:outline-none focus:border-[#8a9a5b] cursor-pointer uppercase tracking-wider text-right w-full"
                               >
-                                <option value="Pending" className="bg-[#1c1c1c] text-white">Pending</option>
-                                <option value="Approved" className="bg-[#1c1c1c] text-white">Approve</option>
-                                <option value="In Progress" className="bg-[#1c1c1c] text-white">In Progress</option>
-                                <option value="Completed" className="bg-[#1c1c1c] text-white">Complete</option>
-                                <option value="Rejected" className="bg-[#1c1c1c] text-white">Reject</option>
+                                <option value="Pending" className="bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)]">Pending</option>
+                                <option value="Approved" className="bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)]">Approve</option>
+                                <option value="In Progress" className="bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)]">In Progress</option>
+                                <option value="Completed" className="bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)]">Complete</option>
+                                <option value="Rejected" className="bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)]">Reject</option>
                               </select>
                             </td>
                           </tr>
@@ -314,11 +314,11 @@ export default function AdminDashboard() {
 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
-                  <div className="px-6 py-4 border-t border-white/10 flex justify-between items-center bg-[#1c1c1c]/50">
+                  <div className="px-6 py-4 border-t border-[rgba(var(--fg),0.1)] flex justify-between items-center bg-[rgba(var(--bg),1)]/50">
                     <button
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/50 hover:text-[#8a9a5b] disabled:opacity-30 disabled:hover:text-white/50 transition-colors"
+                      className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.5)] hover:text-[#8a9a5b] disabled:opacity-30 disabled:hover:text-[rgba(var(--fg),0.5)] transition-colors"
                     >
                       <Icons.ChevronLeft /> Previous
                     </button>
@@ -331,7 +331,7 @@ export default function AdminDashboard() {
                             "w-6 h-6 flex items-center justify-center text-[10px] transition-all",
                             currentPage === i + 1
                               ? "bg-[#8a9a5b] text-[#1c1c1c] font-bold"
-                              : "text-white/50 hover:bg-white/10 hover:text-white"
+                              : "text-[rgba(var(--fg),0.5)] hover:bg-[rgba(var(--fg),0.1)] hover:text-[rgba(var(--fg),1)]"
                           )}
                         >
                           {i + 1}
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
-                      className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/50 hover:text-[#8a9a5b] disabled:opacity-30 disabled:hover:text-white/50 transition-colors"
+                      className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.5)] hover:text-[#8a9a5b] disabled:opacity-30 disabled:hover:text-[rgba(var(--fg),0.5)] transition-colors"
                     >
                       Next <Icons.ChevronRight />
                     </button>
@@ -352,14 +352,14 @@ export default function AdminDashboard() {
 
             {/* VIEW: PROJECT MANAGER */}
             {activeView === "projects" && (
-              <div className="bg-[#222222] border border-white/10">
+              <div className="bg-[rgba(var(--bg-surface),1)] border border-[rgba(var(--fg),0.1)]">
                 <ProjectManager />
               </div>
             )}
 
             {/* VIEW: RESPONSE MANAGER */}
             {activeView === "responses" && (
-              <div className="bg-[#222222] p-0 md:p-6 border border-white/10 overflow-hidden">
+              <div className="bg-[rgba(var(--bg-surface),1)] p-0 md:p-6 border border-[rgba(var(--fg),0.1)] overflow-hidden">
                 <ResponseManager />
               </div>
             )}

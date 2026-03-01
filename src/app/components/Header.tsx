@@ -135,23 +135,24 @@ export default function Header() {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-4 w-56 bg-white border border-gray-100 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.1)] py-2 animate-fade-in-up z-50">
-                    <div className="px-4 py-3 border-b border-gray-50 mb-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Signed in as</p>
-                      <p className="text-xs font-medium truncate text-[#1c1c1c]">{user.email}</p>
+                  <div className="absolute right-0 mt-4 w-56 shadow-[0_2px_20px_-5px_rgba(0,0,0,0.15)] py-2 animate-fade-in-up z-50 border" style={{ background: 'rgb(var(--bg))', borderColor: 'rgb(var(--border))' }}>
+                    <div className="px-4 py-3 mb-2 border-b" style={{ borderColor: 'rgb(var(--border))' }}>
+                      <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'rgb(var(--fg-muted))' }}>Signed in as</p>
+                      <p className="text-xs font-medium truncate" style={{ color: 'rgb(var(--fg))' }}>{user.email}</p>
                     </div>
 
                     {!isAdmin && (
                       <Link
                         href="/track-request"
                         onClick={() => setIsDropdownOpen(false)}
-                        className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] hover:bg-gray-50 transition-colors"
+                        className="block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] transition-colors hover:bg-[rgba(var(--fg),0.05)]"
+                        style={{ color: 'rgb(var(--fg))' }}
                       >
                         Track Request
                       </Link>
                     )}
 
-                    <button onClick={handleSignOut} className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 hover:bg-gray-50 transition-colors">
+                    <button onClick={handleSignOut} className="w-full text-left block px-4 py-2.5 text-[10px] uppercase tracking-[0.15em] text-red-500 transition-colors hover:bg-[rgba(var(--fg),0.05)]">
                       Sign Out
                     </button>
                   </div>
@@ -166,7 +167,8 @@ export default function Header() {
             {/* 🆕 Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 -mr-2 text-[#1c1c1c] z-50 relative"
+              className="md:hidden p-2 -mr-2 z-50 relative"
+              style={{ color: 'rgb(var(--fg))' }}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -212,7 +214,16 @@ export default function Header() {
                   setIsMobileMenuOpen(false);
                   handleSignIn();
                 }}
-                className="mt-8 text-xs font-bold uppercase tracking-[0.2em] border border-black px-8 py-3 hover:bg-[#1c1c1c] hover:text-white transition-all"
+                className="mt-8 text-xs font-bold uppercase tracking-[0.2em] px-8 py-3 transition-all border"
+                style={{ borderColor: 'rgb(var(--fg))', color: 'rgb(var(--fg))' }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'rgb(var(--fg))';
+                  (e.currentTarget as HTMLButtonElement).style.color = 'rgb(var(--bg))';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                  (e.currentTarget as HTMLButtonElement).style.color = 'rgb(var(--fg))';
+                }}
               >
                 Sign In
               </motion.button>

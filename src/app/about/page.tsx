@@ -202,7 +202,7 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#1c1c1c] text-white pb-24 pt-[100px]">
+    <div className="relative w-full overflow-hidden pb-24 pt-[100px]" style={{ background: 'rgb(var(--bg-surface))', color: 'rgb(var(--fg))' }}>
 
       {/* --- Admin Toolbar --- */}
       {isAdmin && (
@@ -226,7 +226,7 @@ export default function AboutPage() {
       )}
 
       {/* --- HERO SECTION --- */}
-      <section className="relative h-screen flex flex-col justify-end pb-24 px-6 md:px-12 border-b border-white/10">
+      <section className="relative h-screen flex flex-col justify-end pb-24 px-6 md:px-12 border-b border-[rgba(var(--fg),0.1)]">
         <div className="max-w-7xl mx-auto w-full flex flex-col items-start z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -256,7 +256,7 @@ export default function AboutPage() {
               multiline
               value={data.heroSubtitle}
               onChange={(v) => handleChange("heroSubtitle", v)}
-              className="text-xl md:text-2xl text-white/70 font-light leading-relaxed"
+              className="text-xl md:text-2xl text-[rgba(var(--fg),0.7)] font-light leading-relaxed"
             />
           </motion.div>
         </div>
@@ -274,13 +274,13 @@ export default function AboutPage() {
         </div>
 
         {/* Stats Row */}
-        <div className="max-w-7xl mx-auto w-full z-10 grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 border-t border-white/10 pt-8">
+        <div className="max-w-7xl mx-auto w-full z-10 grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 border-t border-[rgba(var(--fg),0.1)] pt-8">
           {data.stats.map((stat, i) => (
             <div key={i}>
               <EditableText
                 value={stat.value}
                 onChange={(v) => handleStatChange(i, "value", v)}
-                className="text-3xl lg:text-5xl font-bold tracking-tighter text-white block mb-1"
+                className="text-3xl lg:text-5xl font-bold tracking-tighter text-[rgba(var(--fg),1)] block mb-1"
               />
               <EditableText
                 value={stat.label}
@@ -293,13 +293,13 @@ export default function AboutPage() {
       </section>
 
       {/* --- FOUNDER SPOTLIGHT SECTION --- */}
-      <section className="bg-[#1c1c1c] py-32 border-b border-white/10">
+      <section className="bg-[rgba(var(--bg),1)] py-32 border-b border-[rgba(var(--fg),0.1)]">
         <div className="max-w-[1600px] mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
 
             {/* Founder Image Slider (Left) */}
             <div className="lg:col-span-5 relative group mt-8 lg:mt-0">
-              <div className="relative aspect-[3/4] overflow-hidden bg-white/5 shadow-2xl">
+              <div className="relative aspect-[3/4] overflow-hidden bg-[rgba(var(--fg),0.05)] shadow-2xl">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentImgIndex}
@@ -323,13 +323,13 @@ export default function AboutPage() {
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-r from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-white hover:bg-[#1c1c1c]/40 z-20"
+                      className="absolute left-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-r from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--bg),1)]/40 z-20"
                     >
                       <ChevronLeft size={32} />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-l from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-white hover:bg-[#1c1c1c]/40 z-20"
+                      className="absolute right-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-l from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--bg),1)]/40 z-20"
                     >
                       <ChevronRight size={32} />
                     </button>
@@ -338,28 +338,28 @@ export default function AboutPage() {
 
                 {/* Admin Image Controls */}
                 {isEditing && (
-                  <div className="absolute inset-0 bg-[#1c1c1c]/80 flex flex-col items-center justify-center gap-2 p-6 transition-opacity opacity-0 group-hover:opacity-100 z-30">
+                  <div className="absolute inset-0 bg-[rgba(var(--bg),1)]/80 flex flex-col items-center justify-center gap-2 p-6 transition-opacity opacity-0 group-hover:opacity-100 z-30">
                     <span className="text-[#8a9a5b] text-xs uppercase tracking-widest font-bold">Image URL ({currentImgIndex + 1}/{data.founder.images.length})</span>
                     <input
                       value={data.founder.images[currentImgIndex]}
                       onChange={(e) => updateCurrentImageUrl(e.target.value)}
-                      className="w-full max-w-xs bg-[#1c1c1c] border border-white/20 text-white text-xs p-2 rounded-sm mb-2 focus:border-[#8a9a5b] outline-none"
+                      className="w-full max-w-xs bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] text-xs p-2 rounded-sm mb-2 focus:border-[#8a9a5b] outline-none"
                     />
                     <div className="flex gap-2">
                       <button onClick={addImageSlide} className="px-3 py-1 bg-[#8a9a5b] text-[#1c1c1c] text-[10px] uppercase font-bold hover:bg-white">+ Add Slide</button>
                       {data.founder.images.length > 1 && (
-                        <button onClick={removeCurrentSlide} className="px-3 py-1 bg-red-500 text-white text-[10px] uppercase font-bold hover:bg-red-600">Remove</button>
+                        <button onClick={removeCurrentSlide} className="px-3 py-1 bg-red-500 text-[rgba(var(--fg),1)] text-[10px] uppercase font-bold hover:bg-red-600">Remove</button>
                       )}
                     </div>
                   </div>
                 )}
 
                 {/* Architectural Overlay Lines */}
-                <div className="absolute inset-0 border border-white/20 z-10 pointer-events-none" />
+                <div className="absolute inset-0 border border-[rgba(var(--fg),0.2)] z-10 pointer-events-none" />
               </div>
 
               {/* Decorative Border Offset */}
-              <div className="absolute -bottom-6 -right-6 w-full h-full border border-white/10 z-[-1] hidden lg:block" />
+              <div className="absolute -bottom-6 -right-6 w-full h-full border border-[rgba(var(--fg),0.1)] z-[-1] hidden lg:block" />
             </div>
 
             {/* Founder Content (Right) */}
@@ -370,7 +370,7 @@ export default function AboutPage() {
                   tag="h2"
                   value={data.founder.name}
                   onChange={(v) => handleFounderChange("name", v)}
-                  className="text-5xl md:text-7xl font-bold uppercase tracking-tighter text-white mb-4"
+                  className="text-5xl md:text-7xl font-bold uppercase tracking-tighter text-[rgba(var(--fg),1)] mb-4"
                 />
                 <EditableText
                   value={data.founder.role}
@@ -380,17 +380,17 @@ export default function AboutPage() {
               </div>
 
               <div className="mb-12 relative">
-                <Quote className="absolute -top-6 -left-8 text-white/5 w-16 h-16 -z-10" />
+                <Quote className="absolute -top-6 -left-8 text-[rgba(var(--fg),0.05)] w-16 h-16 -z-10" />
                 <EditableText
                   tag="h3"
                   multiline
                   value={data.founder.quote}
                   onChange={(v) => handleFounderChange("quote", v)}
-                  className="text-3xl md:text-4xl font-light italic text-white/90 leading-tight"
+                  className="text-3xl md:text-4xl font-light italic text-[rgba(var(--fg),0.9)] leading-tight"
                 />
               </div>
 
-              <div className="prose prose-lg prose-invert max-w-none text-white/70 mb-16">
+              <div className="prose prose-lg prose-invert max-w-none text-[rgba(var(--fg),0.7)] mb-16">
                 <EditableText
                   multiline
                   tag="p"
@@ -400,10 +400,10 @@ export default function AboutPage() {
                 />
               </div>
 
-              <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-t border-white/10 pt-12 gap-8">
+              <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-t border-[rgba(var(--fg),0.1)] pt-12 gap-8">
                 <div>
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a9a5b] block mb-4 font-bold">Signature</span>
-                  <div className="font-handwriting text-4xl text-white opacity-80" style={{ fontFamily: 'cursive' }}>
+                  <div className="font-handwriting text-4xl text-[rgba(var(--fg),1)] opacity-80" style={{ fontFamily: 'cursive' }}>
                     <EditableText
                       value={data.founder.signature}
                       onChange={(v) => handleFounderChange("signature", v)}
@@ -415,32 +415,32 @@ export default function AboutPage() {
                 {/* Social Links (Dynamic) */}
                 <div>
                   {isEditing ? (
-                    <div className="flex flex-col gap-3 bg-white/5 border border-white/10 p-6 rounded-sm">
+                    <div className="flex flex-col gap-3 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] p-6 rounded-sm">
                       <span className="text-[10px] uppercase font-bold text-[#8a9a5b]">Social Links</span>
                       <div className="flex items-center gap-3">
-                        <Linkedin size={16} className="text-white/50" />
+                        <Linkedin size={16} className="text-[rgba(var(--fg),0.5)]" />
                         <input
                           value={data.founder.socials.linkedin}
                           onChange={(e) => handleSocialChange('linkedin', e.target.value)}
-                          className="text-xs p-2 bg-[#1c1c1c] border border-white/20 text-white w-48 focus:border-[#8a9a5b] outline-none"
+                          className="text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] w-48 focus:border-[#8a9a5b] outline-none"
                           placeholder="LinkedIn URL"
                         />
                       </div>
                       <div className="flex items-center gap-3">
-                        <Instagram size={16} className="text-white/50" />
+                        <Instagram size={16} className="text-[rgba(var(--fg),0.5)]" />
                         <input
                           value={data.founder.socials.instagram}
                           onChange={(e) => handleSocialChange('instagram', e.target.value)}
-                          className="text-xs p-2 bg-[#1c1c1c] border border-white/20 text-white w-48 focus:border-[#8a9a5b] outline-none"
+                          className="text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] w-48 focus:border-[#8a9a5b] outline-none"
                           placeholder="Instagram URL"
                         />
                       </div>
                       <div className="flex items-center gap-3">
-                        <Mail size={16} className="text-white/50" />
+                        <Mail size={16} className="text-[rgba(var(--fg),0.5)]" />
                         <input
                           value={data.founder.socials.email}
                           onChange={(e) => handleSocialChange('email', e.target.value)}
-                          className="text-xs p-2 bg-[#1c1c1c] border border-white/20 text-white w-48 focus:border-[#8a9a5b] outline-none"
+                          className="text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] w-48 focus:border-[#8a9a5b] outline-none"
                           placeholder="Email (mailto:...)"
                         />
                       </div>
@@ -448,17 +448,17 @@ export default function AboutPage() {
                   ) : (
                     <div className="flex gap-4">
                       {data.founder.socials.linkedin && (
-                        <a href={data.founder.socials.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
+                        <a href={data.founder.socials.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] flex items-center justify-center text-[rgba(var(--fg),0.5)] hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
                           <Linkedin size={18} className="group-hover:scale-110 transition-transform" />
                         </a>
                       )}
                       {data.founder.socials.instagram && (
-                        <a href={data.founder.socials.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
+                        <a href={data.founder.socials.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] flex items-center justify-center text-[rgba(var(--fg),0.5)] hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
                           <Instagram size={18} className="group-hover:scale-110 transition-transform" />
                         </a>
                       )}
                       {data.founder.socials.email && (
-                        <a href={data.founder.socials.email} className="w-12 h-12 bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
+                        <a href={data.founder.socials.email} className="w-12 h-12 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] flex items-center justify-center text-[rgba(var(--fg),0.5)] hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
                           <Mail size={18} className="group-hover:scale-110 transition-transform" />
                         </a>
                       )}
@@ -481,7 +481,7 @@ export default function AboutPage() {
                 <span className="w-8 h-[1px] bg-[#8a9a5b]"></span>
                 The minds behind the designs
               </p>
-              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white leading-none">Our Team</h2>
+              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-[rgba(var(--fg),1)] leading-none">Our Team</h2>
             </div>
             {isEditing && (
               <button
@@ -502,10 +502,10 @@ export default function AboutPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="group relative bg-white/5 border border-white/10 hover:border-white/30 transition-all duration-500 flex flex-col"
+                  className="group relative bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] hover:border-[rgba(var(--fg),0.3)] transition-all duration-500 flex flex-col"
                 >
                   {/* Image Area */}
-                  <div className="relative aspect-[4/5] overflow-hidden bg-[#1c1c1c]">
+                  <div className="relative aspect-[4/5] overflow-hidden bg-[rgba(var(--bg),1)]">
                     <Image
                       src={member.image}
                       alt={member.name}
@@ -516,7 +516,7 @@ export default function AboutPage() {
                       <div className="absolute top-4 right-4 flex gap-2 z-20">
                         <button
                           onClick={() => removeTeamMember(member.id)}
-                          className="bg-red-500 text-white p-2 hover:bg-red-600 shadow-md transition-colors"
+                          className="bg-red-500 text-[rgba(var(--fg),1)] p-2 hover:bg-red-600 shadow-md transition-colors"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -525,13 +525,13 @@ export default function AboutPage() {
 
                     {/* Image Edit Overlay */}
                     {isEditing && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1c]/90 p-4 border-t border-white/10 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                      <div className="absolute bottom-0 left-0 right-0 bg-[rgba(var(--bg),1)]/90 p-4 border-t border-[rgba(var(--fg),0.1)] opacity-0 group-hover:opacity-100 transition-opacity z-20">
                         <span className="text-[9px] uppercase font-bold text-[#8a9a5b] block mb-2">Image URL</span>
                         <input
                           value={member.image}
                           onChange={(e) => updateTeamMember(member.id, "image", e.target.value)}
                           placeholder="Image URL"
-                          className="w-full text-xs p-2 bg-[#1c1c1c] border border-white/20 text-white focus:border-[#8a9a5b] outline-none"
+                          className="w-full text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] focus:border-[#8a9a5b] outline-none"
                         />
                       </div>
                     )}
@@ -545,7 +545,7 @@ export default function AboutPage() {
                     <EditableText
                       value={member.name}
                       onChange={(v) => updateTeamMember(member.id, "name", v)}
-                      className="text-2xl font-bold uppercase tracking-tight text-white mb-1 block w-full"
+                      className="text-2xl font-bold uppercase tracking-tight text-[rgba(var(--fg),1)] mb-1 block w-full"
                     />
                     <EditableText
                       value={member.role}
@@ -558,7 +558,7 @@ export default function AboutPage() {
             </AnimatePresence>
 
             {data.team.length === 0 && isEditing && (
-              <div className="col-span-full py-24 text-center text-white/40 text-sm border border-dashed border-white/20 bg-white/5">
+              <div className="col-span-full py-24 text-center text-[rgba(var(--fg),0.4)] text-sm border border-dashed border-[rgba(var(--fg),0.2)] bg-[rgba(var(--fg),0.05)]">
                 <p className="mb-4">No team members added.</p>
                 <p className="text-xs text-[#8a9a5b]">Click "Add Member" to show this section to visitors.</p>
               </div>

@@ -19,10 +19,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const stored = localStorage.getItem("avail-theme") as Theme | null;
-        if (stored) {
-            setTheme(stored);
-            document.documentElement.setAttribute("data-theme", stored);
-        }
+        const systemPref: Theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const initial = stored ?? systemPref;
+        setTheme(initial);
+        document.documentElement.setAttribute("data-theme", initial);
     }, []);
 
     const toggleTheme = () => {

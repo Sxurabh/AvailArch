@@ -98,7 +98,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'rgb(var(--bg))' }}>
 
       {/* 1. HERO (Dynamic Sections) */}
       <ProjectHero
@@ -107,34 +107,34 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16">
-        <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-gray-400 hover:text-[#1c1c1c] transition-colors mb-16">
+        <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest transition-colors mb-16" style={{ color: 'rgb(var(--fg-muted))' }}>
           ← Back to Projects
         </Link>
 
         {/* 2. OVERVIEW */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 mb-24">
           <div className="lg:col-span-8">
-            <h2 className="text-sm font-bold uppercase tracking-widest mb-6 border-b border-black/10 pb-4">Project Overview</h2>
-            <div className="prose prose-neutral max-w-none text-gray-600 font-light leading-relaxed whitespace-pre-line text-sm md:text-base">
+            <h2 className="text-sm font-bold uppercase tracking-widest mb-6 pb-4" style={{ borderBottom: '1px solid rgba(var(--border), 1)', color: 'rgb(var(--fg))' }}>Project Overview</h2>
+            <div className="max-w-none font-light leading-relaxed whitespace-pre-line text-sm md:text-base" style={{ color: 'rgb(var(--fg-muted))' }}>
               {project.description || "No description provided."}
             </div>
           </div>
 
           <div className="lg:col-span-4">
-            <div className="bg-gray-50 p-8 border border-gray-100 sticky top-24">
-              <h3 className="text-xs font-bold uppercase tracking-widest mb-6 text-[#1c1c1c]">Details</h3>
+            <div className="p-8 sticky top-24 border" style={{ background: 'rgb(var(--bg-surface))', borderColor: 'rgb(var(--border))' }}>
+              <h3 className="text-xs font-bold uppercase tracking-widest mb-6" style={{ color: 'rgb(var(--fg))' }}>Details</h3>
               <div className="space-y-6">
                 <div>
-                  <span className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Client</span>
-                  <span className="text-sm text-[#1c1c1c]">{project.client || "Private Client"}</span>
+                  <span className="block text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgb(var(--fg-muted))' }}>Client</span>
+                  <span className="text-sm" style={{ color: 'rgb(var(--fg))' }}>{project.client || "Private Client"}</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Location</span>
-                  <span className="text-sm text-[#1c1c1c]">{project.location || "Unknown"}</span>
+                  <span className="block text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgb(var(--fg-muted))' }}>Location</span>
+                  <span className="text-sm" style={{ color: 'rgb(var(--fg))' }}>{project.location || "Unknown"}</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] text-gray-400 uppercase tracking-widest mb-1">Year</span>
-                  <span className="text-sm text-[#1c1c1c]">{project.year}</span>
+                  <span className="block text-[10px] uppercase tracking-widest mb-1" style={{ color: 'rgb(var(--fg-muted))' }}>Year</span>
+                  <span className="text-sm" style={{ color: 'rgb(var(--fg))' }}>{project.year}</span>
                 </div>
               </div>
             </div>
