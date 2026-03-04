@@ -123,7 +123,7 @@ export default function ProjectGrid() {
       {!isLoading && (
         <>
           {/* Floating Filter Menu */}
-          <div className="sticky top-24 z-40 mb-12 flex justify-center pointer-events-none">
+          <div className="sticky top-24 z-30 mb-12 flex justify-center pointer-events-none">
             <div
               className="pointer-events-auto backdrop-blur-md px-6 py-3 rounded-full shadow-sm flex gap-6 overflow-x-auto max-w-[90vw] md:max-w-none no-scrollbar border"
               style={{ background: 'rgba(var(--bg), 0.8)', borderColor: 'rgb(var(--border))' }}

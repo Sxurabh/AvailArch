@@ -23,6 +23,8 @@ export interface Project {
   year: string;
   category: string;
   image: string;
+  status?: "active" | "draft" | "archived";
+  scheduledFor?: string;
 
   // 🟢 NEW: Controls homepage grid layout (freeform)
   gridColSpan?: number;

@@ -42,7 +42,7 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
     e.stopPropagation();
     if (activeSection === null || !project.sections) return;
     const section = project.sections[activeSection];
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? section.images.length - 1 : prev - 1
     );
   };
@@ -50,7 +50,7 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
   // Space List Nav
   const handleNextSectionList = () => {
     if (!project.sections) return;
-    setSectionStartIndex((prev) => 
+    setSectionStartIndex((prev) =>
       Math.min(prev + 1, project.sections!.length - VISIBLE_SECTIONS_COUNT)
     );
   };
@@ -62,20 +62,20 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
   // --- RENDER LOGIC ---
   const isCarouselMode = activeSection !== null;
   const currentSection = isCarouselMode && project.sections ? project.sections[activeSection] : null;
-  
+
   const activeImageSrc = isCarouselMode && currentSection
     ? getDriveImage(currentSection.images[currentImageIndex])
     : mainImageSrc;
 
   const allSections = project.sections || [];
   const visibleSections = allSections.slice(
-    sectionStartIndex, 
+    sectionStartIndex,
     sectionStartIndex + VISIBLE_SECTIONS_COUNT
   );
 
   return (
     <div className="relative w-full h-[85vh] bg-neutral-900 overflow-hidden group">
-      
+
       {/* BACKGROUND IMAGE */}
       <div className="absolute inset-0 transition-opacity duration-700 ease-in-out">
         {activeImageSrc ? (
@@ -92,16 +92,15 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
       </div>
 
       {/* --- HERO CONTENT (Title + Cards) --- */}
-      <div 
-        className={`absolute inset-0 p-6 md:p-12 flex flex-col justify-end transition-all duration-500 transform ${
-          isCarouselMode ? "opacity-0 translate-y-8 pointer-events-none" : "opacity-100 translate-y-0"
-        }`}
+      <div
+        className={`absolute inset-0 p-6 md:p-12 flex flex-col justify-end transition-all duration-500 transform ${isCarouselMode ? "opacity-0 translate-y-8 pointer-events-none" : "opacity-100 translate-y-0"
+          }`}
       >
-        <div className="max-w-7xl w-full mx-auto relative z-10">
+        <div className="max-w-[1600px] w-full mx-auto relative z-10">
           <h1 className="text-white text-5xl md:text-8xl font-thin uppercase tracking-widest mb-8 drop-shadow-lg">
             {project.title}
           </h1>
-          
+
           <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 border-t border-white/20 pt-8">
             <div className="flex gap-4 text-white/80 text-xs md:text-sm uppercase tracking-[0.2em] font-medium">
               <span>{project.category}</span>
@@ -112,9 +111,9 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
             {/* SPACE CARDS CAROUSEL */}
             {allSections.length > 0 && (
               <div className="flex items-center gap-4">
-                
+
                 {/* Prev Arrow */}
-                <button 
+                <button
                   onClick={handlePrevSectionList}
                   disabled={sectionStartIndex === 0}
                   className="p-2 rounded-full border border-white/10 hover:bg-white/10 text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
@@ -146,7 +145,7 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
                 </div>
 
                 {/* Next Arrow */}
-                <button 
+                <button
                   onClick={handleNextSectionList}
                   disabled={sectionStartIndex >= allSections.length - VISIBLE_SECTIONS_COUNT}
                   className="p-2 rounded-full border border-white/10 hover:bg-white/10 text-white disabled:opacity-20 disabled:cursor-not-allowed transition-all"
@@ -160,10 +159,9 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
       </div>
 
       {/* --- CAROUSEL OVERLAY (When a Space is clicked) --- */}
-      <div 
-        className={`absolute inset-0 z-30 flex flex-col justify-between transition-opacity duration-500 ${
-          !isCarouselMode ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
+      <div
+        className={`absolute inset-0 z-30 flex flex-col justify-between transition-opacity duration-500 ${!isCarouselMode ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
       >
         {/* Top Header */}
         <div className="w-full p-8 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent">
@@ -173,8 +171,8 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
               {currentSection?.title}
             </h2>
           </div>
-          
-          <button 
+
+          <button
             onClick={handleClose}
             className="p-3 border border-white/20 rounded-full hover:bg-white hover:text-[#1c1c1c] text-white transition-all duration-300"
           >
@@ -184,14 +182,14 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
 
         {/* Center Arrows */}
         <div className="absolute inset-0 flex items-center justify-between px-4 md:px-12 pointer-events-none">
-          <button 
+          <button
             onClick={prevImage}
             className="pointer-events-auto p-4 text-white/50 hover:text-white hover:bg-[#1c1c1c]/30 rounded-full backdrop-blur-sm transition-all"
           >
             <ChevronLeft className="w-12 h-12 font-thin" strokeWidth={0.5} />
           </button>
 
-          <button 
+          <button
             onClick={nextImage}
             className="pointer-events-auto p-4 text-white/50 hover:text-white hover:bg-[#1c1c1c]/30 rounded-full backdrop-blur-sm transition-all"
           >
@@ -201,7 +199,7 @@ export default function ProjectHero({ project, mainImageSrc }: ProjectHeroProps)
 
         {/* Bottom Counter */}
         <div className="w-full p-8 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
-           <div className="bg-[#1c1c1c]/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
+          <div className="bg-[#1c1c1c]/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10">
             <span className="text-xs text-white uppercase tracking-widest font-mono">
               Image {currentImageIndex + 1} of {currentSection?.images.length}
             </span>

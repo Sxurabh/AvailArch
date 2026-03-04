@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         mainImageSrc={mainImage}
       />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 pt-16">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 pt-16">
         <Link href="/" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest transition-colors mb-16" style={{ color: 'rgb(var(--fg-muted))' }}>
           ← Back to Projects
         </Link>

@@ -4,16 +4,20 @@ import { createClient } from "@/lib/supabase/server";
 import { optimizeImage } from "@/lib/imageOptimizer";
 import { randomUUID } from "crypto";
 
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+// Images are optimized via Sharp; PDFs are uploaded as-is
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+const PDF_TYPE = "application/pdf";
+const ALLOWED_TYPES = [...IMAGE_TYPES, PDF_TYPE];
 const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 
 interface UploadResult {
     optimizedUrl: string;
-    thumbnailUrl: string;
+    thumbnailUrl: string | null;
     originalName: string;
     originalSize: number;
     optimizedSize: number;
     compressionRatio: string;
+    fileType: "image" | "pdf";
 }
 
 export async function POST(request: NextRequest) {
@@ -49,7 +53,7 @@ export async function POST(request: NextRequest) {
             // Validate type
             if (!ALLOWED_TYPES.includes(file.type)) {
                 return NextResponse.json(
-                    { error: `Invalid file type: ${file.name}. Allowed: JPEG, PNG, WebP` },
+                    { error: `Invalid file type: ${file.name}. Allowed: JPEG, PNG, WebP, HEIC, PDF` },
                     { status: 400 }
                 );
             }
@@ -62,23 +66,46 @@ export async function POST(request: NextRequest) {
                 );
             }
 
-            // Read file buffer
             const arrayBuffer = await file.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
-
-            // Process with Sharp
-            const optimized = await optimizeImage(buffer);
-
-            // Generate unique path
             const fileId = randomUUID();
             const basePath = `${user.id}/${fileId}`;
+
+            // --- PDF: upload directly without optimization ---
+            if (file.type === PDF_TYPE) {
+                const { error: pdfError } = await supabase.storage
+                    .from(bucket)
+                    .upload(`${basePath}/original.pdf`, buffer, {
+                        contentType: "application/pdf",
+                        cacheControl: "31536000",
+                        upsert: false,
+                    });
+
+                if (pdfError) throw new Error(`Upload failed for ${file.name}: ${pdfError.message}`);
+
+                const { data: pdfUrl } = supabase.storage.from(bucket).getPublicUrl(`${basePath}/original.pdf`);
+
+                results.push({
+                    optimizedUrl: pdfUrl.publicUrl,
+                    thumbnailUrl: null,
+                    originalName: file.name,
+                    originalSize: file.size,
+                    optimizedSize: file.size,
+                    compressionRatio: "0%",
+                    fileType: "pdf",
+                });
+                continue;
+            }
+
+            // --- IMAGE (JPEG, PNG, WebP, HEIC): optimize via Sharp ---
+            const optimized = await optimizeImage(buffer);
 
             // Upload optimized version
             const { error: optError } = await supabase.storage
                 .from(bucket)
                 .upload(`${basePath}/optimized.webp`, optimized.optimizedBuffer, {
                     contentType: "image/webp",
-                    cacheControl: "31536000", // 1 year cache
+                    cacheControl: "31536000",
                     upsert: false,
                 });
 
@@ -108,6 +135,7 @@ export async function POST(request: NextRequest) {
                 originalSize: optimized.originalSize,
                 optimizedSize: optimized.optimizedSize,
                 compressionRatio: `${ratio}%`,
+                fileType: "image",
             });
         }
 

@@ -21,6 +21,8 @@ const defaultEmptyValues = {
   year: new Date().getFullYear().toString(),
   category: "",
   description: "",
+  status: "active" as "active" | "draft" | "archived",
+  scheduledFor: "",
   gridColSpan: 1,
   gridRowSpan: 1,
   sections: [],
@@ -127,8 +129,39 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               />
             </div>
 
+            {/* 🟢 NEW VISIBILITY & SCHEDULING CONTROLS */}
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 bg-[rgba(var(--fg),0.02)] p-6 border border-[rgba(var(--fg),0.1)]">
+              <div className="space-y-2 group">
+                <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c] transition-colors">
+                  Project Status
+                </label>
+                <select
+                  {...register("status")}
+                  className="w-full pb-2 bg-transparent border-b border-[rgba(var(--fg),0.2)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium uppercase cursor-pointer"
+                >
+                  <option value="active">Active (Visible)</option>
+                  <option value="draft">Draft (Hidden)</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+
+              {watch("status") === "draft" && (
+                <div className="space-y-2 group animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#8a9a5b] transition-colors flex justify-between">
+                    <span>Schedule Publish Date (Optional)</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    {...register("scheduledFor")}
+                    className="w-full pb-2 bg-transparent border-b border-[rgba(var(--fg),0.2)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium text-[rgba(var(--fg),0.8)]"
+                  />
+                  <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-1">Leave empty to keep as manual draft.</p>
+                </div>
+              )}
+            </div>
+
             {/* 🟢 NEW GRID SIZE SELECTOR USING COL/ROW SPANS */}
-            <div className="grid grid-cols-2 gap-4 w-full">
+            <div className="grid grid-cols-2 gap-4 w-full md:col-span-2">
               <ArchitecturalInput label="Grid Col Span" register={register} name="gridColSpan" type="number" placeholder="1" />
               <ArchitecturalInput label="Grid Row Span" register={register} name="gridRowSpan" type="number" placeholder="1" />
             </div>
@@ -138,7 +171,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               <textarea
                 {...register("description")}
                 rows={5}
-                className="w-full p-4 bg-[rgba(var(--fg),0.02)] border border-[rgba(var(--fg),0.1)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-mono resize-none"
+                className="w-full p-4 bg-[rgba(var(--fg),0.02)] border border-[rgba(var(--fg),0.1)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-mono resize-none custom-scrollbar"
                 placeholder="Project details..."
               />
             </div>
@@ -216,14 +249,37 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                   <Trash2 size={16} />
                 </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-3">
                     <ArchitecturalInput label="Space Name" register={register} name={`spaces.${index}.name` as const} required />
                   </div>
-                  <ArchitecturalInput label="Main Image ID" register={register} name={`spaces.${index}.mainImage` as const} />
-                  <div className="hidden md:block" />
-                  <ArchitecturalInput label="2D Drawing ID" register={register} name={`spaces.${index}.slider2d` as const} />
-                  <ArchitecturalInput label="3D Render ID" register={register} name={`spaces.${index}.slider3d` as const} />
+                  <div className="space-y-2">
+                    <Controller
+                      control={control}
+                      name={`spaces.${index}.mainImage` as const}
+                      render={({ field: { onChange, value } }) => (
+                        <ImageUploader label="Main Image" bucket="project-images" maxFiles={1} value={value ? [value] : []} onChange={(urls) => onChange(urls[0] || "")} />
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Controller
+                      control={control}
+                      name={`spaces.${index}.slider2d` as const}
+                      render={({ field: { onChange, value } }) => (
+                        <ImageUploader label="2D Drawing" bucket="project-images" maxFiles={1} value={value ? [value] : []} onChange={(urls) => onChange(urls[0] || "")} />
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Controller
+                      control={control}
+                      name={`spaces.${index}.slider3d` as const}
+                      render={({ field: { onChange, value } }) => (
+                        <ImageUploader label="3D Render" bucket="project-images" maxFiles={1} value={value ? [value] : []} onChange={(urls) => onChange(urls[0] || "")} />
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -256,7 +312,15 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                     <XIcon size={14} />
                   </button>
 
-                  <ArchitecturalInput label="Image ID" register={register} name={`gallery.${index}.id` as const} required />
+                  <div className="space-y-2">
+                    <Controller
+                      control={control}
+                      name={`gallery.${index}.id` as const}
+                      render={({ field: { onChange, value } }) => (
+                        <ImageUploader label="Gallery Image" bucket="project-images" maxFiles={1} value={value ? [value] : []} onChange={(urls) => onChange(urls[0] || "")} />
+                      )}
+                    />
+                  </div>
 
                   <div className="space-y-1">
                     <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)]">Grid Size</label>

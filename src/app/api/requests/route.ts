@@ -4,29 +4,34 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(req: Request) {
   const supabase = await createClient();
 
-  // RLS inherently handles admin vs user row fetching if Supabase auth is used.
-  // Since we are migrating from NextAuth, we might not have user_id associated correctly yet.
-  // However, because we configured RLS on requests ("Users can read own requests", "Admins can read all")
-  // a standard select will return ONLY the rows this user is allowed to see.
   const { data: requests, error } = await supabase
     .from("requests")
-    .select("*")
+    .select("*, profiles (email)")
     .order('created_at', { ascending: false });
 
   if (error) {
-    // If not authenticated, RLS will return an empty array or throw an error depending on config
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Format to match old interface if needed
   const formatted = requests.map((r: any) => ({
     id: r.id,
-    userEmail: r.type, // We don't have explicit emails stored in requests except maybe through profiles
+    userEmail: r.profiles?.email || 'Unknown Client',
     date: new Date(r.created_at).toLocaleDateString(),
+    // Legacy field
     type: r.type,
     description: r.description,
     status: r.status,
-    adminNotes: r.admin_notes
+    adminNotes: r.admin_notes,
+    // New fields
+    projectCategory: r.project_category || "residential",
+    commercialType: r.commercial_type,
+    contactNo: r.contact_no,
+    projectLocation: r.project_location,
+    bhk: r.bhk,
+    areaValue: r.area_value,
+    areaUnit: r.area_unit || "sqft",
+    planImages: r.plan_images || [],
+    isArchived: r.is_archived || false,
   }));
 
   return NextResponse.json(formatted);
@@ -36,14 +41,31 @@ export async function POST(req: Request) {
   const supabase = await createClient();
   const body = await req.json();
 
-  // Rely on RLS to deny insert if unauthenticated
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { error } = await supabase
     .from("requests")
     .insert({
-      type: body.type,
-      description: body.description,
+      user_id: user.id,
+      type: body.projectCategory === "commercial"
+        ? `Commercial - ${body.commercialType || "General"}`
+        : `Residential - ${body.bhk || ""}BHK`,
+      description: body.description || "",
       status: "Pending",
-      admin_notes: ""
+      admin_notes: "",
+      // New fields
+      project_category: body.projectCategory || "residential",
+      commercial_type: body.commercialType || null,
+      contact_no: body.contactNo || null,
+      project_location: body.projectLocation || null,
+      bhk: body.bhk || null,
+      area_value: body.areaValue ? Number(body.areaValue) : null,
+      area_unit: body.areaUnit || "sqft",
+      plan_images: body.planImages || [],
     });
 
   if (error) {
@@ -56,15 +78,17 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   const supabase = await createClient();
-  const { id, status, adminNotes } = await req.json();
+  const body = await req.json();
+  const { id, status, adminNotes, isArchived } = body;
 
-  // Rely on RLS admin-only update policy
+  const updateData: any = {};
+  if (status !== undefined) updateData.status = status;
+  if (adminNotes !== undefined) updateData.admin_notes = adminNotes;
+  if (isArchived !== undefined) updateData.is_archived = isArchived;
+
   const { error } = await supabase
     .from("requests")
-    .update({
-      status: status,
-      admin_notes: adminNotes
-    })
+    .update(updateData)
     .eq('id', id);
 
   if (error) {

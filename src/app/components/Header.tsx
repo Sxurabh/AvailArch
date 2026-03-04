@@ -85,7 +85,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-sm transition-all duration-500 border-b" style={{ background: `rgba(var(--bg), 0.95)`, borderColor: `rgba(var(--border), 0.5)` }}>
+      <header className="fixed top-0 left-0 w-full z-[100] backdrop-blur-sm transition-all duration-500 border-b" style={{ background: `rgba(var(--bg), 0.95)`, borderColor: `rgba(var(--border), 0.5)` }}>
         <div className="flex justify-between items-center px-6 py-6 md:px-12 max-w-[1600px] mx-auto">
           <Link href="/" className="text-sm font-bold tracking-[0.25em] uppercase hover:opacity-50 transition-opacity z-50 relative">
             Avail Arch
@@ -184,7 +184,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 flex flex-col justify-center items-center gap-8 md:hidden"
+            className="fixed inset-0 z-[90] flex flex-col justify-center items-center gap-8 md:hidden"
             style={{ background: 'rgb(var(--bg))' }}
           >
             {navItems.map((item, index) => (
@@ -203,6 +203,23 @@ export default function Header() {
                 </Link>
               </motion.div>
             ))}
+
+            
+            {/* Mobile Theme Toggle */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              onClick={toggleTheme}
+              className="mt-4 flex items-center gap-3 text-xs uppercase tracking-widest px-6 py-3 border rounded-full transition-colors"
+              style={{ borderColor: 'rgb(var(--fg))', color: 'rgb(var(--fg))' }}
+            >
+              {theme === "light" ? (
+                <><Moon size={16} /> Dark Mode</>
+              ) : (
+                <><Sun size={16} /> Light Mode</>
+              )}
+            </motion.button>
 
             {/* Mobile Sign In (if not logged in) */}
             {!session?.user && (

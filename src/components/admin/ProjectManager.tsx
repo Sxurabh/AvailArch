@@ -11,8 +11,9 @@ import { getDriveImage } from "@/lib/driveUtils"; // 🟢 Import Image Helper
 
 export default function ProjectManager() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [activeTab, setActiveTab] = useState<"index" | "create">("index");
+  const [activeTab, setActiveTab] = useState<"active" | "draft" | "archived">("active");
   const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -29,10 +30,8 @@ export default function ProjectManager() {
   };
 
   useEffect(() => {
-    if (activeTab === "index") {
-      fetchProjects();
-    }
-  }, [activeTab]);
+    fetchProjects();
+  }, []);
 
   async function fetchProjects() {
     setIsLoading(true);
@@ -74,7 +73,7 @@ export default function ProjectManager() {
 
       showToast("Project saved successfully", "success");
       setEditingProject(undefined);
-      setActiveTab("index");
+      setIsModalOpen(false);
       fetchProjects();
 
     } catch (error: any) {
@@ -106,8 +105,7 @@ export default function ProjectManager() {
 
   const handleEdit = (project: Project) => {
     setEditingProject(project);
-    setActiveTab("create");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsModalOpen(true);
   };
 
   return (
@@ -134,128 +132,201 @@ export default function ProjectManager() {
       <div className="flex gap-12 mb-12 border-b border-[rgba(var(--fg),0.05)] pb-0">
         <button
           onClick={() => {
-            setActiveTab("index");
+            setActiveTab("active");
             setEditingProject(undefined);
           }}
           className={cn(
             "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
-            activeTab === "index"
+            activeTab === "active"
               ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
               : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
           )}
         >
-          Index
+          Active
         </button>
         <button
-          onClick={() => setActiveTab("create")}
+          onClick={() => {
+            setActiveTab("draft");
+            setEditingProject(undefined);
+          }}
           className={cn(
             "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
-            activeTab === "create"
+            activeTab === "draft"
               ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
               : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
           )}
         >
-          {editingProject ? `Edit: ${editingProject.title}` : "Create Entry"}
+          Draft
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab("archived");
+            setEditingProject(undefined);
+          }}
+          className={cn(
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
+            activeTab === "archived"
+              ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
+              : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
+          )}
+        >
+          Archived
+        </button>
+        <div className="flex-1"></div>
+        <button
+          onClick={() => {
+            setEditingProject(undefined);
+            setIsModalOpen(true);
+          }}
+          className={cn(
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4 text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
+          )}
+        >
+          Create Entry
         </button>
       </div>
 
-      {/* Content Area */}
-      {activeTab === "create" ? (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <ProjectForm
-            initialData={editingProject}
-            onSubmit={handleSaveProject}
-            isLoading={isSaving}
-          />
-        </div>
-      ) : (
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {isLoading ? (
-            <div className="h-64 flex items-center justify-center text-[10px] uppercase tracking-widest text-[#8a9a5b]">
-              <span className="animate-pulse">Loading Projects...</span>
-            </div>
-          ) : projects.length === 0 ? (
-            <div className="h-64 flex items-center justify-center border border-dashed border-[rgba(var(--fg),0.2)] bg-[rgba(var(--fg),0.05)]">
-              <p className="text-xs text-[rgba(var(--fg),0.4)] uppercase tracking-widest">No projects found</p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {/* Header - Fixed */}
-              <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-4 border-b border-[rgba(var(--fg),0.1)] text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium bg-[rgba(var(--bg-surface),1)] z-10 sticky top-0">
-                <div className="col-span-1">Preview</div>
-                <div className="col-span-4">Project Info</div>
-                <div className="col-span-4">Meta</div>
-                <div className="col-span-3 text-right">Actions</div>
+      {/* Main Content */}
+      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {isLoading ? (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="animate-pulse border border-[rgba(var(--fg),0.05)] bg-[rgba(var(--bg),1)]/40 p-4 md:px-6 md:py-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-center flex-shrink-0">
+                <div className="hidden md:block col-span-1 aspect-square bg-[rgba(var(--fg),0.1)] rounded-sm" />
+                <div className="col-span-4 space-y-2">
+                  <div className="h-3 w-3/4 bg-[rgba(var(--fg),0.1)] rounded" />
+                  <div className="h-2 w-1/3 bg-[rgba(var(--fg),0.1)] rounded" />
+                </div>
+                <div className="col-span-4 space-y-2">
+                  <div className="h-2 w-1/4 bg-[rgba(var(--fg),0.1)] rounded" />
+                  <div className="h-2 w-1/4 bg-[rgba(var(--fg),0.1)] rounded" />
+                </div>
+                <div className="col-span-3 flex justify-end gap-6">
+                  <div className="h-4 w-8 bg-[rgba(var(--fg),0.1)] rounded" />
+                  <div className="h-4 w-12 bg-[rgba(var(--fg),0.1)] rounded" />
+                </div>
               </div>
+            ))}
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="h-64 flex items-center justify-center border border-dashed border-[rgba(var(--fg),0.2)] bg-[rgba(var(--fg),0.05)]">
+            <p className="text-xs text-[rgba(var(--fg),0.4)] uppercase tracking-widest">No projects found</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {/* Header - Fixed */}
+            <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-4 border-b border-[rgba(var(--fg),0.1)] text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium bg-[rgba(var(--bg-surface),1)] z-10 sticky top-0">
+              <div className="col-span-1">Preview</div>
+              <div className="col-span-4">Project Info</div>
+              <div className="col-span-4">Meta</div>
+              <div className="col-span-3 text-right">Actions</div>
+            </div>
 
-              {/* Rows - Scrollable Container */}
-              <div
-                className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10"
-                data-lenis-prevent
-              >
-                {projects.map((project) => {
-                  const thumbUrl = getDriveImage(project.image);
+            {/* Rows - Scrollable Container */}
+            <div
+              className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10"
+              data-lenis-prevent
+            >
+              {projects.filter((p) => (p.status || "active") === activeTab).map((project) => {
+                const thumbUrl = getDriveImage(project.image);
 
-                  return (
-                    <div
-                      key={project.id || Math.random()}
-                      className="group bg-[rgba(var(--bg),1)]/40 border border-[rgba(var(--fg),0.05)] hover:border-[#8a9a5b]/50 hover:bg-[rgba(var(--fg),0.05)] transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
-                    >
-                      {/* Thumb */}
-                      <div className="hidden md:block col-span-1 aspect-square bg-[rgba(var(--fg),0.05)] relative overflow-hidden ring-1 ring-[rgba(var(--fg),0.1)]">
-                        {thumbUrl ? (
-                          <Image
-                            src={thumbUrl}
-                            alt={project.title}
-                            fill
-                            className="object-cover grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-[rgba(var(--fg),0.05)]" />
-                        )}
-                      </div>
+                return (
+                  <div
+                    key={project.id || Math.random()}
+                    className="group bg-[rgba(var(--bg),1)]/40 border border-[rgba(var(--fg),0.05)] hover:border-[#8a9a5b]/50 hover:bg-[rgba(var(--fg),0.05)] transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
+                  >
+                    {/* Thumb */}
+                    <div className="hidden md:block col-span-1 aspect-square bg-[rgba(var(--fg),0.05)] relative overflow-hidden ring-1 ring-[rgba(var(--fg),0.1)]">
+                      {thumbUrl ? (
+                        <Image
+                          src={thumbUrl}
+                          alt={project.title}
+                          fill
+                          className="object-cover grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[rgba(var(--fg),0.05)]" />
+                      )}
+                    </div>
 
-                      {/* Details */}
-                      <div className="col-span-4">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-[rgba(var(--fg),1)] group-hover:text-[#8a9a5b] transition-colors">
-                          {project.title}
-                        </h3>
-                        <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-1 font-mono truncate">
-                          ID: {project.id}
-                        </p>
-                      </div>
+                    {/* Details */}
+                    <div className="col-span-4">
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-[rgba(var(--fg),1)] group-hover:text-[#8a9a5b] transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-1 font-mono truncate">
+                        ID: {project.id}
+                      </p>
+                    </div>
 
-                      {/* Meta */}
-                      <div className="col-span-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.6)]">
-                          {project.category}
-                        </span>
+                    {/* Meta */}
+                    <div className="col-span-4 flex flex-col gap-1">
+                      <span className="text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.6)]">
+                        {project.category}
+                      </span>
+                      <div className="flex items-center gap-3">
                         <span className="text-[10px] font-mono text-[#8a9a5b]/70">
                           {project.year}
                         </span>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="col-span-3 flex justify-end gap-6 items-center">
-                        <button
-                          onClick={() => handleEdit(project)}
-                          className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.4)] hover:text-[#8a9a5b] transition-colors border-b border-transparent hover:border-[#8a9a5b]"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(project.id)}
-                          className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.3)] hover:text-red-500 transition-colors"
-                        >
-                          Delete
-                        </button>
+                        {project.status === "draft" && project.scheduledFor && (
+                          <span className="text-[9px] uppercase tracking-widest text-blue-500 flex items-center gap-1 border border-blue-500/30 px-2 py-0.5">
+                            Scheduled: {new Date(project.scheduledFor).toLocaleDateString()}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {/* Actions */}
+                    <div className="col-span-3 flex justify-end gap-6 items-center">
+                      <button
+                        onClick={() => handleEdit(project)}
+                        className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.4)] hover:text-[#8a9a5b] transition-colors border-b border-transparent hover:border-[#8a9a5b]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.3)] hover:text-red-500 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          )}
+          </div>
+        )}
+      </div>
+
+      {/* Modal Overlay for Project Form */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[rgba(var(--bg),1)]/80 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-[rgba(var(--bg-surface),1)] w-full max-w-4xl shadow-2xl border border-[rgba(var(--fg),0.1)] relative animate-in fade-in zoom-in-95 duration-200 mt-auto mb-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b border-[rgba(var(--fg),0.1)]">
+              <h2 className="text-xl uppercase tracking-widest font-light text-[rgba(var(--fg),1)]">
+                {editingProject ? `Edit Project: ${editingProject.title}` : "Create New Project"}
+              </h2>
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setEditingProject(undefined);
+                }}
+                className="text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)] transition-colors text-2xl font-light"
+              >
+                &times;
+              </button>
+            </div>
+            {/* Modal Body */}
+            <div className="p-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+              <ProjectForm
+                initialData={editingProject}
+                onSubmit={handleSaveProject}
+                isLoading={isSaving}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

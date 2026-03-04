@@ -25,6 +25,8 @@ export async function PUT(
         grid_col_span: body.gridColSpan || 1,
         grid_row_span: body.gridRowSpan || 1,
         description: body.description,
+        status: body.status || "active",
+        scheduled_for: body.scheduledFor || null,
         client: body.client,
         location: body.location,
         before_image: body.beforeImage,
