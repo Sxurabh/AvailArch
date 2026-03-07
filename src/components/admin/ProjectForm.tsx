@@ -33,10 +33,14 @@ const defaultEmptyValues = {
 // --- CUSTOM INPUT COMPONENT ---
 const ArchitecturalInput = ({ label, register, name, required, placeholder, ...props }: any) => (
   <div className="space-y-2 group">
-    <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c] transition-colors">
+    <label
+      htmlFor={name}
+      className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c] transition-colors"
+    >
       {label}
     </label>
     <input
+      id={name}
       {...register(name, { required })}
       placeholder={placeholder}
       className="w-full pb-2 bg-transparent border-b border-[rgba(var(--fg),0.2)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium placeholder:text-[rgba(var(--fg),0.4)] font-mono"
@@ -134,10 +138,14 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             {/* 🟢 NEW VISIBILITY & SCHEDULING CONTROLS */}
             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 bg-[rgba(var(--fg),0.02)] p-6 border border-[rgba(var(--fg),0.1)]">
               <div className="space-y-2 group">
-                <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c] transition-colors">
+                <label
+                  htmlFor="status"
+                  className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c] transition-colors"
+                >
                   Project Status
                 </label>
                 <select
+                  id="status"
                   {...register("status")}
                   className="w-full pb-2 bg-transparent border-b border-[rgba(var(--fg),0.2)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium uppercase cursor-pointer"
                 >
@@ -149,11 +157,15 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
 
               {watch("status") === "draft" && (
                 <div className="space-y-2 group animate-in fade-in slide-in-from-top-2 duration-300">
-                  <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#8a9a5b] transition-colors flex justify-between">
+                  <label
+                    htmlFor="scheduledFor"
+                    className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#8a9a5b] transition-colors flex justify-between"
+                  >
                     <span>Schedule Publish Date (Optional)</span>
                   </label>
                   <input
                     type="datetime-local"
+                    id="scheduledFor"
                     {...register("scheduledFor")}
                     className="w-full pb-2 bg-transparent border-b border-[rgba(var(--fg),0.2)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-medium text-[rgba(var(--fg),0.8)]"
                   />
@@ -169,8 +181,14 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             </div>
 
             <div className="md:col-span-2 space-y-2 mt-4 group">
-              <label className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c]">Description</label>
+              <label
+                htmlFor="description"
+                className="text-[9px] font-bold uppercase tracking-[0.15em] text-[rgba(var(--fg),0.5)] group-focus-within:text-[#1c1c1c]"
+              >
+                Description
+              </label>
               <textarea
+                id="description"
                 {...register("description")}
                 rows={5}
                 className="w-full p-4 bg-[rgba(var(--fg),0.02)] border border-[rgba(var(--fg),0.1)] focus:border-[#8a9a5b] transition-colors outline-none text-sm font-mono resize-none custom-scrollbar"
@@ -189,8 +207,26 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               onClick={() => appendSection({ title: "New Section", images: [] })}
               className="flex items-center gap-2 text-[10px] bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
-              <Plus size={14} /> Add Section
+              <Plus size={14} /> Add Placeholder
             </button>
+          </div>
+
+          <div className="mb-8 p-6 bg-[rgba(var(--fg),0.02)] border border-[rgba(var(--fg),0.1)] group">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[rgba(var(--fg),0.6)] mb-4">Bulk Add Hero Sections</h4>
+            <ImageUploader
+              label="Select or Drag multiple images here"
+              bucket="project-images"
+              maxFiles={50}
+              value={[]}
+              onChange={(urls) => {
+                if (urls.length > 0) {
+                  urls.forEach(url => appendSection({ title: "New Section", images: [url] }));
+                }
+              }}
+            />
+            <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-4">
+              Tip: Uploading multiple images here will automatically create a new hero section for each image below.
+            </p>
           </div>
 
           <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar" data-lenis-prevent>
@@ -236,8 +272,26 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               onClick={() => appendSpace({ name: "New Space", mainImage: "", slider2d: "", slider3d: "" })}
               className="flex items-center gap-2 text-[10px] bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
-              <Plus size={14} /> Add Space
+              <Plus size={14} /> Add Placeholder
             </button>
+          </div>
+
+          <div className="mb-8 p-6 bg-[rgba(var(--fg),0.02)] border border-[rgba(var(--fg),0.1)] group">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[rgba(var(--fg),0.6)] mb-4">Bulk Add Spaces</h4>
+            <ImageUploader
+              label="Select or Drag multiple images here"
+              bucket="project-images"
+              maxFiles={50}
+              value={[]}
+              onChange={(urls) => {
+                if (urls.length > 0) {
+                  urls.forEach(url => appendSpace({ name: "New Space", mainImage: url, slider2d: "", slider3d: "" }));
+                }
+              }}
+            />
+            <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-4">
+              Tip: Uploading multiple images here will automatically create a new space for each image below, setting it as the main image.
+            </p>
           </div>
 
           <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar" data-lenis-prevent>
@@ -298,8 +352,26 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               onClick={() => appendGallery({ id: "", size: "normal" })}
               className="flex items-center gap-2 text-[10px] bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
-              <Plus size={14} /> Add Image
+              <Plus size={14} /> Add Placeholder
             </button>
+          </div>
+
+          <div className="mb-8 p-6 bg-[rgba(var(--fg),0.02)] border border-[rgba(var(--fg),0.1)] group">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-[rgba(var(--fg),0.6)] mb-4">Bulk Add to Gallery</h4>
+            <ImageUploader
+              label="Select or Drag multiple images here"
+              bucket="project-images"
+              maxFiles={50}
+              value={[]}
+              onChange={(urls) => {
+                if (urls.length > 0) {
+                  urls.forEach(url => appendGallery({ id: url, size: "normal" }));
+                }
+              }}
+            />
+            <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-4">
+              Tip: Uploading multiple images here will automatically create gallery entries for each image below.
+            </p>
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar" data-lenis-prevent>

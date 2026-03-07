@@ -132,12 +132,13 @@ export default function ImageUploader({
           ${status === "uploading" ? "pointer-events-none opacity-70" : ""}
         `}
             >
-                <input
+            <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
                     multiple
                     className="hidden"
+                    data-testid="image-upload-input"
                     onChange={(e) => e.target.files && handleFiles(e.target.files)}
                 />
 
@@ -202,6 +203,7 @@ export default function ImageUploader({
                             )}
                             <button
                                 type="button"
+                                aria-label="Remove image"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     removeUrl(i);
