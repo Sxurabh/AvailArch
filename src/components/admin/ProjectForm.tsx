@@ -110,20 +110,22 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
             <ArchitecturalInput label="Project Title" register={register} name="title" required placeholder="Project Name" />
             <ArchitecturalInput label="Year" register={register} name="year" placeholder="2024" />
             <ArchitecturalInput label="Category" register={register} name="category" placeholder="Residential" />
-            <ArchitecturalInput label="Main Image URL (or upload below)" register={register} name="image" required placeholder="URL or Google Drive link" />
-
-            {/* Image Uploader for Main Image */}
+            {/* Image Uploader for Main Image (Now Default) */}
             <div className="md:col-span-2">
               <Controller
                 control={control}
                 name="image"
                 render={({ field: { onChange, value } }) => (
                   <ImageUploader
-                    label="Upload Main Image"
+                    label="Main Project Image"
                     bucket="project-images"
                     maxFiles={1}
                     value={value ? [value] : []}
-                    onChange={(urls) => onChange(urls[0] || "")}
+                    onChange={(urls) => {
+                      onChange(urls[0] || "");
+                      // Auto-save when an image is successfully uploaded to this field
+                      setTimeout(() => handleSubmit(onSubmit)(), 0);
+                    }}
                   />
                 )}
               />
