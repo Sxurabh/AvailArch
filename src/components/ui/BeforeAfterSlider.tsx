@@ -10,12 +10,12 @@ interface BeforeAfterSliderProps {
   className?: string; // NEW: Allow parent to control sizing
 }
 
-export default function BeforeAfterSlider({ 
-  beforeImage, 
-  afterImage, 
-  leftLabel = "Before", 
+export default function BeforeAfterSlider({
+  beforeImage,
+  afterImage,
+  leftLabel = "Before",
   rightLabel = "After",
-  className = "" 
+  className = ""
 }: BeforeAfterSliderProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -51,10 +51,11 @@ export default function BeforeAfterSlider({
   }, [isDragging]);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       // CHANGED: h-[500px] -> h-full, added className prop
       className={`relative w-full h-full min-h-[300px] overflow-hidden cursor-ew-resize select-none bg-gray-100 group border border-gray-200 ${className}`}
+      data-testid="slider-handle"
       onMouseDown={handleMouseDown}
       onTouchStart={handleMouseDown}
     >
@@ -68,19 +69,19 @@ export default function BeforeAfterSlider({
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPosition}%` }}>
         <Image src={beforeImage} alt={leftLabel} fill className="object-cover" />
         <div className="absolute top-4 left-4 bg-[#1c1c1c]/60 text-white text-[10px] uppercase tracking-widest px-3 py-1 backdrop-blur-md z-10 font-medium rounded-sm">
-           {leftLabel}
+          {leftLabel}
         </div>
       </div>
 
       {/* Vertical Slider Handle */}
-      <div 
+      <div
         className="absolute inset-y-0 w-1 bg-white cursor-ew-resize shadow-[0_0_15px_rgba(0,0,0,0.5)] z-20 flex items-center justify-center"
         style={{ left: `${sliderPosition}%` }}
       >
         <div className="w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center border border-gray-200 transform hover:scale-110 transition-transform">
-            <svg className="w-4 h-4 text-[#1c1c1c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
-            </svg>
+          <svg className="w-4 h-4 text-[#1c1c1c]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l-3 3 3 3m8-6l3 3-3 3" />
+          </svg>
         </div>
       </div>
     </div>

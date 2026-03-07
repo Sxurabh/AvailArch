@@ -37,6 +37,7 @@ function formatProjectData(row: any) {
     year: row.year,
     category: row.category,
     image: row.image,
+    gridColSpan: row.grid_col_span || 1,
     gridRowSpan: row.grid_row_span || 1,
     description: row.description,
     status: row.status || "active",

@@ -6,6 +6,7 @@ const mockOrder = vi.fn()
 const mockSelect = vi.fn()
 const mockInsert = vi.fn()
 const mockSingle = vi.fn()
+const mockUpdate = vi.fn()
 const mockFrom = vi.fn()
 
 vi.mock('lib/supabase/server', () => ({
@@ -18,8 +19,8 @@ const mockProject = {
     year: '2024',
     category: 'Residential',
     image: '/images/villa.jpg',
-    gridcolspan: 8,
-    gridrowspan: 2,
+    grid_col_span: 8,
+    grid_row_span: 2,
     description: 'A minimalist villa',
     client: 'John Doe',
     location: 'Mumbai',
@@ -101,11 +102,19 @@ describe('POST /api/projects', () => {
     })
 
     it('inserts hero images when provided', async () => {
-        // Track additional from() calls for sub-tables
         const mockHeroInsert = vi.fn().mockResolvedValue({ error: null })
+
+        // ✅ Override BEFORE the POST call, using a conditional mock
         mockFrom.mockImplementation((table: string) => {
-            if (table === 'projectheroimages') return { insert: mockHeroInsert }
-            return { select: mockSelect, insert: mockInsert }
+            if (table === 'project_hero_images') {
+                return { insert: mockHeroInsert }
+            }
+            // Default tables
+            return {
+                select: mockSelect,
+                insert: mockInsert,
+                update: mockUpdate,
+            }
         })
 
         const req = makeRequest({
@@ -118,11 +127,12 @@ describe('POST /api/projects', () => {
         await POST(req)
         expect(mockHeroInsert).toHaveBeenCalledWith(
             expect.arrayContaining([
-                expect.objectContaining({ imageurl: 'https://example.com/img1.webp', sortorder: 0 }),
-                expect.objectContaining({ imageurl: 'https://example.com/img2.webp', sortorder: 1 }),
+                expect.objectContaining({ image_url: 'https://example.com/img1.webp', sort_order: 0 }),
+                expect.objectContaining({ image_url: 'https://example.com/img2.webp', sort_order: 1 }),
             ])
         )
     })
+
 
     it('returns 500 when project insert fails', async () => {
         mockSingle.mockResolvedValueOnce({ data: null, error: { message: 'Insert failed' } })

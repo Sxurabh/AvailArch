@@ -22,18 +22,19 @@ const mockRequest = {
     type: 'Residential - 2 BHK',
     description: 'Open plan living space',
     status: 'Pending',
-    adminnotes: '',
-    projectcategory: 'residential',
-    commercialtype: null,
-    contactno: '9999999999',
-    projectlocation: 'Mumbai',
+    admin_notes: '',              // was adminnotes
+    project_category: 'residential', // was projectcategory
+    commercial_type: null,        // was commercialtype
+    contact_no: '9999999999',    // was contactno
+    project_location: 'Mumbai',  // was projectlocation
     bhk: '2',
-    areavalue: 1200,
-    areaunit: 'sqft',
-    planimages: [],
-    isarchived: false,
+    area_value: 1200,            // was areavalue
+    area_unit: 'sqft',           // was areaunit
+    plan_images: [],             // was planimages
+    is_archived: false,          // was isarchived
     profiles: { email: 'client@example.com' },
 }
+
 
 beforeEach(() => {
     vi.clearAllMocks()
@@ -107,7 +108,7 @@ describe('POST /api/requests', () => {
         const res = await POST(req)
         expect(res.status).toBe(200)
         expect(mockInsert).toHaveBeenCalledWith(
-            expect.objectContaining({ commercialtype: 'Office', projectcategory: 'commercial' })
+            expect.objectContaining({ commercial_type: 'Office', project_category: 'commercial' })
         )
     })
 
@@ -143,14 +144,14 @@ describe('PATCH /api/requests', () => {
         const req = makeReq({ id: 'req-1', adminNotes: 'Will call tomorrow.' })
         const res = await PATCH(req)
         expect(res.status).toBe(200)
-        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ adminnotes: 'Will call tomorrow.' }))
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ admin_notes: 'Will call tomorrow.' }))
     })
 
     it('archives a request', async () => {
         const req = makeReq({ id: 'req-1', isArchived: true })
         const res = await PATCH(req)
         expect(res.status).toBe(200)
-        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ isarchived: true }))
+        expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ is_archived: true }))
     })
 
     it('returns 500 when update fails', async () => {

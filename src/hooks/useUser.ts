@@ -13,7 +13,10 @@ export function useUser() {
 
         async function getProfile(userId: string) {
             const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-            if (mounted) setProfile(data);
+            if (mounted) {
+                setProfile(data);
+                setLoading(false);
+            }
         }
 
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -41,12 +44,6 @@ export function useUser() {
         };
     }, []);
 
-    // Set loading to false once profile is fetched if session exists
-    useEffect(() => {
-        if (session && profile !== null) {
-            setLoading(false);
-        }
-    }, [session, profile]);
 
     return {
         session,

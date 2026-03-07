@@ -25,7 +25,6 @@ beforeEach(() => {
   global.fetch = vi.fn() as any
   global.alert = vi.fn() as any
   global.URL.createObjectURL = vi.fn(() => 'blob:preview-url') as any
-  vi.useFakeTimers()
 })
 
 afterEach(() => {
@@ -63,8 +62,8 @@ describe('TrackRequestPage — new request flow (existing)', () => {
     attachFile(container)
     fireEvent.click(screen.getByRole('button', { name: /Submit Request/i }))
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('api/upload?bucket=request-images', expect.objectContaining({ method: 'POST' })))
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('api/requests', expect.objectContaining({ method: 'POST', body: expect.stringContaining('planImages') })))
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/upload?bucket=request-images', expect.objectContaining({ method: 'POST' })))
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/requests', expect.objectContaining({ method: 'POST', body: expect.stringContaining('planImages') })))
     expect(screen.getByText(/Request submitted successfully/i)).toBeInTheDocument()
   })
 
@@ -114,13 +113,13 @@ describe('TrackRequestPage — NEW additional cases', () => {
 
   it('switching to Commercial shows the commercial type dropdown', () => {
     render(<TrackRequestPage />)
-    fireEvent.click(screen.getByText(/Commercial/i))
-    expect(screen.getByLabelText(/Commercial Type/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByText(/🏢 Commercial/i))
+    expect(screen.getByText(/Commercial Type/i)).toBeInTheDocument()
   })
 
   it('switching to Commercial hides BHK selector', () => {
     render(<TrackRequestPage />)
-    fireEvent.click(screen.getByText(/Commercial/i))
+    fireEvent.click(screen.getByText(/🏢 Commercial/i))
     expect(screen.queryByText(/^BHK$/i)).not.toBeInTheDocument()
   })
 
@@ -165,7 +164,7 @@ describe('TrackRequestPage — NEW additional cases', () => {
 
     await waitFor(() =>
       expect(fetchMock).toHaveBeenCalledWith(
-        'api/requests',
+        '/api/requests',
         expect.objectContaining({ body: expect.stringContaining('"planImages":[]') })
       )
     )
@@ -199,9 +198,7 @@ describe('TrackRequestPage — NEW additional cases', () => {
 
     await waitFor(() => expect(screen.getByText(/Request submitted successfully/i)).toBeInTheDocument())
 
-    act(() => { vi.advanceTimersByTime(2000) })
-
-    await waitFor(() => expect(screen.getByText(/Request History/i)).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/Request History/i)).toHaveStyle({ color: 'rgb(var(--fg))' }), { timeout: 3500 })
   })
 
   it('shows loading indicator while fetching history', async () => {
@@ -278,7 +275,7 @@ describe('TrackRequestPage — NEW additional cases', () => {
   it('removes a file from the preview list when remove is clicked', () => {
     const { container } = render(<TrackRequestPage />)
     attachFile(container)
-    const removeBtn = screen.getByRole('button', { name: /Remove/i })
+    const removeBtn = screen.getByTitle(/Remove/i)
     fireEvent.click(removeBtn)
     expect(screen.queryByText('plan.png')).not.toBeInTheDocument()
   })

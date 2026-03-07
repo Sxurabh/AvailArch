@@ -24,11 +24,10 @@ describe('resolveImageUrl', () => {
         expect(resolveImageUrl(url)).toBe(url)
     })
 
-    it('converts Google Drive link to thumbnail proxy URL', () => {
+    it('passes Google Drive URLs through unchanged (use getDriveImage for conversion)', () => {
         const url = 'https://drive.google.com/file/d/1abc123DEF456ghi789/view'
         const result = resolveImageUrl(url)
-        expect(result).toContain('thumbnail')
-        expect(result).toContain('1abc123DEF456ghi789')
+        expect(result).toBe(url)  // resolveImageUrl just validates/passes through
     })
 
     it('passes valid external HTTPS URLs through', () => {

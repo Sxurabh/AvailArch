@@ -65,7 +65,7 @@ describe('useUser', () => {
 
         const { result } = renderHook(() => useUser())
         await waitFor(() => expect(result.current.loading).toBe(false))
-        expect(result.current.user?.role).toBeNull()
+        expect(result.current.user?.role).toBeUndefined()
     })
 
     it('cleans up subscription on unmount', async () => {

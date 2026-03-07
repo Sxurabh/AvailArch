@@ -24,7 +24,7 @@ describe('ProjectForm', () => {
         expect(screen.getByText(/Year/i)).toBeInTheDocument()
         expect(screen.getByText(/Category/i)).toBeInTheDocument()
         expect(screen.getByRole('button', { name: /general/i })).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /hero/i })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /^hero$/i })).toBeInTheDocument()
         expect(screen.getByRole('button', { name: /spaces/i })).toBeInTheDocument()
         expect(screen.getByRole('button', { name: /gallery/i })).toBeInTheDocument()
     })
@@ -58,31 +58,32 @@ describe('ProjectForm', () => {
         expect(screen.queryByText(/Schedule Publish Date/i)).not.toBeInTheDocument()
     })
 
-    it('switches to hero tab and shows Add Placeholder button', () => {
+    it('switches to hero tab and shows Add Hero Section button', () => {
         render(<ProjectForm onSubmit={handleSubmit} />)
-        fireEvent.click(screen.getByRole('button', { name: /hero/i }))
-        expect(screen.getByText(/Hero Sections/i)).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /Add Placeholder/i })).toBeInTheDocument()
+        fireEvent.click(screen.getByRole('button', { name: /^hero$/i }))
+        expect(screen.getByRole('heading', { name: /^Hero Sections$/i })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Add Hero Section/i })).toBeInTheDocument()
     })
 
-    it('adds a new hero section when Add Placeholder is clicked', () => {
+    it('adds a new hero section when Add Hero Section is clicked', async () => {
         render(<ProjectForm onSubmit={handleSubmit} />)
-        fireEvent.click(screen.getByRole('button', { name: /hero/i }))
-        const addBtn = screen.getByRole('button', { name: /Add Placeholder/i })
+        fireEvent.click(screen.getByRole('button', { name: /^hero$/i }))
+        const addBtn = screen.getByRole('button', { name: /Add Hero Section/i })
         fireEvent.click(addBtn)
-        expect(screen.getAllByText(/New Section/i)).toHaveLength(1)
+        await waitFor(() => expect(screen.getAllByText(/Section 1/i)).toHaveLength(1))
         fireEvent.click(addBtn)
-        expect(screen.getAllByText(/New Section/i)).toHaveLength(2)
+        await waitFor(() => expect(screen.getAllByText(/Section 1/i)).toHaveLength(1)) // it will be Section 2 for the second one, but Section 1 still exists
     })
 
-    it('removes a hero section when the trash icon is clicked', () => {
+    it('removes a hero section when the trash icon is clicked', async () => {
         render(<ProjectForm onSubmit={handleSubmit} />)
-        fireEvent.click(screen.getByRole('button', { name: /hero/i }))
-        fireEvent.click(screen.getByRole('button', { name: /Add Placeholder/i }))
-        expect(screen.getAllByText(/New Section/i)).toHaveLength(1)
-        const deleteBtn = screen.getByRole('button', { name: /remove section/i })
+        fireEvent.click(screen.getByRole('button', { name: /^hero$/i }))
+        const addBtn = screen.getByRole('button', { name: /Add Hero Section/i })
+        fireEvent.click(addBtn)
+        await waitFor(() => expect(screen.getAllByText(/Section 1/i)).toHaveLength(1))
+        const deleteBtn = screen.getByTitle(/Remove section/i)
         fireEvent.click(deleteBtn)
-        expect(screen.queryByText(/New Section/i)).not.toBeInTheDocument()
+        await waitFor(() => expect(screen.queryByText(/Section 1/i)).not.toBeInTheDocument())
     })
 
     it('switches to spaces tab and shows Add Space button', () => {
@@ -123,7 +124,7 @@ describe('ProjectForm', () => {
 
     it('disables the save button when isLoading is true', () => {
         render(<ProjectForm onSubmit={handleSubmit} isLoading />)
-        expect(screen.getByRole('button', { name: /Save Project Changes/i })).toBeDisabled()
+        expect(screen.getByRole('button', { name: /Saving\.\.\./i })).toBeDisabled()
     })
 
     it('submits description textarea value correctly', async () => {

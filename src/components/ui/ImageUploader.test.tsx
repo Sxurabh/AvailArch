@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import ImageUploader from './ImageUploader'
 
@@ -64,7 +64,7 @@ describe('ImageUploader Component', () => {
         fireEvent.change(input, { target: { files: [file] } })
 
         await waitFor(() => expect(mockFetch).toHaveBeenCalledWith(
-            'api/upload?bucket=project-images',
+            '/api/upload?bucket=project-images',
             expect.objectContaining({ method: 'POST' })
         ))
         await waitFor(() => expect(mockOnChange).toHaveBeenCalledWith(['http://example.com/optimized-image.jpg']))
@@ -109,7 +109,7 @@ describe('ImageUploader Component', () => {
 
         await waitFor(() =>
             expect(mockFetch).toHaveBeenCalledWith(
-                'api/upload?bucket=request-images',
+                '/api/upload?bucket=request-images',
                 expect.objectContaining({ method: 'POST' })
             )
         )
@@ -126,22 +126,33 @@ describe('ImageUploader Component', () => {
 
         await waitFor(() => expect(screen.getByText(/Optimizing/i)).toBeInTheDocument())
 
-        resolveFetch({
-            ok: true,
-            json: async () => ({ images: [], summary: { count: 0, totalOriginalKB: 0, totalOptimizedKB: 0 } }),
+        await act(async () => {
+            resolveFetch({
+                ok: true,
+                json: async () => ({ images: [], summary: { count: 0, totalOriginalKB: 0, totalOptimizedKB: 0 } }),
+            })
         })
     })
 
     it('activates drag-over style when a file is dragged over the dropzone', () => {
         render(<ImageUploader onChange={mockOnChange} />)
         const dropzone = screen.getByText(/Drag.*drop.*images.*here/i).closest('div')!
+            .closest('[class*="border-dashed"]')! as HTMLElement
+
         fireEvent.dragOver(dropzone)
-        expect(screen.getByText(/Drop files here/i)).toBeInTheDocument()
+        expect(dropzone.className).toContain('border-black')
+        fireEvent.dragOver(dropzone)
+        // Component adds border-black and scale classes on dragOver
+        expect(dropzone.className).toContain('border-black')
     })
 
     it('resets drag-over style on drag-leave', () => {
         render(<ImageUploader onChange={mockOnChange} />)
         const dropzone = screen.getByText(/Drag.*drop.*images.*here/i).closest('div')!
+            .closest('[class*="border-dashed"]')! as HTMLElement
+
+        fireEvent.dragOver(dropzone)
+        expect(dropzone.className).toContain('border-black')
         fireEvent.dragOver(dropzone)
         fireEvent.dragLeave(dropzone)
         expect(screen.queryByText(/Drop files here/i)).not.toBeInTheDocument()
@@ -159,6 +170,10 @@ describe('ImageUploader Component', () => {
 
         render(<ImageUploader onChange={mockOnChange} />)
         const dropzone = screen.getByText(/Drag.*drop.*images.*here/i).closest('div')!
+            .closest('[class*="border-dashed"]')! as HTMLElement
+
+        fireEvent.dragOver(dropzone)
+        expect(dropzone.className).toContain('border-black')
         const file = new File(['x'], 'dropped.jpg', { type: 'image/jpeg' })
 
         fireEvent.drop(dropzone, { dataTransfer: { files: [file] } })

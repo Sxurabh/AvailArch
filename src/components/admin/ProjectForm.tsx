@@ -207,7 +207,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               onClick={() => appendSection({ title: "New Section", images: [] })}
               className="flex items-center gap-2 text-[10px] bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
-              <Plus size={14} /> Add Placeholder
+              <Plus size={14} /> Add Hero Section
             </button>
           </div>
 
@@ -236,6 +236,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
                   type="button"
                   onClick={() => removeSection(index)}
                   className="absolute top-4 right-4 text-[rgba(var(--fg),0.4)] hover:text-red-500 transition-colors"
+                  title="Remove section"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -272,7 +273,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               onClick={() => appendSpace({ name: "New Space", mainImage: "", slider2d: "", slider3d: "" })}
               className="flex items-center gap-2 text-[10px] bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
-              <Plus size={14} /> Add Placeholder
+              <Plus size={14} /> Add Space
             </button>
           </div>
 
@@ -352,7 +353,7 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Projec
               onClick={() => appendGallery({ id: "", size: "normal" })}
               className="flex items-center gap-2 text-[10px] bg-[rgba(var(--bg),1)] text-[rgba(var(--fg),1)] hover:bg-[#8a9a5b] hover:text-[#1c1c1c] px-4 py-3 uppercase tracking-widest transition-colors"
             >
-              <Plus size={14} /> Add Placeholder
+              <Plus size={14} /> Add Image
             </button>
           </div>
 
