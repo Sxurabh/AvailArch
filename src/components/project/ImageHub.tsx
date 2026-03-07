@@ -225,20 +225,30 @@ export default function ImageHub({ spaces, finalGallery }: ImageHubProps) {
                         sizes: mobile=100vw, tablet=50vw, desktop=33vw
                         (wide items get double width so 66vw on desktop)
                         quality=85: good sharpness without huge file size  */}
-                    <Image
-                      src={src}
-                      alt={`Execution detail ${idx + 1}`}
-                      fill
-                      quality={85}
-                      sizes={
-                        item.size === "wide"
-                          ? "(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 66vw"
-                          : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      }
-                      // First 3 visible images load eagerly, rest lazy
-                      loading={idx < 3 ? "eager" : "lazy"}
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    {src && (src.startsWith("http") || src.startsWith("blob:") || src.startsWith("/")) ? (
+                      <Image
+                        src={src}
+                        alt={`Execution detail ${idx + 1}`}
+                        fill
+                        quality={85}
+                        sizes={
+                          item.size === "wide"
+                            ? "(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 66vw"
+                            : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        }
+                        // First 3 visible images load eagerly, rest lazy
+                        loading={idx < 3 ? "eager" : "lazy"}
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        unoptimized={src.includes("supabase.co")}
+                        onError={(e) => {
+                          e.currentTarget.style.opacity = '0';
+                        }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-neutral-200">
+                        <span className="text-[10px] text-neutral-400 uppercase tracking-widest">Unavailable</span>
+                      </div>
+                    )}
 
                     {/* Hover overlay — pointer-events-none so cursor stays visible */}
                     <div className="absolute inset-0 bg-[#1c1c1c]/0 group-hover:bg-[#1c1c1c]/30 transition-colors duration-500 flex items-center justify-center pointer-events-none">
@@ -339,26 +349,40 @@ export default function ImageHub({ spaces, finalGallery }: ImageHubProps) {
                     className="absolute inset-0"
                   >
                     {/* ── Active image (quality=90 for full clarity) ── */}
-                    <Image
-                      src={activeSrc}
-                      alt={`Gallery image ${selectedImageIndex + 1}`}
-                      fill
-                      quality={90}
-                      priority
-                      sizes="100vw"
-                      className="object-contain"
-                    />
+                    {activeSrc && (activeSrc.startsWith("http") || activeSrc.startsWith("blob:") || activeSrc.startsWith("/")) ? (
+                      <Image
+                        src={activeSrc}
+                        alt={`Gallery image ${selectedImageIndex + 1}`}
+                        fill
+                        quality={90}
+                        priority
+                        sizes="100vw"
+                        className="object-contain"
+                        unoptimized={activeSrc.includes("supabase.co")}
+                        onError={(e) => {
+                          e.currentTarget.style.opacity = '0';
+                        }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-neutral-500 uppercase tracking-widest text-xs">
+                        Image Unavailable
+                      </div>
+                    )}
                   </motion.div>
                 </AnimatePresence>
 
                 {/* Hidden prefetch images for instant prev/next load */}
-                {prevSrc && prevSrc !== activeSrc && (
+                {prevSrc && prevSrc !== activeSrc && (prevSrc.startsWith("http") || prevSrc.startsWith("blob:") || prevSrc.startsWith("/")) && (
                   <Image src={prevSrc} alt="" fill quality={90} sizes="100vw"
-                    className="hidden" aria-hidden />
+                    className="hidden" aria-hidden
+                    unoptimized={prevSrc.includes("supabase.co")}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                 )}
-                {nextSrc && nextSrc !== activeSrc && (
+                {nextSrc && nextSrc !== activeSrc && (nextSrc.startsWith("http") || nextSrc.startsWith("blob:") || nextSrc.startsWith("/")) && (
                   <Image src={nextSrc} alt="" fill quality={90} sizes="100vw"
-                    className="hidden" aria-hidden />
+                    className="hidden" aria-hidden
+                    unoptimized={nextSrc.includes("supabase.co")}
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                 )}
               </div>
 
@@ -405,15 +429,26 @@ export default function ImageHub({ spaces, finalGallery }: ImageHubProps) {
                           }`}
                       >
                         {/* Thumbnails use quality=25 — tiny, fast, just enough detail */}
-                        <Image
-                          src={thumbSrc}
-                          alt=""
-                          fill
-                          quality={25}
-                          loading="lazy"
-                          sizes="80px"
-                          className="object-cover pointer-events-none"
-                        />
+                        {thumbSrc && (thumbSrc.startsWith("http") || thumbSrc.startsWith("blob:") || thumbSrc.startsWith("/")) ? (
+                          <Image
+                            src={thumbSrc}
+                            alt=""
+                            fill
+                            quality={25}
+                            loading="lazy"
+                            sizes="80px"
+                            className="object-cover pointer-events-none"
+                            unoptimized={thumbSrc.includes("supabase.co")}
+                            onError={(e) => {
+                              // Fallback on error to avert broken image UI
+                              e.currentTarget.style.opacity = '0';
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
+                            <span className="text-[10px] text-neutral-500">N/A</span>
+                          </div>
+                        )}
                       </button>
                     );
                   })}

@@ -192,11 +192,12 @@ export default function ImageUploader({
                 <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
                     {existingUrls.map((url, i) => (
                         <div key={i} className="relative aspect-square bg-gray-100 overflow-hidden group">
-                            {url ? (
+                            {url && (url.startsWith("http") || url.startsWith("blob:") || url.startsWith("/")) ? (
                                 <Image src={url} alt={`Image ${i + 1}`} fill className="object-cover" />
                             ) : (
-                                <div className="flex items-center justify-center h-full">
-                                    <ImageIcon className="w-6 h-6 text-gray-300" />
+                                <div className="flex flex-col items-center justify-center h-full p-2 text-center break-all text-gray-500">
+                                    <ImageIcon className="w-6 h-6 text-gray-300 mb-1" />
+                                    {url && <span className="text-[8px] truncate max-w-full">{url}</span>}
                                 </div>
                             )}
                             <button
