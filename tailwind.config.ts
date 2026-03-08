@@ -11,14 +11,14 @@ const config: Config = {
       },
       colors: {
         background: "#ffffff",
-        foreground: "#111111", 
-        muted: "#9CA3AF",      
-        border: "#E5E5E5",     
+        foreground: "#111111",
+        muted: "#9CA3AF",
+        border: "#E5E5E5",
         // 👇 MAKE SURE THIS IS HERE AND RESTART SERVER
-        brand: "#bfff00",      
+        brand: "#8A9A5B",
       },
       letterSpacing: {
-        widest: '.2em',       
+        widest: '.2em',
         tighter: '-.02em',
       },
       fontSize: {

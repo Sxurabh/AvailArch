@@ -25,7 +25,7 @@ export default function AuthSuccess() {
   return (
     <div className="flex h-screen w-full items-center justify-center bg-white">
       <div className="text-center">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] animate-pulse text-black">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] animate-pulse text-[#1c1c1c]">
           Authenticating...
         </p>
         <p className="text-[10px] text-gray-400 mt-2 uppercase tracking-widest">

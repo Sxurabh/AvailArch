@@ -37,7 +37,7 @@ export default function ProcessTimeline() {
         {/* Sticky Sidebar (Left) */}
         <div className="lg:col-span-4 relative">
           <div className="sticky top-40">
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight text-black mb-4 font-serif">
+            <h2 className="text-4xl md:text-5xl font-light tracking-tight text-[#1c1c1c] mb-4 font-serif">
               The Process
             </h2>
             <p className="text-xs text-gray-400 uppercase tracking-widest leading-relaxed max-w-xs">
@@ -62,14 +62,14 @@ export default function ProcessTimeline() {
                   
                   {/* Number */}
                   <div className="md:col-span-2">
-                    <span className="text-xs font-mono text-gray-400 group-hover:text-black transition-colors">
+                    <span className="text-xs font-mono text-gray-400 group-hover:text-[#1c1c1c] transition-colors">
                       ({step.number})
                     </span>
                   </div>
 
                   {/* Title & Subtitle */}
                   <div className="md:col-span-5">
-                    <h3 className="text-2xl font-light text-black mb-1 group-hover:translate-x-2 transition-transform duration-500 ease-out">
+                    <h3 className="text-2xl font-light text-[#1c1c1c] mb-1 group-hover:translate-x-2 transition-transform duration-500 ease-out">
                       {step.title}
                     </h3>
                     <span className="text-[10px] uppercase tracking-widest text-gray-400">

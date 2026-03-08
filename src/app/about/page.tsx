@@ -1,11 +1,11 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Edit2, Save, Plus, Trash2, 
+import {
+  Edit2, Save, Plus, Trash2,
   Linkedin, Instagram, Mail, Quote,
   ChevronLeft, ChevronRight, Link as LinkIcon
 } from "lucide-react";
@@ -41,22 +41,22 @@ interface AboutData {
 
 // --- Initial Default Data ---
 const INITIAL_DATA: AboutData = {
-  heroTitle: "Crafting Spaces, Defining Lifestyles.",
-  heroSubtitle: "We believe that architecture is not just about walls, but about the life that happens between them.",
+  heroTitle: "Curating Spaces, Shaping Lifestyles.",
+  heroSubtitle: "We believe that interior design is not merely about decorating a space, but about enhancing the way you live, work, and feel within it.",
   stats: [
     { label: "Years Experience", value: "12+" },
-    { label: "Projects Completed", value: "85+" },
+    { label: "Interiors Designed", value: "85+" },
     { label: "Design Awards", value: "14" },
   ],
   founder: {
     name: "Eleanor Vane",
-    role: "Principal Architect & Founder",
+    role: "Principal Interior Designer & Founder",
     images: [
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000" // Example 2nd image
+      "https://images.unsplash.com/photo-1542314831-c6a4d14effd0?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1000" // Example 2nd image
     ],
-    quote: "Design is not just what it looks like and feels like. Design is how it works.",
-    bio: "With over a decade of experience in high-end residential and commercial design, Eleanor focuses on the intersection of minimalism and warmth. Her work has been featured in Architectural Digest and Vogue Living. She believes every space tells a story, and her mission is to help you write yours.",
+    quote: "Exceptional interiors effortlessly blend form and function, creating environments that are as deeply personal as they are beautiful.",
+    bio: "With over a decade of experience in high-end residential and boutique commercial design, Eleanor focuses on the intersection of modern minimalism and inviting warmth. Her layered, textural approach to interiors has been featured in Architectural Digest and Vogue Living. She believes every room should tell the client's story, and her mission is to help you translate your unique vision into a cohesive, breathable living space.",
     signature: "Eleanor V.",
     socials: {
       linkedin: "https://linkedin.com",
@@ -81,9 +81,9 @@ const INITIAL_DATA: AboutData = {
 };
 
 export default function AboutPage() {
-  const { data: session } = useSession();
-  const isAdmin = (session?.user as any)?.role === "admin";
-  
+  const { user } = useUser();
+  const isAdmin = user?.role === "admin";
+
   const [isEditing, setIsEditing] = useState(false);
   const [data, setData] = useState<AboutData>(INITIAL_DATA);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
@@ -121,7 +121,7 @@ export default function AboutPage() {
   const prevImage = () => {
     setCurrentImgIndex((prev) => (prev - 1 + data.founder.images.length) % data.founder.images.length);
   };
-  
+
   const updateCurrentImageUrl = (url: string) => {
     const newImages = [...data.founder.images];
     newImages[currentImgIndex] = url;
@@ -170,54 +170,54 @@ export default function AboutPage() {
   };
 
   // --- Helper Components ---
-  const EditableText = ({ 
-    value, 
-    onChange, 
-    className, 
+  const EditableText = ({
+    value,
+    onChange,
+    className,
     multiline = false,
-    tag = "div" 
+    tag = "div"
   }: { value: string, onChange: (val: string) => void, className?: string, multiline?: boolean, tag?: string }) => {
     if (!isEditing) {
-        if (tag === "h1") return <h1 className={className}>{value}</h1>;
-        if (tag === "h2") return <h2 className={className}>{value}</h2>;
-        if (tag === "h3") return <h3 className={className}>{value}</h3>;
-        if (tag === "p") return <p className={className}>{value}</p>;
-        return <div className={className}>{value}</div>;
+      if (tag === "h1") return <h1 className={className}>{value}</h1>;
+      if (tag === "h2") return <h2 className={className}>{value}</h2>;
+      if (tag === "h3") return <h3 className={className}>{value}</h3>;
+      if (tag === "p") return <p className={className}>{value}</p>;
+      return <div className={className}>{value}</div>;
     }
 
     return multiline ? (
-      <textarea 
-        value={value} 
-        onChange={e => onChange(e.target.value)} 
+      <textarea
+        value={value}
+        onChange={e => onChange(e.target.value)}
         className={cn("w-full bg-gray-50 border border-gray-300 p-2 rounded-sm focus:ring-1 focus:ring-black outline-none resize-none", className)}
         rows={6}
       />
     ) : (
-      <input 
-        value={value} 
-        onChange={e => onChange(e.target.value)} 
+      <input
+        value={value}
+        onChange={e => onChange(e.target.value)}
         className={cn("w-full bg-gray-50 border border-gray-300 p-1 rounded-sm focus:ring-1 focus:ring-black outline-none", className)}
       />
     );
   };
 
   return (
-    <div className="min-h-screen bg-white pb-24">
-      
+    <div className="relative w-full overflow-hidden pb-24 pt-[100px]" style={{ background: 'rgb(var(--bg-surface))', color: 'rgb(var(--fg))' }}>
+
       {/* --- Admin Toolbar --- */}
       {isAdmin && (
         <div className="fixed bottom-6 right-6 z-50 flex gap-2">
           {isEditing ? (
-            <button 
+            <button
               onClick={saveChanges}
-              className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full shadow-xl hover:scale-105 transition-transform uppercase tracking-widest text-xs font-bold"
+              className="flex items-center gap-2 bg-[#8a9a5b] text-[#1c1c1c] px-6 py-3 rounded-full shadow-xl hover:scale-105 transition-transform uppercase tracking-widest text-xs font-bold"
             >
               <Save size={16} /> Save Changes
             </button>
           ) : (
-            <button 
+            <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 bg-white text-black border border-gray-200 px-6 py-3 rounded-full shadow-xl hover:bg-gray-50 transition-colors uppercase tracking-widest text-xs font-bold"
+              className="flex items-center gap-2 bg-white text-[#1c1c1c] border border-gray-200 px-6 py-3 rounded-full shadow-xl hover:bg-gray-50 transition-colors uppercase tracking-widest text-xs font-bold"
             >
               <Edit2 size={16} /> Edit Page
             </button>
@@ -226,36 +226,66 @@ export default function AboutPage() {
       )}
 
       {/* --- HERO SECTION --- */}
-      <section className="relative pt-32 pb-20 px-6 md:px-12 max-w-[1600px] mx-auto">
-        <div className="max-w-4xl">
-          <EditableText 
-            tag="h1"
-            value={data.heroTitle} 
-            onChange={(v) => handleChange("heroTitle", v)}
-            className="text-4xl md:text-7xl font-light tracking-tight text-black mb-6 leading-[1.1]"
+      <section className="relative h-screen flex flex-col justify-end pb-24 px-6 md:px-12 border-b border-[rgba(var(--fg),0.1)]">
+        <div className="max-w-7xl mx-auto w-full flex flex-col items-start z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="text-[#8a9a5b] text-xs uppercase tracking-[0.3em] mb-6 flex items-center gap-4">
+              <span className="w-8 h-[1px] bg-[#8a9a5b]"></span>
+              About Us
+            </p>
+            <EditableText
+              tag="h1"
+              value={data.heroTitle}
+              onChange={(v) => handleChange("heroTitle", v)}
+              className="text-5xl md:text-8xl lg:text-[7rem] font-bold uppercase tracking-tighter leading-[0.9] mix-blend-difference mb-8 max-w-5xl"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="w-full md:w-1/2 ml-auto"
+          >
+            <EditableText
+              tag="p"
+              multiline
+              value={data.heroSubtitle}
+              onChange={(v) => handleChange("heroSubtitle", v)}
+              className="text-xl md:text-2xl text-[rgba(var(--fg),0.7)] font-light leading-relaxed"
+            />
+          </motion.div>
+        </div>
+
+        {/* Ambient Video/Image Background */}
+        <div className="absolute inset-0 z-0 opacity-20 mix-blend-luminosity">
+          <Image
+            src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=2800&auto=format&fit=crop"
+            alt="Studio Background"
+            fill
+            className="object-cover"
+            priority
           />
-          <EditableText 
-            tag="p"
-            multiline
-            value={data.heroSubtitle} 
-            onChange={(v) => handleChange("heroSubtitle", v)}
-            className="text-lg md:text-xl text-gray-500 font-light max-w-2xl leading-relaxed"
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 border-t border-gray-100 pt-8">
+        <div className="max-w-7xl mx-auto w-full z-10 grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 border-t border-[rgba(var(--fg),0.1)] pt-8">
           {data.stats.map((stat, i) => (
             <div key={i}>
-              <EditableText 
-                value={stat.value} 
+              <EditableText
+                value={stat.value}
                 onChange={(v) => handleStatChange(i, "value", v)}
-                className="text-3xl font-light text-black block mb-1"
+                className="text-3xl lg:text-5xl font-bold tracking-tighter text-[rgba(var(--fg),1)] block mb-1"
               />
-              <EditableText 
-                value={stat.label} 
+              <EditableText
+                value={stat.label}
                 onChange={(v) => handleStatChange(i, "label", v)}
-                className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold"
+                className="text-[10px] uppercase tracking-[0.2em] text-[#8a9a5b] font-bold"
               />
             </div>
           ))}
@@ -263,263 +293,274 @@ export default function AboutPage() {
       </section>
 
       {/* --- FOUNDER SPOTLIGHT SECTION --- */}
-      <section className="bg-stone-50 py-24 mb-24">
-         <div className="max-w-[1600px] mx-auto px-6 md:px-12">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-              
-              {/* Founder Image Slider (Left) */}
-              <div className="lg:col-span-5 relative group">
-                 <div className="relative aspect-[3/4] overflow-hidden bg-gray-200 shadow-2xl">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={currentImgIndex}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="relative w-full h-full"
-                      >
-                         <Image 
-                           src={data.founder.images[currentImgIndex]} 
-                           alt="Founder" 
-                           fill 
-                           className="object-cover"
-                         />
-                      </motion.div>
-                    </AnimatePresence>
+      <section className="bg-[rgba(var(--bg),1)] py-32 border-b border-[rgba(var(--fg),0.1)]">
+        <div className="max-w-[1600px] mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
 
-                    {/* Navigation Arrows (Transparent until hover) */}
-                    {data.founder.images.length > 1 && (
-                      <>
-                        <button 
-                          onClick={prevImage}
-                          className="absolute left-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-r from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-white hover:bg-black/10"
-                        >
-                          <ChevronLeft size={32} />
-                        </button>
-                        <button 
-                          onClick={nextImage}
-                          className="absolute right-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-l from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-white hover:bg-black/10"
-                        >
-                          <ChevronRight size={32} />
-                        </button>
-                      </>
-                    )}
-
-                    {/* Admin Image Controls */}
-                    {isEditing && (
-                      <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2 p-6 transition-opacity opacity-0 group-hover:opacity-100">
-                        <span className="text-white text-xs uppercase tracking-widest font-bold">Image URL ({currentImgIndex + 1}/{data.founder.images.length})</span>
-                        <input 
-                          value={data.founder.images[currentImgIndex]}
-                          onChange={(e) => updateCurrentImageUrl(e.target.value)}
-                          className="w-full max-w-xs bg-white/90 text-black text-xs p-2 rounded-sm mb-2"
-                        />
-                        <div className="flex gap-2">
-                           <button onClick={addImageSlide} className="px-3 py-1 bg-white text-black text-[10px] uppercase font-bold hover:bg-gray-200">+ Add Slide</button>
-                           {data.founder.images.length > 1 && (
-                             <button onClick={removeCurrentSlide} className="px-3 py-1 bg-red-500 text-white text-[10px] uppercase font-bold hover:bg-red-600">Remove</button>
-                           )}
-                        </div>
-                      </div>
-                    )}
-                 </div>
-                 {/* Decorative Border Offset */}
-                 <div className="absolute -bottom-6 -right-6 w-full h-full border-2 border-black/5 z-[-1] hidden lg:block" />
-              </div>
-
-              {/* Founder Content (Right) */}
-              <div className="lg:col-span-7 lg:pl-12 pt-8">
-                 <div className="mb-8">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-4 block">Meet The Principal</span>
-                    <EditableText 
-                      tag="h2"
-                      value={data.founder.name} 
-                      onChange={(v) => handleFounderChange("name", v)}
-                      className="text-4xl md:text-5xl font-serif text-black mb-2"
+            {/* Founder Image Slider (Left) */}
+            <div className="lg:col-span-5 relative group mt-8 lg:mt-0">
+              <div className="relative aspect-[3/4] overflow-hidden bg-[rgba(var(--fg),0.05)] shadow-2xl">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentImgIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative w-full h-full"
+                  >
+                    <Image
+                      src={data.founder.images[currentImgIndex]}
+                      alt="Founder"
+                      fill
+                      className="object-cover grayscale hover:grayscale-0 transition-all duration-700"
                     />
-                    <EditableText 
-                      value={data.founder.role} 
-                      onChange={(v) => handleFounderChange("role", v)}
-                      className="text-sm uppercase tracking-widest text-gray-500 font-medium"
-                    />
-                 </div>
+                  </motion.div>
+                </AnimatePresence>
 
-                 <div className="mb-10 relative">
-                    <Quote className="absolute -top-6 -left-8 text-gray-200 w-12 h-12 -z-10" />
-                    <EditableText 
-                      tag="h3"
-                      multiline
-                      value={data.founder.quote} 
-                      onChange={(v) => handleFounderChange("quote", v)}
-                      className="text-2xl font-light italic text-gray-800 leading-relaxed"
-                    />
-                 </div>
+                {/* Navigation Arrows (Transparent until hover) */}
+                {data.founder.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-r from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--bg),1)]/40 z-20"
+                    >
+                      <ChevronLeft size={32} />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-0 top-0 bottom-0 w-16 flex items-center justify-center bg-gradient-to-l from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 text-[rgba(var(--fg),1)] hover:bg-[rgba(var(--bg),1)]/40 z-20"
+                    >
+                      <ChevronRight size={32} />
+                    </button>
+                  </>
+                )}
 
-                 <div className="prose prose-sm max-w-none text-gray-600 mb-10">
-                    <EditableText 
-                      multiline
-                      tag="p"
-                      value={data.founder.bio} 
-                      onChange={(v) => handleFounderChange("bio", v)}
-                      className="text-base leading-7 font-light"
+                {/* Admin Image Controls */}
+                {isEditing && (
+                  <div className="absolute inset-0 bg-[rgba(var(--bg),1)]/80 flex flex-col items-center justify-center gap-2 p-6 transition-opacity opacity-0 group-hover:opacity-100 z-30">
+                    <span className="text-[#8a9a5b] text-xs uppercase tracking-widest font-bold">Image URL ({currentImgIndex + 1}/{data.founder.images.length})</span>
+                    <input
+                      value={data.founder.images[currentImgIndex]}
+                      onChange={(e) => updateCurrentImageUrl(e.target.value)}
+                      className="w-full max-w-xs bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] text-xs p-2 rounded-sm mb-2 focus:border-[#8a9a5b] outline-none"
                     />
-                 </div>
-
-                 <div className="flex items-end justify-between border-t border-gray-200 pt-8">
-                    <div>
-                        <span className="text-[9px] uppercase tracking-widest text-gray-400 block mb-2">Signature</span>
-                        <div className="font-handwriting text-3xl text-black" style={{ fontFamily: 'cursive' }}>
-                           <EditableText 
-                             value={data.founder.signature} 
-                             onChange={(v) => handleFounderChange("signature", v)}
-                             className="text-3xl"
-                           />
-                        </div>
-                    </div>
-                    
-                    {/* Social Links (Dynamic) */}
-                    <div>
-                      {isEditing ? (
-                        <div className="flex flex-col gap-2 bg-gray-100 p-4 rounded-sm">
-                           <span className="text-[9px] uppercase font-bold text-gray-400">Social Links</span>
-                           <div className="flex items-center gap-2">
-                             <Linkedin size={14} className="text-gray-400" />
-                             <input 
-                               value={data.founder.socials.linkedin}
-                               onChange={(e) => handleSocialChange('linkedin', e.target.value)}
-                               className="text-xs p-1 bg-white border border-gray-300 w-40"
-                               placeholder="LinkedIn URL"
-                             />
-                           </div>
-                           <div className="flex items-center gap-2">
-                             <Instagram size={14} className="text-gray-400" />
-                             <input 
-                               value={data.founder.socials.instagram}
-                               onChange={(e) => handleSocialChange('instagram', e.target.value)}
-                               className="text-xs p-1 bg-white border border-gray-300 w-40"
-                               placeholder="Instagram URL"
-                             />
-                           </div>
-                           <div className="flex items-center gap-2">
-                             <Mail size={14} className="text-gray-400" />
-                             <input 
-                               value={data.founder.socials.email}
-                               onChange={(e) => handleSocialChange('email', e.target.value)}
-                               className="text-xs p-1 bg-white border border-gray-300 w-40"
-                               placeholder="Email (mailto:...)"
-                             />
-                           </div>
-                        </div>
-                      ) : (
-                        <div className="flex gap-4">
-                            {data.founder.socials.linkedin && (
-                              <a href={data.founder.socials.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-all rounded-full">
-                                <Linkedin size={14} />
-                              </a>
-                            )}
-                            {data.founder.socials.instagram && (
-                              <a href={data.founder.socials.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-all rounded-full">
-                                <Instagram size={14} />
-                              </a>
-                            )}
-                            {data.founder.socials.email && (
-                              <a href={data.founder.socials.email} className="w-10 h-10 bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-all rounded-full">
-                                <Mail size={14} />
-                              </a>
-                            )}
-                        </div>
+                    <div className="flex gap-2">
+                      <button onClick={addImageSlide} className="px-3 py-1 bg-[#8a9a5b] text-[#1c1c1c] text-[10px] uppercase font-bold hover:bg-white">+ Add Slide</button>
+                      {data.founder.images.length > 1 && (
+                        <button onClick={removeCurrentSlide} className="px-3 py-1 bg-red-500 text-[rgba(var(--fg),1)] text-[10px] uppercase font-bold hover:bg-red-600">Remove</button>
                       )}
                     </div>
-                 </div>
+                  </div>
+                )}
+
+                {/* Architectural Overlay Lines */}
+                <div className="absolute inset-0 border border-[rgba(var(--fg),0.2)] z-10 pointer-events-none" />
               </div>
 
+              {/* Decorative Border Offset */}
+              <div className="absolute -bottom-6 -right-6 w-full h-full border border-[rgba(var(--fg),0.1)] z-[-1] hidden lg:block" />
             </div>
-         </div>
+
+            {/* Founder Content (Right) */}
+            <div className="lg:col-span-7 lg:pl-12 pt-8">
+              <div className="mb-12">
+                <span className="text-[10px] uppercase tracking-[0.3em] text-[#8a9a5b] font-bold mb-6 block">Meet The Principal</span>
+                <EditableText
+                  tag="h2"
+                  value={data.founder.name}
+                  onChange={(v) => handleFounderChange("name", v)}
+                  className="text-5xl md:text-7xl font-bold uppercase tracking-tighter text-[rgba(var(--fg),1)] mb-4"
+                />
+                <EditableText
+                  value={data.founder.role}
+                  onChange={(v) => handleFounderChange("role", v)}
+                  className="text-sm md:text-base uppercase tracking-widest text-[#8a9a5b]"
+                />
+              </div>
+
+              <div className="mb-12 relative">
+                <Quote className="absolute -top-6 -left-8 text-[rgba(var(--fg),0.05)] w-16 h-16 -z-10" />
+                <EditableText
+                  tag="h3"
+                  multiline
+                  value={data.founder.quote}
+                  onChange={(v) => handleFounderChange("quote", v)}
+                  className="text-3xl md:text-4xl font-light italic text-[rgba(var(--fg),0.9)] leading-tight"
+                />
+              </div>
+
+              <div className="prose prose-lg prose-invert max-w-none text-[rgba(var(--fg),0.7)] mb-16">
+                <EditableText
+                  multiline
+                  tag="p"
+                  value={data.founder.bio}
+                  onChange={(v) => handleFounderChange("bio", v)}
+                  className="text-lg leading-relaxed font-light"
+                />
+              </div>
+
+              <div className="flex flex-col md:flex-row items-start md:items-end justify-between border-t border-[rgba(var(--fg),0.1)] pt-12 gap-8">
+                <div>
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a9a5b] block mb-4 font-bold">Signature</span>
+                  <div className="font-handwriting text-4xl text-[rgba(var(--fg),1)] opacity-80" style={{ fontFamily: 'cursive' }}>
+                    <EditableText
+                      value={data.founder.signature}
+                      onChange={(v) => handleFounderChange("signature", v)}
+                      className="text-4xl"
+                    />
+                  </div>
+                </div>
+
+                {/* Social Links (Dynamic) */}
+                <div>
+                  {isEditing ? (
+                    <div className="flex flex-col gap-3 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] p-6 rounded-sm">
+                      <span className="text-[10px] uppercase font-bold text-[#8a9a5b]">Social Links</span>
+                      <div className="flex items-center gap-3">
+                        <Linkedin size={16} className="text-[rgba(var(--fg),0.5)]" />
+                        <input
+                          value={data.founder.socials.linkedin}
+                          onChange={(e) => handleSocialChange('linkedin', e.target.value)}
+                          className="text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] w-48 focus:border-[#8a9a5b] outline-none"
+                          placeholder="LinkedIn URL"
+                        />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Instagram size={16} className="text-[rgba(var(--fg),0.5)]" />
+                        <input
+                          value={data.founder.socials.instagram}
+                          onChange={(e) => handleSocialChange('instagram', e.target.value)}
+                          className="text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] w-48 focus:border-[#8a9a5b] outline-none"
+                          placeholder="Instagram URL"
+                        />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Mail size={16} className="text-[rgba(var(--fg),0.5)]" />
+                        <input
+                          value={data.founder.socials.email}
+                          onChange={(e) => handleSocialChange('email', e.target.value)}
+                          className="text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] w-48 focus:border-[#8a9a5b] outline-none"
+                          placeholder="Email (mailto:...)"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-4">
+                      {data.founder.socials.linkedin && (
+                        <a href={data.founder.socials.linkedin} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] flex items-center justify-center text-[rgba(var(--fg),0.5)] hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
+                          <Linkedin size={18} className="group-hover:scale-110 transition-transform" />
+                        </a>
+                      )}
+                      {data.founder.socials.instagram && (
+                        <a href={data.founder.socials.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] flex items-center justify-center text-[rgba(var(--fg),0.5)] hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
+                          <Instagram size={18} className="group-hover:scale-110 transition-transform" />
+                        </a>
+                      )}
+                      {data.founder.socials.email && (
+                        <a href={data.founder.socials.email} className="w-12 h-12 bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] flex items-center justify-center text-[rgba(var(--fg),0.5)] hover:text-[#1c1c1c] hover:bg-[#8a9a5b] hover:border-[#8a9a5b] transition-all rounded-full group">
+                          <Mail size={18} className="group-hover:scale-110 transition-transform" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </section>
 
       {/* --- TEAM SECTION (Conditionally Hidden) --- */}
       {(data.team.length > 0 || isEditing) && (
-        <section className="px-6 md:px-12 max-w-[1600px] mx-auto">
-          <div className="flex justify-between items-end mb-12">
+        <section className="px-6 md:px-12 max-w-[1600px] mx-auto pb-32">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
             <div>
-              <h2 className="text-2xl font-light uppercase tracking-[0.2em] text-black mb-2">Our Team</h2>
-              <p className="text-xs text-gray-400 uppercase tracking-widest">The minds behind the designs</p>
+              <p className="text-[#8a9a5b] text-xs uppercase tracking-[0.3em] flex items-center gap-4 mb-4">
+                <span className="w-8 h-[1px] bg-[#8a9a5b]"></span>
+                The minds behind the designs
+              </p>
+              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-[rgba(var(--fg),1)] leading-none">Our Team</h2>
             </div>
             {isEditing && (
-              <button 
+              <button
                 onClick={addTeamMember}
-                className="flex items-center gap-2 text-[10px] uppercase font-bold tracking-widest bg-black text-white px-4 py-2 hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-2 text-[10px] uppercase font-bold tracking-widest bg-[#8a9a5b] text-[#1c1c1c] px-6 py-3 hover:bg-white transition-colors"
               >
-                <Plus size={12} /> Add Member
+                <Plus size={14} /> Add Member
               </button>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <AnimatePresence>
               {data.team.map((member) => (
-                <motion.div 
+                <motion.div
                   key={member.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="group relative bg-white border border-gray-100 hover:border-gray-300 transition-colors duration-300 flex flex-col"
+                  className="group relative bg-[rgba(var(--fg),0.05)] border border-[rgba(var(--fg),0.1)] hover:border-[rgba(var(--fg),0.3)] transition-all duration-500 flex flex-col"
                 >
                   {/* Image Area */}
-                  <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    <Image 
-                      src={member.image} 
-                      alt={member.name} 
-                      fill 
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  <div className="relative aspect-[4/5] overflow-hidden bg-[rgba(var(--bg),1)]">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100 scale-100 group-hover:scale-105"
                     />
                     {isEditing && (
-                      <div className="absolute top-2 right-2 flex gap-2">
-                        <button 
+                      <div className="absolute top-4 right-4 flex gap-2 z-20">
+                        <button
                           onClick={() => removeTeamMember(member.id)}
-                          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 shadow-md"
+                          className="bg-red-500 text-[rgba(var(--fg),1)] p-2 hover:bg-red-600 shadow-md transition-colors"
                         >
-                          <Trash2 size={12} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     )}
-                    
+
                     {/* Image Edit Overlay */}
                     {isEditing && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-white/90 p-2 border-t border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <input 
+                      <div className="absolute bottom-0 left-0 right-0 bg-[rgba(var(--bg),1)]/90 p-4 border-t border-[rgba(var(--fg),0.1)] opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        <span className="text-[9px] uppercase font-bold text-[#8a9a5b] block mb-2">Image URL</span>
+                        <input
                           value={member.image}
                           onChange={(e) => updateTeamMember(member.id, "image", e.target.value)}
                           placeholder="Image URL"
-                          className="w-full text-[10px] p-1 bg-transparent border-b border-gray-300 focus:border-black outline-none"
+                          className="w-full text-xs p-2 bg-[rgba(var(--bg),1)] border border-[rgba(var(--fg),0.2)] text-[rgba(var(--fg),1)] focus:border-[#8a9a5b] outline-none"
                         />
                       </div>
                     )}
+
+                    {/* Architectural Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none" />
                   </div>
 
                   {/* Info Area */}
-                  <div className="p-6">
-                    <EditableText 
+                  <div className="absolute bottom-0 left-0 w-full p-6 z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    <EditableText
                       value={member.name}
                       onChange={(v) => updateTeamMember(member.id, "name", v)}
-                      className="text-lg font-medium text-black mb-1 block w-full"
+                      className="text-2xl font-bold uppercase tracking-tight text-[rgba(var(--fg),1)] mb-1 block w-full"
                     />
-                    <EditableText 
+                    <EditableText
                       value={member.role}
                       onChange={(v) => updateTeamMember(member.id, "role", v)}
-                      className="text-[10px] uppercase tracking-widest text-gray-400 block w-full"
+                      className="text-[10px] uppercase tracking-[0.2em] text-[#8a9a5b] block w-full"
                     />
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
-            
+
             {data.team.length === 0 && isEditing && (
-              <div className="col-span-full py-12 text-center text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+              <div className="col-span-full py-24 text-center text-[rgba(var(--fg),0.4)] text-sm border border-dashed border-[rgba(var(--fg),0.2)] bg-[rgba(var(--fg),0.05)]">
                 <p className="mb-4">No team members added.</p>
-                <p className="text-xs">Click "Add Member" to show this section to visitors.</p>
+                <p className="text-xs text-[#8a9a5b]">Click "Add Member" to show this section to visitors.</p>
               </div>
             )}
           </div>

@@ -1,7 +1,6 @@
 // src/app/api/about/route.ts
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth"; // Adjust path if authOptions is elsewhere
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET() {
   // In the future, read from a JSON file or DB here
@@ -9,10 +8,17 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+
   // 🔒 Security Check
-  if (!session || (session.user as any).role !== "admin") {
+  if (profile?.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -30,6 +30,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "interiordesign.net",
       },
+      // 🟢 SUPABASE STORAGE (Optimized Images)
+      {
+        protocol: "https",
+        hostname: "xjbxqjbzrgmlgjkfqfnc.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "vhrddvhzemtdmukygzsz.supabase.co",
+      },
     ],
   },
 };

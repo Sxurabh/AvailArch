@@ -5,191 +5,328 @@ import { useState, useEffect } from "react";
 import ProjectForm from "./ProjectForm";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Project } from "@/lib/data";
+import Toast, { ToastType } from "@/components/ui/Toast";
+import { getDriveImage } from "@/lib/driveUtils"; // 🟢 Import Image Helper
 
 export default function ProjectManager() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("index"); // 'index' | 'create'
-  const [editingProject, setEditingProject] = useState<any | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeTab, setActiveTab] = useState<"active" | "draft" | "archived">("active");
+  const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Toast State
+  const [toast, setToast] = useState<{ msg: string; type: ToastType; visible: boolean }>({
+    msg: "",
+    type: "success",
+    visible: false,
+  });
+
+  const showToast = (msg: string, type: ToastType = "success") => {
+    setToast({ msg, type, visible: true });
+    setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), 3000);
+  };
 
   useEffect(() => {
     fetchProjects();
-  }, [activeTab]);
+  }, []);
 
   async function fetchProjects() {
+    setIsLoading(true);
     try {
       const res = await fetch("/api/projects", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      // Ensure we treat it as an array
-      setProjects(Array.isArray(data) ? data.reverse() : []); 
+      setProjects(Array.isArray(data) ? data.reverse() : []);
     } catch (error) {
       console.error("Failed to fetch projects", error);
+      showToast("Failed to sync projects", "error");
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Irreversible action. Delete this project?")) return;
-    
-    // 🛑 DEBUG LOG: Check if ID is valid
-    console.log("Attempting to delete ID:", id);
-    if (!id) {
-        alert("Error: Invalid Project ID");
-        return;
-    }
-
+  async function handleSaveProject(formData: Project) {
+    setIsSaving(true);
     try {
-      // 🟢 FIX: Correct URL structure for Dynamic Route [id]
-      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
-      
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to delete");
+      let res;
+      if (editingProject && editingProject.id) {
+        res = await fetch(`/api/projects/${editingProject.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        res = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
       }
 
-      // 🟢 FIX: Filter using 'id' (not _id)
-      setProjects(projects.filter((p) => p.id !== id));
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to save project");
+      }
+
+      showToast("Project saved successfully", "success");
+      setEditingProject(undefined);
+      setIsModalOpen(false);
+      fetchProjects();
+
     } catch (error: any) {
-      console.error("Failed to delete", error);
-      alert(`Error: ${error.message}`);
+      console.error("Save Error:", error);
+      showToast(error.message, "error");
+    } finally {
+      setIsSaving(false);
     }
   }
 
-  const handleEdit = (project: any) => {
-    setEditingProject(project);
-    setActiveTab("create");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  async function handleDelete(id: string) {
+    if (!confirm("Irreversible action. Delete this project?")) return;
 
-  const handleSuccess = () => {
-    setEditingProject(null);
-    setActiveTab("index");
-    fetchProjects();
+    if (!id) {
+      showToast("Invalid Project ID", "error");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      showToast("Project deleted", "info");
+    } catch (error: any) {
+      showToast(error.message, "error");
+    }
+  }
+
+  const handleEdit = (project: Project) => {
+    setEditingProject(project);
+    setIsModalOpen(true);
   };
 
   return (
-    <div className="max-w-4xl mx-auto pt-12 min-h-[60vh] animate-in fade-in slide-in-from-bottom-4">
-      <h1 className="text-2xl font-light uppercase tracking-widest mb-2">
-        Portfolio Manager
-      </h1>
-      <p className="text-xs text-gray-400 mb-12 uppercase tracking-wider">
-        Admin Console
-      </p>
+    <div className="w-full pt-6 md:pt-10 px-0 md:px-6 min-h-[60vh] font-sans">
+      <Toast
+        message={toast.msg}
+        type={toast.type}
+        isVisible={toast.visible}
+        onClose={() => setToast((prev) => ({ ...prev, visible: false }))}
+      />
 
-      {/* Tabs */}
-      <div className="flex gap-8 border-b border-gray-100 mb-12">
+      <div className="flex justify-between items-end mb-12 border-b border-[rgba(var(--fg),0.1)] pb-6">
+        <div>
+          <h1 className="text-3xl font-light uppercase tracking-tighter text-[rgba(var(--fg),1)] mb-2">
+            Portfolio <span className="font-bold">Manager</span>
+          </h1>
+          <p className="text-[10px] text-[#8a9a5b] uppercase tracking-[0.2em]">
+            Admin Console v1.0
+          </p>
+        </div>
+      </div>
+
+      {/* Modern Tabs */}
+      <div className="flex gap-12 mb-12 border-b border-[rgba(var(--fg),0.05)] pb-0">
         <button
           onClick={() => {
-            setActiveTab("index");
-            setEditingProject(null);
+            setActiveTab("active");
+            setEditingProject(undefined);
           }}
           className={cn(
-            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
-            activeTab === "index"
-              ? "border-b border-black text-black"
-              : "text-gray-400 hover:text-black"
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
+            activeTab === "active"
+              ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
+              : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
           )}
         >
-          Project Index
+          Active
         </button>
         <button
-          onClick={() => setActiveTab("create")}
+          onClick={() => {
+            setActiveTab("draft");
+            setEditingProject(undefined);
+          }}
           className={cn(
-            "pb-3 text-[10px] uppercase tracking-[0.2em] transition-all outline-none",
-            activeTab === "create"
-              ? "border-b border-black text-black"
-              : "text-gray-400 hover:text-black"
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
+            activeTab === "draft"
+              ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
+              : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
           )}
         >
-          {editingProject ? "Edit Entry" : "Create New"}
+          Draft
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab("archived");
+            setEditingProject(undefined);
+          }}
+          className={cn(
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4",
+            activeTab === "archived"
+              ? "text-[#8a9a5b] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-[#8a9a5b]"
+              : "text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
+          )}
+        >
+          Archived
+        </button>
+        <div className="flex-1"></div>
+        <button
+          onClick={() => {
+            setEditingProject(undefined);
+            setIsModalOpen(true);
+          }}
+          className={cn(
+            "text-xs uppercase tracking-[0.15em] transition-all relative py-4 text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)]"
+          )}
+        >
+          Create Entry
         </button>
       </div>
 
-      {/* Content Area */}
-      {activeTab === "create" ? (
-        <ProjectForm
-          existingProject={editingProject}
-          onSuccess={handleSuccess}
-          onCancel={() => {
-            setEditingProject(null);
-            setActiveTab("index");
-          }}
-        />
-      ) : (
-        <div className="space-y-4">
-          {isLoading ? (
-            <div className="text-[10px] uppercase tracking-widest text-gray-400 animate-pulse">
-              Syncing Data...
-            </div>
-          ) : projects.length === 0 ? (
-            <p className="text-xs text-gray-400 italic">No projects found.</p>
-          ) : (
-            <div className="grid gap-4">
-              {/* Header Row */}
-              <div className="hidden md:grid grid-cols-12 gap-4 pb-2 border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-400">
-                <div className="col-span-1">Thumb</div>
-                <div className="col-span-5">Project Details</div>
-                <div className="col-span-3">Category</div>
-                <div className="col-span-3 text-right">Actions</div>
-              </div>
-
-              {/* Rows */}
-              {projects.map((project) => (
-                <div
-                  // 🟢 FIX: Use 'id' as key
-                  key={project.id || Math.random()} 
-                  className="group bg-white border border-transparent hover:border-gray-100 p-4 md:p-0 md:py-4 md:border-b md:border-gray-50 grid grid-cols-1 md:grid-cols-12 gap-4 items-center transition-all"
-                >
-                  {/* Thumb */}
-                  <div className="hidden md:block col-span-1 relative h-10 w-10 bg-gray-100 overflow-hidden">
-                    {project.imageUrl && (
-                      <Image
-                        src={project.imageUrl}
-                        alt="thumb"
-                        fill
-                        className="object-cover grayscale group-hover:grayscale-0 transition-all"
-                      />
-                    )}
-                  </div>
-
-                  {/* Details */}
-                  <div className="col-span-5">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-black">
-                      {project.title}
-                    </h3>
-                    <p className="text-[10px] text-gray-400 mt-1 line-clamp-1 font-mono">
-                      {project.description}
-                    </p>
-                  </div>
-
-                  {/* Category */}
-                  <div className="col-span-3 flex items-center">
-                    <span className="text-[9px] uppercase tracking-widest border border-gray-100 px-2 py-1 text-gray-500">
-                      {project.category}
-                    </span>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="col-span-3 flex justify-end gap-6 md:gap-4 pr-2">
-                    <button
-                      onClick={() => handleEdit(project)}
-                      className="text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      // 🟢 FIX: Pass 'project.id', NOT 'project._id'
-                      onClick={() => handleDelete(project.id)} 
-                      className="text-[10px] uppercase tracking-widest font-bold text-gray-300 hover:text-red-500 transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
+      {/* Main Content */}
+      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {isLoading ? (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="animate-pulse border border-[rgba(var(--fg),0.05)] bg-[rgba(var(--bg),1)]/40 p-4 md:px-6 md:py-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-center flex-shrink-0">
+                <div className="hidden md:block col-span-1 aspect-square bg-[rgba(var(--fg),0.1)] rounded-sm" />
+                <div className="col-span-4 space-y-2">
+                  <div className="h-3 w-3/4 bg-[rgba(var(--fg),0.1)] rounded" />
+                  <div className="h-2 w-1/3 bg-[rgba(var(--fg),0.1)] rounded" />
                 </div>
-              ))}
+                <div className="col-span-4 space-y-2">
+                  <div className="h-2 w-1/4 bg-[rgba(var(--fg),0.1)] rounded" />
+                  <div className="h-2 w-1/4 bg-[rgba(var(--fg),0.1)] rounded" />
+                </div>
+                <div className="col-span-3 flex justify-end gap-6">
+                  <div className="h-4 w-8 bg-[rgba(var(--fg),0.1)] rounded" />
+                  <div className="h-4 w-12 bg-[rgba(var(--fg),0.1)] rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="h-64 flex items-center justify-center border border-dashed border-[rgba(var(--fg),0.2)] bg-[rgba(var(--fg),0.05)]">
+            <p className="text-xs text-[rgba(var(--fg),0.4)] uppercase tracking-widest">No projects found</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {/* Header - Fixed */}
+            <div className="hidden md:grid grid-cols-12 gap-6 px-6 py-4 border-b border-[rgba(var(--fg),0.1)] text-[9px] uppercase tracking-widest text-[rgba(var(--fg),0.4)] font-medium bg-[rgba(var(--bg-surface),1)] z-10 sticky top-0">
+              <div className="col-span-1">Preview</div>
+              <div className="col-span-4">Project Info</div>
+              <div className="col-span-4">Meta</div>
+              <div className="col-span-3 text-right">Actions</div>
             </div>
-          )}
+
+            {/* Rows - Scrollable Container */}
+            <div
+              className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2 pb-10"
+              data-lenis-prevent
+            >
+              {projects.filter((p) => (p.status || "active") === activeTab).map((project) => {
+                const thumbUrl = getDriveImage(project.image);
+
+                return (
+                  <div
+                    key={project.id || Math.random()}
+                    className="group bg-[rgba(var(--bg),1)]/40 border border-[rgba(var(--fg),0.05)] hover:border-[#8a9a5b]/50 hover:bg-[rgba(var(--fg),0.05)] transition-all duration-300 grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 md:px-6 md:py-5 flex-shrink-0"
+                  >
+                    {/* Thumb */}
+                    <div className="hidden md:block col-span-1 aspect-square bg-[rgba(var(--fg),0.05)] relative overflow-hidden ring-1 ring-[rgba(var(--fg),0.1)]">
+                      {thumbUrl ? (
+                        <Image
+                          src={thumbUrl}
+                          alt={project.title}
+                          fill
+                          className="object-cover grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[rgba(var(--fg),0.05)]" />
+                      )}
+                    </div>
+
+                    {/* Details */}
+                    <div className="col-span-4">
+                      <h3 className="text-sm font-bold uppercase tracking-widest text-[rgba(var(--fg),1)] group-hover:text-[#8a9a5b] transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="text-[10px] text-[rgba(var(--fg),0.4)] mt-1 font-mono truncate">
+                        ID: {project.id}
+                      </p>
+                    </div>
+
+                    {/* Meta */}
+                    <div className="col-span-4 flex flex-col gap-1">
+                      <span className="text-[10px] uppercase tracking-widest text-[rgba(var(--fg),0.6)]">
+                        {project.category}
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-mono text-[#8a9a5b]/70">
+                          {project.year}
+                        </span>
+                        {project.status === "draft" && project.scheduledFor && (
+                          <span className="text-[9px] uppercase tracking-widest text-blue-500 flex items-center gap-1 border border-blue-500/30 px-2 py-0.5">
+                            Scheduled: {new Date(project.scheduledFor).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-3 flex justify-end gap-6 items-center">
+                      <button
+                        onClick={() => handleEdit(project)}
+                        className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.4)] hover:text-[#8a9a5b] transition-colors border-b border-transparent hover:border-[#8a9a5b]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        className="text-[10px] uppercase tracking-widest font-bold text-[rgba(var(--fg),0.3)] hover:text-red-500 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Modal Overlay for Project Form */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[rgba(var(--bg),1)]/80 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-[rgba(var(--bg-surface),1)] w-full max-w-4xl shadow-2xl border border-[rgba(var(--fg),0.1)] relative animate-in fade-in zoom-in-95 duration-200 mt-auto mb-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b border-[rgba(var(--fg),0.1)]">
+              <h2 className="text-xl uppercase tracking-widest font-light text-[rgba(var(--fg),1)]">
+                {editingProject ? `Edit Project: ${editingProject.title}` : "Create New Project"}
+              </h2>
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setEditingProject(undefined);
+                }}
+                className="text-[rgba(var(--fg),0.4)] hover:text-[rgba(var(--fg),1)] transition-colors text-2xl font-light"
+              >
+                &times;
+              </button>
+            </div>
+            {/* Modal Body */}
+            <div className="p-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+              <ProjectForm
+                initialData={editingProject}
+                onSubmit={handleSaveProject}
+                isLoading={isSaving}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

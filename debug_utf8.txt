@@ -1,0 +1,67 @@
+﻿[dotenv@17.3.1] injecting env (10) from .env.local -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+Starting migration from Google Sheets to Supabase...
+Fetching Projects...
+node.exe : Migration 
+failed: Error: No key 
+or keyFile set.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo      
+        : NotSpecified  
+  : (Migration faile.   
+ ..or keyFile set.:S    
+tring) [], RemoteEx    
+ception
+    + FullyQualifiedErr 
+   orId : NativeComman  
+  dError
+ 
+    at 
+GoogleToken.<anonymous> 
+(I:\AvailArch\node_modul
+es\gtoken\build\cjs\src\
+index.cjs:299:17)
+    at 
+Generator.<anonymous> (I
+:\AvailArch\node_modules
+\gtoken\build\cjs\src\in
+dex.cjs:36:1660)
+    at Generator.next (I
+:\AvailArch\node_modules
+\gtoken\build\cjs\src\in
+dex.cjs:37:362)
+    at 
+asyncGeneratorStep (I:\A
+vailArch\node_modules\gt
+oken\build\cjs\src\index
+.cjs:38:70)
+    at _next (I:\AvailAr
+ch\node_modules\gtoken\b
+uild\cjs\src\index.cjs:3
+9:163)
+    at I:\AvailArch\node
+_modules\gtoken\build\cj
+s\src\index.cjs:39:299
+    at new Promise 
+(<anonymous>)
+    at 
+GoogleToken.<anonymous> 
+(I:\AvailArch\node_modul
+es\gtoken\build\cjs\src\
+index.cjs:39:90)
+    at GoogleToken._getT
+okenAsyncInner (I:\Avail
+Arch\node_modules\gtoken
+\build\cjs\src\index.cjs
+:281:31)
+    at 
+GoogleToken.<anonymous> 
+(I:\AvailArch\node_modul
+es\gtoken\build\cjs\src\
+index.cjs:266:129)
