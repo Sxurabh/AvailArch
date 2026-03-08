@@ -27,6 +27,25 @@ To learn more about Next.js, take a look at the following resources:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
+## Testing and release safety
+
+Use the production safety matrix at [`docs/testing-matrix.md`](docs/testing-matrix.md) to organize high-value tests and prevent regressions when adding new features.
+
+### How to use the test matrix
+
+1. Add or update the feature row before coding.
+2. Implement required Unit / Integration / E2E / Smoke coverage listed for that row.
+3. Run release checks before merge:
+
+```bash
+npm run lint
+npm test -- --run
+npm run build
+```
+
+4. Mark the matrix row status to `Done` only after checks pass.
+5. If a production bug happens, add it under “Regression cases from incidents” with a permanent test.
+
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
