@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GET } from './route'
 
-const mockGetUser = vi.fn()
-const mockSingle = vi.fn()
-const mockEq = vi.fn()
-const mockSelect = vi.fn()
-const mockFrom = vi.fn()
-const mockGetFormResponses = vi.fn()
+const {mockGetUser, mockSingle, mockEq, mockSelect, mockFrom, mockGetFormResponses} = vi.hoisted(() => ({
+  mockGetUser: vi.fn(),
+  mockSingle: vi.fn(),
+  mockEq: vi.fn(),
+  mockSelect: vi.fn(),
+  mockFrom: vi.fn(),
+  mockGetFormResponses: vi.fn(),
+}))
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(async () => ({

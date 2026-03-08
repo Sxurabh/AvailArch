@@ -30,9 +30,7 @@ beforeEach(() => {
   mockSectionInsert.mockReturnValue({ select: mockSectionSelect })
 
   lastProjectUpdatePayload = undefined
-  mockPatchEq
-    .mockResolvedValueOnce({ error: null, count: 1 })
-    .mockResolvedValue({ error: null, count: 1 })
+  mockPatchEq.mockResolvedValue({ error: null, count: 1 })
 
   mockFrom.mockImplementation((table: string) => {
     if (table === 'projects') {
