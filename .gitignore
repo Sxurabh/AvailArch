@@ -40,3 +40,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# E2E auth state — contains real session cookies
+e2e/.auth/
