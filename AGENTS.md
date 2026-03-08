@@ -34,6 +34,15 @@ npm test -- --run
 npm run build
 ```
 
+### E2E Testing (Playwright)
+```bash
+npm run test:e2e         # Run all E2E tests
+npm run test:e2e:ui      # Run with UI mode
+npm run test:e2e:headed  # Run in headed mode
+npm run test:perf        # Run performance tests only
+npx playwright show-report  # View HTML report
+```
+
 ---
 
 ## 2. Code Style Guidelines
