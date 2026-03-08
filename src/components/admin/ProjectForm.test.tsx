@@ -70,9 +70,9 @@ describe('ProjectForm', () => {
         fireEvent.click(screen.getByRole('button', { name: /^hero$/i }))
         const addBtn = screen.getByRole('button', { name: /Add Hero Section/i })
         fireEvent.click(addBtn)
-        await waitFor(() => expect(screen.getAllByText(/Section 1/i)).toHaveLength(1))
+        await waitFor(() => expect(screen.getAllByLabelText(/Section Title/i)).toHaveLength(1))
         fireEvent.click(addBtn)
-        await waitFor(() => expect(screen.getAllByText(/Section 1/i)).toHaveLength(1)) // it will be Section 2 for the second one, but Section 1 still exists
+        await waitFor(() => expect(screen.getAllByLabelText(/Section Title/i)).toHaveLength(2))
     })
 
     it('removes a hero section when the trash icon is clicked', async () => {
@@ -80,10 +80,10 @@ describe('ProjectForm', () => {
         fireEvent.click(screen.getByRole('button', { name: /^hero$/i }))
         const addBtn = screen.getByRole('button', { name: /Add Hero Section/i })
         fireEvent.click(addBtn)
-        await waitFor(() => expect(screen.getAllByText(/Section 1/i)).toHaveLength(1))
+        await waitFor(() => expect(screen.getAllByLabelText(/Section Title/i)).toHaveLength(1))
         const deleteBtn = screen.getByTitle(/Remove section/i)
         fireEvent.click(deleteBtn)
-        await waitFor(() => expect(screen.queryByText(/Section 1/i)).not.toBeInTheDocument())
+        await waitFor(() => expect(screen.queryByLabelText(/Section Title/i)).not.toBeInTheDocument())
     })
 
     it('switches to spaces tab and shows Add Space button', () => {
