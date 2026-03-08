@@ -9,7 +9,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
 
-  globalSetup: './e2e/global-setup.ts', // ← add this
+  globalSetup: './e2e/global-setup.ts',
 
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
@@ -22,23 +22,33 @@ export default defineConfig({
       name: 'admin',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'e2e/.auth/admin.json', // ← pre-authenticated as admin
+        storageState: 'e2e/.auth/admin.json',
       },
-      testMatch: '**/*.admin.spec.ts',
+      testMatch: '**/dashboard.admin.spec.ts',
     },
     {
       name: 'user',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'e2e/.auth/user.json', // ← pre-authenticated as user
+        storageState: 'e2e/.auth/user.json',
       },
-      testMatch: '**/*.user.spec.ts',
+      testMatch: '**/dashboard.user.spec.ts',
     },
     {
       name: 'public',
       use: { ...devices['Desktop Chrome'] },
-      // No storageState = unauthenticated
-      testMatch: '**/*.public.spec.ts',
+      testMatch: '**/pages/**/*.spec.ts',
+    },
+    {
+      name: 'flows',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: '**/flows/**/*.spec.ts',
+      testIgnore: ['**/dashboard*.spec.ts'],
+    },
+    {
+      name: 'performance',
+      use: { ...devices['Desktop Chrome'] },
+      testMatch: '**/performance/**/*.spec.ts',
     },
   ],
 

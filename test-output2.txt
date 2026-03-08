@@ -1,0 +1,795 @@
+[dotenv@17.3.1] injecting env (13) from .env.local -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+🔗 Generated magic link for admin (e2e-admin@availarch.test)
+   Found tokens in URL hash
+   👤 Set profile role to admin
+✅ Authenticated as admin
+🔗 Generated magic link for user (e2e-user@availarch.test)
+   Found tokens in URL hash
+   👤 Set profile role to user
+✅ Authenticated as user
+🎭 All auth states ready.
+
+Running 76 tests using 6 workers
+
+  ✘   1 [admin] › e2e\flows\dashboard.admin.spec.ts:9:9 › Dashboard - Admin User › should load dashboard without Access Denied (30.2s)
+  ✘   3 [admin] › e2e\flows\dashboard.admin.spec.ts:28:9 › Dashboard - Admin User › should show requests tab by default (30.2s)
+  ✘   2 [admin] › e2e\flows\dashboard.admin.spec.ts:35:9 › Dashboard - Admin User › should have navigation to projects and responses tabs (30.2s)
+  ✘   5 [user] › e2e\flows\dashboard.user.spec.ts:9:9 › Dashboard - Regular User › should show Access Denied for non-admin user (30.2s)
+  ✘   4 [admin] › e2e\flows\dashboard.admin.spec.ts:14:9 › Dashboard - Admin User › should display admin features (30.2s)
+  ✘   6 [user] › e2e\flows\dashboard.user.spec.ts:16:9 › Dashboard - Regular User › should not show admin features for regular user (30.2s)
+  ✓  11 [public] › e2e\pages\auth-success.spec.ts:4:9 › Auth Success Page › should load auth success page (2.2s)
+  ✓   7 [public] › e2e\pages\about.spec.ts:8:7 › About Page › should load without crash (2.5s)
+  ✓   8 [public] › e2e\pages\about.spec.ts:12:7 › About Page › should display about page (2.6s)
+  ✓  12 [public] › e2e\pages\auth-success.spec.ts:17:9 › Auth Success Page › should redirect or show content after auth (3.5s)
+  ✓   9 [public] › e2e\pages\auth-success.spec.ts:10:9 › Auth Success Page › should handle authentication callback (4.1s)
+  ✓  13 [public] › e2e\pages\blog.spec.ts:8:7 › Blog Page › should load without crash (1.8s)
+  ✓  14 [public] › e2e\pages\blog.spec.ts:12:7 › Blog Page › should display blog page (1.8s)
+  ✓  10 [public] › e2e\pages\about.spec.ts:17:7 › About Page › should not have critical console errors (4.7s)
+  ✓  15 [public] › e2e\pages\blog.spec.ts:17:7 › Blog Page › should not have critical console errors (3.0s)
+  ✓  17 [public] › e2e\pages\home.spec.ts:8:7 › Home Page › should load without crash (1.8s)
+  ✓  18 [public] › e2e\pages\home.spec.ts:12:7 › Home Page › should display main content (1.7s)
+  ✓  20 [public] › e2e\pages\home.spec.ts:37:7 › Home Page › should have valid meta tags (1.5s)
+  ✓  21 [public] › e2e\pages\not-found.spec.ts:4:9 › 404 Not Found Page › should handle invalid route gracefully (1.6s)
+  ✓  23 [public] › e2e\pages\not-found.spec.ts:17:9 › 404 Not Found Page › should have working navigation from 404 (1.8s)
+  ✓  24 [public] › e2e\pages\process.spec.ts:8:7 › Process Page › should load without crash (1.5s)
+  ✓  22 [public] › e2e\pages\not-found.spec.ts:10:9 › 404 Not Found Page › should display not found content (2.4s)
+  ✓  25 [public] › e2e\pages\process.spec.ts:12:7 › Process Page › should display process page (1.4s)
+  ✓  26 [public] › e2e\pages\process.spec.ts:17:7 › Process Page › should not have critical console errors (1.9s)
+  ✓  30 [public] › e2e\pages\project-details.spec.ts:24:9 › Project Details Page › should have back link to projects (953ms)
+  ✘  16 [public] › e2e\pages\custom-cursor.spec.ts:4:9 › CustomCursor › should render cursor on home page (30.2s)
+  ✘  19 [public] › e2e\pages\home.spec.ts:16:7 › Home Page › should not have critical console errors (30.1s)
+  ✓  32 [public] › e2e\pages\projects.spec.ts:10:7 › Projects Page › should navigate to individual project page (1.1s)
+  ✘  33 [public] › e2e\pages\projects.spec.ts:4:7 › Projects Page › should load project list page (6.1s)
+  ✘  27 [public] › e2e\pages\project-details.spec.ts:4:9 › Project Details Page › should load project page structure (40.0s)
+  ✘  28 [public] › e2e\pages\project-details.spec.ts:10:9 › Project Details Page › should display project content or not found (40.0s)
+  ✘  29 [public] › e2e\pages\project-details.spec.ts:17:9 › Project Details Page › should handle invalid project id (40.0s)
+  ✓  36 [public] › e2e\pages\public-routes.spec.ts:13:9 › Route: / › should return 200 for / (634ms)
+  ✘  31 [public] › e2e\pages\project-details.spec.ts:33:9 › Project Details Page › should not crash on project page (40.0s)
+  ✓  37 [public] › e2e\pages\public-routes.spec.ts:18:9 › Route: / › should not crash on / (942ms)
+  ✓  38 [public] › e2e\pages\public-routes.spec.ts:18:9 › Route: /about › should not crash on /about (1.0s)
+  ✓  39 [public] › e2e\pages\public-routes.spec.ts:13:9 › Route: /about › should return 200 for /about (1.1s)
+  ✓  41 [public] › e2e\pages\public-routes.spec.ts:13:9 › Route: /blog › should return 200 for /blog (1.0s)
+  ✓  40 [public] › e2e\pages\public-routes.spec.ts:18:9 › Route: /process › should not crash on /process (1.2s)
+  ✓  42 [public] › e2e\pages\public-routes.spec.ts:18:9 › Route: /blog › should not crash on /blog (662ms)
+  ✓  45 [public] › e2e\pages\public-routes.spec.ts:26:7 › Static Assets › should have valid HTML structure (630ms)
+  ✓  47 [public] › e2e\pages\public-routes.spec.ts:31:7 › Static Assets › should load fonts correctly (761ms)
+  ✓  46 [public] › e2e\pages\public-routes.spec.ts:13:9 › Route: /process › should return 200 for /process (760ms)
+  ✓  43 [public] › e2e\pages\public-routes.spec.ts:13:9 › Route: /track-request › should return 200 for /track-request (2.7s)
+  ✓  44 [public] › e2e\pages\public-routes.spec.ts:18:9 › Route: /track-request › should not crash on /track-request (2.6s)
+  ✓  48 [flows] › e2e\flows\authentication.spec.ts:4:7 › Authentication › should have login page accessible (963ms)
+  ✓  49 [flows] › e2e\flows\authentication.spec.ts:9:7 › Authentication › should redirect to auth when accessing protected route (2.0s)
+  ✓  50 [flows] › e2e\flows\authentication.spec.ts:16:7 › Authentication › should not expose sensitive data without auth (1.6s)
+  ✓  51 [flows] › e2e\flows\authentication.spec.ts:21:7 › Authentication › should handle auth callback page (1.5s)
+  ✓  52 [flows] › e2e\flows\dashboard-enhanced.spec.ts:4:9 › Dashboard Enhanced (Unauthenticated) › should redirect to home when not authenticated (3.4s)
+  ✘  35 [public] › e2e\pages\projects.spec.ts:27:7 › Projects Page › should not have critical console errors on projects (30.2s)
+  ✘  34 [public] › e2e\pages\projects.spec.ts:20:7 › Projects Page › should display project details without crash (40.0s)
+  ✓  57 [flows] › e2e\flows\dashboard.spec.ts:4:7 › Dashboard (Unauthenticated) › should redirect to home when not authenticated (2.6s)
+  ✘  53 [flows] › e2e\flows\dashboard.admin.spec.ts:9:9 › Dashboard - Admin User › should load dashboard without Access Denied (30.1s)
+  ✘  54 [flows] › e2e\flows\dashboard.admin.spec.ts:14:9 › Dashboard - Admin User › should display admin features (30.1s)
+  ✘  55 [flows] › e2e\flows\dashboard.admin.spec.ts:28:9 › Dashboard - Admin User › should show requests tab by default (30.2s)
+  ✘  56 [flows] › e2e\flows\dashboard.admin.spec.ts:35:9 › Dashboard - Admin User › should have navigation to projects and responses tabs (30.2s)
+  ✓  60 [flows] › e2e\flows\track-request.spec.ts:8:7 › Track Request Form › should load without crash (888ms)
+  ✓  61 [flows] › e2e\flows\track-request.spec.ts:12:7 › Track Request Form › should display page content (1.1s)
+  ✓  63 [flows] › e2e\flows\track-request.spec.ts:30:7 › Track Request Form › should have area unit toggle (sqft/sqmt) (958ms)
+  ✓  65 [flows] › e2e\flows\track-request.spec.ts:23:7 › Track Request Form › should allow BHK selection (846ms)
+  ✓  62 [flows] › e2e\flows\track-request.spec.ts:17:7 › Track Request Form › should handle form or redirect to auth (3.0s)
+Page load time: 548ms
+  ✓  67 [performance] › e2e\performance\core-vitals.spec.ts:51:7 › Performance - Core Web Vitals › Page should load within reasonable time (827ms)
+Large blocking scripts: 0
+  ✓  69 [performance] › e2e\performance\core-vitals.spec.ts:61:7 › Performance - Core Web Vitals › should not have render-blocking resources (147ms)
+  ✘  58 [flows] › e2e\flows\dashboard.user.spec.ts:16:9 › Dashboard - Regular User › should not show admin features for regular user (30.1s)
+  ✘  59 [flows] › e2e\flows\dashboard.user.spec.ts:9:9 › Dashboard - Regular User › should show Access Denied for non-admin user (30.1s)
+  ✓  72 [performance] › e2e\performance\loading-states.spec.ts:4:9 › Loading States › should show loading state on home page (650ms)
+  ✓  73 [performance] › e2e\performance\loading-states.spec.ts:11:9 › Loading States › should handle slow network gracefully (607ms)
+  ✘  64 [flows] › e2e\flows\track-request.spec.ts:42:7 › Track Request Form › should not have critical console errors (30.1s)
+  ✘  66 [performance] › e2e\performance\core-vitals.spec.ts:9:7 › Performance - Core Web Vitals › Home page LCP should be under threshold (30.1s)
+  ✘  68 [performance] › e2e\performance\core-vitals.spec.ts:29:7 › Performance - Core Web Vitals › Home page should have minimal CLS (30.1s)
+  ✘  70 [performance] › e2e\performance\core-vitals.spec.ts:74:7 › Performance - Core Web Vitals › images should have proper loading attributes (30.1s)
+  ✓  76 [performance] › e2e\performance\loading-states.spec.ts:44:9 › Loading States › should handle API timeout gracefully (3.6s)
+  ✘  71 [performance] › e2e\performance\core-vitals.spec.ts:96:7 › Performance - API Response › API routes should respond quickly (30.0s)
+  ✘  74 [performance] › e2e\performance\loading-states.spec.ts:22:9 › Loading States › should eventually show content even with delays (30.1s)
+  ✘  75 [performance] › e2e\performance\loading-states.spec.ts:33:9 › Loading States › should handle page navigation smoothly (30.1s)
+
+
+  1) [admin] › e2e\flows\dashboard.admin.spec.ts:9:9 › Dashboard - Admin User › should load dashboard without Access Denied 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-a2457-board-without-Access-Denied-admin\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-a2457-board-without-Access-Denied-admin\error-context.md
+
+  2) [admin] › e2e\flows\dashboard.admin.spec.ts:14:9 › Dashboard - Admin User › should display admin features 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-1465b-ould-display-admin-features-admin\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-1465b-ould-display-admin-features-admin\error-context.md
+
+  3) [admin] › e2e\flows\dashboard.admin.spec.ts:28:9 › Dashboard - Admin User › should show requests tab by default 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-09fb9-how-requests-tab-by-default-admin\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-09fb9-how-requests-tab-by-default-admin\error-context.md
+
+  4) [admin] › e2e\flows\dashboard.admin.spec.ts:35:9 › Dashboard - Admin User › should have navigation to projects and responses tabs 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-bb878-projects-and-responses-tabs-admin\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-bb878-projects-and-responses-tabs-admin\error-context.md
+
+  5) [user] › e2e\flows\dashboard.user.spec.ts:9:9 › Dashboard - Regular User › should show Access Denied for non-admin user 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Regular User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should show Access Denied for non-admin user', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.user-Dashb-f9c23-s-Denied-for-non-admin-user-user\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.user-Dashb-f9c23-s-Denied-for-non-admin-user-user\error-context.md
+
+  6) [user] › e2e\flows\dashboard.user.spec.ts:16:9 › Dashboard - Regular User › should not show admin features for regular user 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Regular User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should show Access Denied for non-admin user', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.user-Dashb-f2bbf-n-features-for-regular-user-user\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.user-Dashb-f2bbf-n-features-for-regular-user-user\error-context.md
+
+  7) [public] › e2e\pages\custom-cursor.spec.ts:4:9 › CustomCursor › should render cursor on home page 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test('should render cursor on home page', async ({ page }) => {
+      5 |         await page.goto('/');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |         const body = page.locator('body');
+      8 |         await expect(body).toBeVisible();
+      9 |     });
+        at I:\AvailArch\e2e\pages\custom-cursor.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\pages-custom-cursor-Custom-3fedb--render-cursor-on-home-page-public\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\pages-custom-cursor-Custom-3fedb--render-cursor-on-home-page-public\error-context.md
+
+  8) [public] › e2e\pages\home.spec.ts:16:7 › Home Page › should not have critical console errors ──
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      23 |
+      24 |     await page.goto('/');
+    > 25 |     await page.waitForLoadState('networkidle');
+         |                ^
+      26 |
+      27 |     const criticalErrors = errors.filter(e => 
+      28 |       !e.includes('favicon') && 
+        at I:\AvailArch\e2e\pages\home.spec.ts:25:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\pages-home-Home-Page-should-not-have-critical-console-errors-public\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\pages-home-Home-Page-should-not-have-critical-console-errors-public\error-context.md
+
+  9) [public] › e2e\pages\project-details.spec.ts:4:9 › Project Details Page › should load project page structure 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - navigating to "http://localhost:3000/projects/test-project", waiting until "load"[22m
+
+
+      3 | test.describe('Project Details Page', () => {
+      4 |     test('should load project page structure', async ({ page }) => {
+    > 5 |         await page.goto('/projects/test-project');
+        |                    ^
+      6 |         const body = page.locator('body');
+      7 |         await expect(body).toBeVisible();
+      8 |     });
+        at I:\AvailArch\e2e\pages\project-details.spec.ts:5:20
+
+  10) [public] › e2e\pages\project-details.spec.ts:10:9 › Project Details Page › should display project content or not found 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - navigating to "http://localhost:3000/projects/test-project", waiting until "load"[22m
+
+
+       9 |
+      10 |     test('should display project content or not found', async ({ page }) => {
+    > 11 |         await page.goto('/projects/test-project');
+         |                    ^
+      12 |         await page.waitForTimeout(2000);
+      13 |         const body = page.locator('body');
+      14 |         expect(await body.isVisible()).toBe(true);
+        at I:\AvailArch\e2e\pages\project-details.spec.ts:11:20
+
+  11) [public] › e2e\pages\project-details.spec.ts:17:9 › Project Details Page › should handle invalid project id 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - navigating to "http://localhost:3000/projects/invalid-project-id-12345", waiting until "load"[22m
+
+
+      16 |
+      17 |     test('should handle invalid project id', async ({ page }) => {
+    > 18 |         await page.goto('/projects/invalid-project-id-12345');
+         |                    ^
+      19 |         await page.waitForTimeout(2000);
+      20 |         const body = page.locator('body');
+      21 |         expect(await body.isVisible()).toBe(true);
+        at I:\AvailArch\e2e\pages\project-details.spec.ts:18:20
+
+  12) [public] › e2e\pages\project-details.spec.ts:33:9 › Project Details Page › should not crash on project page 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - navigating to "http://localhost:3000/projects/test-project", waiting until "load"[22m
+
+
+      32 |
+      33 |     test('should not crash on project page', async ({ page }) => {
+    > 34 |         const response = await page.goto('/projects/test-project');
+         |                                     ^
+      35 |         expect(response?.status() || 200).toBeLessThan(500);
+      36 |     });
+      37 | });
+        at I:\AvailArch\e2e\pages\project-details.spec.ts:34:37
+
+  13) [public] › e2e\pages\projects.spec.ts:4:7 › Projects Page › should load project list page ────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('a[href^="/projects/"]').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('a[href^="/projects/"]').first()[22m
+
+
+       5 |     await page.goto('/');
+       6 |     const projectLinks = page.locator('a[href^="/projects/"]');
+    >  7 |     await expect(projectLinks.first()).toBeVisible();
+         |                                        ^
+       8 |   });
+       9 |
+      10 |   test('should navigate to individual project page', async ({ page }) => {
+        at I:\AvailArch\e2e\pages\projects.spec.ts:7:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\pages-projects-Projects-Page-should-load-project-list-page-public\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\pages-projects-Projects-Page-should-load-project-list-page-public\error-context.md
+
+  14) [public] › e2e\pages\projects.spec.ts:20:7 › Projects Page › should display project details without crash 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - navigating to "http://localhost:3000/projects/test-project", waiting until "load"[22m
+
+
+      19 |
+      20 |   test('should display project details without crash', async ({ page }) => {
+    > 21 |     await page.goto('/projects/test-project');
+         |                ^
+      22 |     
+      23 |     const body = page.locator('body');
+      24 |     await expect(body).toBeVisible();
+        at I:\AvailArch\e2e\pages\projects.spec.ts:21:16
+
+  15) [public] › e2e\pages\projects.spec.ts:27:7 › Projects Page › should not have critical console errors on projects 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      34 |
+      35 |     await page.goto('/');
+    > 36 |     await page.waitForLoadState('networkidle');
+         |                ^
+      37 |
+      38 |     const projectLink = page.locator('a[href^="/projects/"]').first();
+      39 |     if (await projectLink.isVisible()) {
+        at I:\AvailArch\e2e\pages\projects.spec.ts:36:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\pages-projects-Projects-Pa-a74cf--console-errors-on-projects-public\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\pages-projects-Projects-Pa-a74cf--console-errors-on-projects-public\error-context.md
+
+  16) [flows] › e2e\flows\dashboard.admin.spec.ts:9:9 › Dashboard - Admin User › should load dashboard without Access Denied 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-a2457-board-without-Access-Denied-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-a2457-board-without-Access-Denied-flows\error-context.md
+
+  17) [flows] › e2e\flows\dashboard.admin.spec.ts:14:9 › Dashboard - Admin User › should display admin features 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-1465b-ould-display-admin-features-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-1465b-ould-display-admin-features-flows\error-context.md
+
+  18) [flows] › e2e\flows\dashboard.admin.spec.ts:28:9 › Dashboard - Admin User › should show requests tab by default 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-09fb9-how-requests-tab-by-default-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-09fb9-how-requests-tab-by-default-flows\error-context.md
+
+  19) [flows] › e2e\flows\dashboard.admin.spec.ts:35:9 › Dashboard - Admin User › should have navigation to projects and responses tabs 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Admin User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should load dashboard without Access Denied', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.admin.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.admin-Dash-bb878-projects-and-responses-tabs-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.admin-Dash-bb878-projects-and-responses-tabs-flows\error-context.md
+
+  20) [flows] › e2e\flows\dashboard.user.spec.ts:9:9 › Dashboard - Regular User › should show Access Denied for non-admin user 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Regular User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should show Access Denied for non-admin user', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.user-Dashb-f9c23-s-Denied-for-non-admin-user-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.user-Dashb-f9c23-s-Denied-for-non-admin-user-flows\error-context.md
+
+  21) [flows] › e2e\flows\dashboard.user.spec.ts:16:9 › Dashboard - Regular User › should not show admin features for regular user 
+
+    [31mTest timeout of 30000ms exceeded while running "beforeEach" hook.[39m
+
+      2 |
+      3 | test.describe('Dashboard - Regular User', () => {
+    > 4 |     test.beforeEach(async ({ page }) => {
+        |          ^
+      5 |         await page.goto('/dashboard');
+      6 |         await page.waitForLoadState('networkidle');
+      7 |     });
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:4:10
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      4 |     test.beforeEach(async ({ page }) => {
+      5 |         await page.goto('/dashboard');
+    > 6 |         await page.waitForLoadState('networkidle');
+        |                    ^
+      7 |     });
+      8 |
+      9 |     test('should show Access Denied for non-admin user', async ({ page }) => {
+        at I:\AvailArch\e2e\flows\dashboard.user.spec.ts:6:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-dashboard.user-Dashb-f2bbf-n-features-for-regular-user-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-dashboard.user-Dashb-f2bbf-n-features-for-regular-user-flows\error-context.md
+
+  22) [flows] › e2e\flows\track-request.spec.ts:42:7 › Track Request Form › should not have critical console errors 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      49 |
+      50 |     await page.goto('/track-request');
+    > 51 |     await page.waitForLoadState('networkidle');
+         |                ^
+      52 |
+      53 |     const criticalErrors = errors.filter(e => 
+      54 |       !e.includes('favicon') && 
+        at I:\AvailArch\e2e\flows\track-request.spec.ts:51:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\flows-track-request-Track--202dc-ave-critical-console-errors-flows\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\flows-track-request-Track--202dc-ave-critical-console-errors-flows\error-context.md
+
+  23) [performance] › e2e\performance\core-vitals.spec.ts:9:7 › Performance - Core Web Vitals › Home page LCP should be under threshold 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+       9 |   test('Home page LCP should be under threshold', async ({ page }) => {
+      10 |     await page.goto('/');
+    > 11 |     await page.waitForLoadState('networkidle');
+         |                ^
+      12 |
+      13 |     const lcp = await page.evaluate(() => {
+      14 |       return new Promise((resolve) => {
+        at I:\AvailArch\e2e\performance\core-vitals.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\performance-core-vitals-Pe-b32a4-P-should-be-under-threshold-performance\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\performance-core-vitals-Pe-b32a4-P-should-be-under-threshold-performance\error-context.md
+
+  24) [performance] › e2e\performance\core-vitals.spec.ts:29:7 › Performance - Core Web Vitals › Home page should have minimal CLS 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      29 |   test('Home page should have minimal CLS', async ({ page }) => {
+      30 |     await page.goto('/');
+    > 31 |     await page.waitForLoadState('networkidle');
+         |                ^
+      32 |
+      33 |     const cls = await page.evaluate(() => {
+      34 |       return new Promise((resolve) => {
+        at I:\AvailArch\e2e\performance\core-vitals.spec.ts:31:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\performance-core-vitals-Pe-79868-age-should-have-minimal-CLS-performance\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\performance-core-vitals-Pe-79868-age-should-have-minimal-CLS-performance\error-context.md
+
+  25) [performance] › e2e\performance\core-vitals.spec.ts:74:7 › Performance - Core Web Vitals › images should have proper loading attributes 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      74 |   test('images should have proper loading attributes', async ({ page }) => {
+      75 |     await page.goto('/');
+    > 76 |     await page.waitForLoadState('networkidle');
+         |                ^
+      77 |
+      78 |     const images = page.locator('img');
+      79 |     const count = await images.count();
+        at I:\AvailArch\e2e\performance\core-vitals.spec.ts:76:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\performance-core-vitals-Pe-5d5db-e-proper-loading-attributes-performance\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\performance-core-vitals-Pe-5d5db-e-proper-loading-attributes-performance\error-context.md
+
+  26) [performance] › e2e\performance\core-vitals.spec.ts:96:7 › Performance - API Response › API routes should respond quickly 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+  27) [performance] › e2e\performance\loading-states.spec.ts:22:9 › Loading States › should eventually show content even with delays 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      23 |         const start = Date.now();
+      24 |         await page.goto('/');
+    > 25 |         await page.waitForLoadState('networkidle');
+         |                    ^
+      26 |         const loadTime = Date.now() - start;
+      27 |         
+      28 |         const body = page.locator('body');
+        at I:\AvailArch\e2e\performance\loading-states.spec.ts:25:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\performance-loading-states-19dcf-ow-content-even-with-delays-performance\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\performance-loading-states-19dcf-ow-content-even-with-delays-performance\error-context.md
+
+  28) [performance] › e2e\performance\loading-states.spec.ts:33:9 › Loading States › should handle page navigation smoothly 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      33 |     test('should handle page navigation smoothly', async ({ page }) => {
+      34 |         await page.goto('/');
+    > 35 |         await page.waitForLoadState('networkidle');
+         |                    ^
+      36 |         
+      37 |         await page.goto('/about');
+      38 |         await page.waitForLoadState('networkidle');
+        at I:\AvailArch\e2e\performance\loading-states.spec.ts:35:20
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\performance-loading-states-592ff-le-page-navigation-smoothly-performance\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\performance-loading-states-592ff-le-page-navigation-smoothly-performance\error-context.md
+
+  28 failed
+    [admin] › e2e\flows\dashboard.admin.spec.ts:9:9 › Dashboard - Admin User › should load dashboard without Access Denied 
+    [admin] › e2e\flows\dashboard.admin.spec.ts:14:9 › Dashboard - Admin User › should display admin features 
+    [admin] › e2e\flows\dashboard.admin.spec.ts:28:9 › Dashboard - Admin User › should show requests tab by default 
+    [admin] › e2e\flows\dashboard.admin.spec.ts:35:9 › Dashboard - Admin User › should have navigation to projects and responses tabs 
+    [user] › e2e\flows\dashboard.user.spec.ts:9:9 › Dashboard - Regular User › should show Access Denied for non-admin user 
+    [user] › e2e\flows\dashboard.user.spec.ts:16:9 › Dashboard - Regular User › should not show admin features for regular user 
+    [public] › e2e\pages\custom-cursor.spec.ts:4:9 › CustomCursor › should render cursor on home page 
+    [public] › e2e\pages\home.spec.ts:16:7 › Home Page › should not have critical console errors ───
+    [public] › e2e\pages\project-details.spec.ts:4:9 › Project Details Page › should load project page structure 
+    [public] › e2e\pages\project-details.spec.ts:10:9 › Project Details Page › should display project content or not found 
+    [public] › e2e\pages\project-details.spec.ts:17:9 › Project Details Page › should handle invalid project id 
+    [public] › e2e\pages\project-details.spec.ts:33:9 › Project Details Page › should not crash on project page 
+    [public] › e2e\pages\projects.spec.ts:4:7 › Projects Page › should load project list page ──────
+    [public] › e2e\pages\projects.spec.ts:20:7 › Projects Page › should display project details without crash 
+    [public] › e2e\pages\projects.spec.ts:27:7 › Projects Page › should not have critical console errors on projects 
+    [flows] › e2e\flows\dashboard.admin.spec.ts:9:9 › Dashboard - Admin User › should load dashboard without Access Denied 
+    [flows] › e2e\flows\dashboard.admin.spec.ts:14:9 › Dashboard - Admin User › should display admin features 
+    [flows] › e2e\flows\dashboard.admin.spec.ts:28:9 › Dashboard - Admin User › should show requests tab by default 
+    [flows] › e2e\flows\dashboard.admin.spec.ts:35:9 › Dashboard - Admin User › should have navigation to projects and responses tabs 
+    [flows] › e2e\flows\dashboard.user.spec.ts:9:9 › Dashboard - Regular User › should show Access Denied for non-admin user 
+    [flows] › e2e\flows\dashboard.user.spec.ts:16:9 › Dashboard - Regular User › should not show admin features for regular user 
+    [flows] › e2e\flows\track-request.spec.ts:42:7 › Track Request Form › should not have critical console errors 
+    [performance] › e2e\performance\core-vitals.spec.ts:9:7 › Performance - Core Web Vitals › Home page LCP should be under threshold 
+    [performance] › e2e\performance\core-vitals.spec.ts:29:7 › Performance - Core Web Vitals › Home page should have minimal CLS 
+    [performance] › e2e\performance\core-vitals.spec.ts:74:7 › Performance - Core Web Vitals › images should have proper loading attributes 
+    [performance] › e2e\performance\core-vitals.spec.ts:96:7 › Performance - API Response › API routes should respond quickly 
+    [performance] › e2e\performance\loading-states.spec.ts:22:9 › Loading States › should eventually show content even with delays 
+    [performance] › e2e\performance\loading-states.spec.ts:33:9 › Loading States › should handle page navigation smoothly 
+  48 passed (3.4m)
